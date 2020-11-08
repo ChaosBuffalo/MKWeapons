@@ -19,17 +19,10 @@ import org.apache.logging.log4j.Logger;
 public class MKWeapons
 {
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "mkweapons";
 
     public MKWeapons() {
         MeleeWeaponTypes.registerWeaponTypes();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-    }
-
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        event.getMinecraftSupplier().get().particles.registerFactory(MKWeaponsParticles.DRIPPING_BLOOD,
-                BloodDripParticle.BloodDripFactory::new);
     }
 }

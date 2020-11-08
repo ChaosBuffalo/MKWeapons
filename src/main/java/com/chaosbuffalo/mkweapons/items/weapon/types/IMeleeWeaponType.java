@@ -17,7 +17,9 @@ public interface IMeleeWeaponType {
 
     float getReach();
 
-    List<IWeaponEffect> getEffects();
+    boolean isTwoHanded();
+
+    List<IWeaponEffect> getWeaponEffects();
 
     String getName();
 

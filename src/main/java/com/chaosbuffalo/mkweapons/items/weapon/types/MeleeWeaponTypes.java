@@ -1,9 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.UndeadDamage;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.WeaponBleed;
-import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
-import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponType;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.*;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -23,28 +20,37 @@ public class MeleeWeaponTypes {
     }
 
     public static final MeleeWeaponType LONGSWORD_TYPE = new MeleeWeaponType("longsword",
-                1.5f, -2.4f, 1.5f, 0.05f, 0.0f);
+                1.5f, -2.4f, 1.5f, 0.05f, 0.0f, false,
+            new FuryStrikeWeaponEffect(5, .25));
     public static final MeleeWeaponType GREATSWORD_TYPE = new MeleeWeaponType("greatsword",
-            3.0f, -3.2f, 1.75f, 0.05f, 1.0f);
+            3.0f, -3.2f, 1.75f, 0.05f, 1.0f, true,
+            new DoubleStrikeWeaponEffect(.2));
     public static final MeleeWeaponType KATANA_TYPE = new MeleeWeaponType("katana",
-            1.5f, -2.2f, 2.0f, 0.10f, 0.0f);
+            1.5f, -2.2f, 2.0f, 0.10f, 0.0f, true,
+            new ComboStrikeWeaponEffect(5, .25));
     public static final MeleeWeaponType DAGGER_TYPE = new MeleeWeaponType("dagger",
-            1.0f, -1.0f, 2.5f, 0.10f, -1.0f,
-            new WeaponBleed(1.0f, 10, 5));
+            1.0f, -1.0f, 2.5f, 0.10f, -1.0f, false,
+            new BleedWeaponEffect(2.0f, 10, 4),
+            new ComboStrikeWeaponEffect(3, .50));
     public static final MeleeWeaponType STAFF_TYPE = new MeleeWeaponType("staff",
-            1.0f, -2.5f, 1.5f, 0.05f, 1.0f);
+            1.0f, -2.5f, 1.5f, 0.05f, 1.0f, true,
+            new StunWeaponEffect(.20, 2),
+            new ComboStrikeWeaponEffect(5, .15));
     public static final MeleeWeaponType SPEAR_TYPE = new MeleeWeaponType("spear",
-            1.25f, -2.0f, 1.75f, 0.05f, 2.0f,
-            new WeaponBleed(1.5f, 5, 5));
+            1.25f, -2.0f, 1.75f, 0.05f, 2.0f, false,
+            new BleedWeaponEffect(1.5f, 5, 5),
+            new FuryStrikeWeaponEffect(3, .4));
     public static final MeleeWeaponType WARHAMMER_TYPE = new MeleeWeaponType("warhammer",
-            2.5f, -2.75f, 1.25f, 0.05f, 1.0f,
-            new UndeadDamage(2.0f));
+            2.5f, -2.75f, 1.25f, 0.05f, 1.0f, true,
+            new UndeadDamageWeaponEffect(2.0f),
+            new StunWeaponEffect(.1, 5));
     public static final MeleeWeaponType BATTLEAXE_TYPE = new MeleeWeaponType("battleaxe",
-            3.5f, -3.5f, 1.75f, 0.10f, 0.0f,
-            new WeaponBleed(2.0f, 3, 3));
+            3.5f, -3.5f, 1.75f, 0.10f, 0.0f, true,
+            new BleedWeaponEffect(4.0f, 3, 4));
     public static final MeleeWeaponType MACE_TYPE = new MeleeWeaponType("mace",
-            1.75f, -2.1f, 1.25f, 0.05f, 0.0f,
-            new UndeadDamage(1.5f));
+            1.75f, -2.1f, 1.25f, 0.05f, 0.0f, false,
+            new UndeadDamageWeaponEffect(1.5f),
+            new DoubleStrikeWeaponEffect(.1));
 
     public static void registerWeaponTypes(){
         addWeaponType(LONGSWORD_TYPE);

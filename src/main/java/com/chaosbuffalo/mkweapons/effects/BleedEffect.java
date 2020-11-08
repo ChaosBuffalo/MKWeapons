@@ -14,7 +14,6 @@ import com.chaosbuffalo.targeting_api.TargetingContext;
 import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
 import net.minecraftforge.event.RegistryEvent;
@@ -30,11 +29,6 @@ public class BleedEffect extends SpellPeriodicEffectBase {
     protected BleedEffect() {
         super(GameConstants.TICKS_PER_SECOND, EffectType.HARMFUL, 123);
         setRegistryName("effect.bleed_damage");
-    }
-
-    @Override
-    protected boolean shouldShowParticles() {
-        return false;
     }
 
     @SubscribeEvent

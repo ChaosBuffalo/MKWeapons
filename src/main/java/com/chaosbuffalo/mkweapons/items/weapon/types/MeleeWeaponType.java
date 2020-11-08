@@ -13,9 +13,11 @@ public class MeleeWeaponType implements IMeleeWeaponType {
     private final float reach;
     private final String name;
     private final List<IWeaponEffect> effects;
+    private final boolean isTwoHanded;
 
     public MeleeWeaponType(String name, float damageMultiplier, float attackSpeed,
-                           float critMultiplier, float critChance, float reach, IWeaponEffect... effects){
+                           float critMultiplier, float critChance, float reach, boolean isTwoHanded,
+                           IWeaponEffect... effects){
         this.damageMultiplier = damageMultiplier;
         this.name = name;
         this.attackSpeed = attackSpeed;
@@ -23,10 +25,20 @@ public class MeleeWeaponType implements IMeleeWeaponType {
         this.critChance = critChance;
         this.reach = reach;
         this.effects = Arrays.asList(effects);
+        this.isTwoHanded = isTwoHanded;
     }
 
     @Override
-    public List<IWeaponEffect> getEffects() {
+    public boolean isTwoHanded() {
+        return isTwoHanded;
+    }
+
+    public String getTranslationName(){
+        return String.format("mkweapon.melee.type.%s", getName());
+    }
+
+    @Override
+    public List<IWeaponEffect> getWeaponEffects() {
         return effects;
     }
 
