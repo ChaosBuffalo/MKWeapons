@@ -23,7 +23,7 @@ public class MeleeWeaponTypes {
                 1.5f, -2.4f, 1.5f, 0.05f, 0.0f, false,
             new FuryStrikeWeaponEffect(5, .25));
     public static final MeleeWeaponType GREATSWORD_TYPE = new MeleeWeaponType("greatsword",
-            3.0f, -3.2f, 1.75f, 0.05f, 1.0f, true,
+            2.0f, -3.2f, 1.75f, 0.05f, 1.0f, true,
             new DoubleStrikeWeaponEffect(.2));
     public static final MeleeWeaponType KATANA_TYPE = new MeleeWeaponType("katana",
             1.5f, -2.2f, 2.0f, 0.10f, 0.0f, true,
@@ -41,11 +41,11 @@ public class MeleeWeaponTypes {
             new BleedWeaponEffect(1.5f, 5, 5),
             new FuryStrikeWeaponEffect(3, .4));
     public static final MeleeWeaponType WARHAMMER_TYPE = new MeleeWeaponType("warhammer",
-            2.5f, -2.75f, 1.25f, 0.05f, 1.0f, true,
+            2.25f, -2.75f, 1.25f, 0.05f, 1.0f, true,
             new UndeadDamageWeaponEffect(2.0f),
             new StunWeaponEffect(.1, 5));
     public static final MeleeWeaponType BATTLEAXE_TYPE = new MeleeWeaponType("battleaxe",
-            3.5f, -3.5f, 1.75f, 0.10f, 0.0f, true,
+            2.5f, -3.5f, 1.75f, 0.10f, 0.0f, true,
             new BleedWeaponEffect(4.0f, 3, 4));
     public static final MeleeWeaponType MACE_TYPE = new MeleeWeaponType("mace",
             1.75f, -2.1f, 1.25f, 0.05f, 0.0f, false,

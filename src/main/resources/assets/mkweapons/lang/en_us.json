@@ -70,5 +70,5 @@
   "item.mkweapons.battleaxe_diamond": "Diamond Battleaxe",
   "item.mkweapons.haft": "Haft",
   "mkweapons.two_handed.name": "Two-Handed",
-  "mkweapons.two_handed.description": "You cannot equip a shield with this item"
+  "mkweapons.two_handed.description": "You cannot equip a shield with this weapon."
 }
