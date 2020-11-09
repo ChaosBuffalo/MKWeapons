@@ -1,10 +1,8 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkweapons.effects.BleedEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,13 +18,13 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BleedWeaponEffect implements IWeaponEffect {
+public class BleedMeleeWeaponEffect implements IMeleeWeaponEffect {
 
     private final float damageMultiplier;
     private final int maxStacks;
     private final int durationSeconds;
 
-    public BleedWeaponEffect(float damageMultiplier, int maxStacks, int durationSeconds){
+    public BleedMeleeWeaponEffect(float damageMultiplier, int maxStacks, int durationSeconds){
         this.damageMultiplier = damageMultiplier;
         this.maxStacks = maxStacks;
         this.durationSeconds = durationSeconds;

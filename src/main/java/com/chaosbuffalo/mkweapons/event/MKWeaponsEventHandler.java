@@ -1,29 +1,32 @@
 package com.chaosbuffalo.mkweapons.event;
 
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
-import com.chaosbuffalo.mkcore.core.stats.CriticalStats;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.MKBow;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKBow;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,6 +42,26 @@ public class MKWeaponsEventHandler {
 
     private static AttributeModifier createSlotModifier(UUID uuid, double amount, RangedAttribute mod) {
         return new AttributeModifier(uuid, mod::getName, amount, AttributeModifier.Operation.ADDITION).setSaved(false);
+    }
+
+    private static void handleProjectileDamage(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
+                                               ServerPlayerEntity playerSource, IMKEntityData sourceData){
+        if (source.getImmediateSource() instanceof AbstractArrowEntity){
+            AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
+            MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
+                if (cap.getShootingWeapon() != ItemStack.EMPTY && cap.getShootingWeapon().getItem() instanceof IMKBow){
+                    IMKBow bow = (IMKBow) cap.getShootingWeapon().getItem();
+                    for (IRangedWeaponEffect effect : bow.getWeaponEffects()){
+                        effect.onProjectileHit(event, source, livingTarget, playerSource, sourceData,
+                                arrowEntity, cap.getShootingWeapon());
+                    }
+                }
+            });
+        }
+    }
+
+    public static void registerCombatTriggers(){
+        SpellTriggers.PLAYER_HURT_ENTITY.registerProjectile(MKWeaponsEventHandler::handleProjectileDamage);
     }
 
     @SubscribeEvent
@@ -87,7 +110,7 @@ public class MKWeaponsEventHandler {
         ItemStack mainHand = entity.getHeldItemMainhand();
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
             Item item = mainHand.getItem();
-            for (IWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
+            for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
                 effect.postAttack((IMKMeleeWeapon) item, mainHand, entity);
             }
         }
@@ -129,7 +152,7 @@ public class MKWeaponsEventHandler {
                 float newDamage = event.getAmount();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
                     Item item = mainHand.getItem();
-                    for (IWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
+                    for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
                         newDamage = effect.modifyDamageDealt(newDamage, (IMKMeleeWeapon) item,
                                 mainHand, livingTarget, attacker);
                     }

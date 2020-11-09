@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import net.minecraft.item.IItemTier;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface IMeleeWeaponType {
 
     boolean isTwoHanded();
 
-    List<IWeaponEffect> getWeaponEffects();
+    List<IMeleeWeaponEffect> getWeaponEffects();
 
     String getName();
 

@@ -1,8 +1,11 @@
 package com.chaosbuffalo.mkweapons.init;
 
 
+import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.RapidFireRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
@@ -30,6 +33,8 @@ public class MKWeaponsItems {
 
     public static List<MKMeleeWeapon> WEAPONS = new ArrayList<>();
 
+    public static List<MKBow> BOWS = new ArrayList<>();
+
     @ObjectHolder("haft")
     public static Item Haft;
 
@@ -49,6 +54,12 @@ public class MKWeaponsItems {
                 WEAPONS.add(weapon);
                 evt.getRegistry().register(weapon);
             }
+            MKBow bow = new MKBow(new ResourceLocation(MKWeapons.MODID, String.format("longbow_%s", mat.getA())),
+                    new Item.Properties().maxDamage(mat.getB().getMaxUses() * 3).group(ItemGroup.COMBAT), mat.getB(),
+                    GameConstants.TICKS_PER_SECOND * 2.5f, 4.0f,
+                    new RapidFireRangedWeaponEffect(7, .10f));
+            BOWS.add(bow);
+            evt.getRegistry().register(bow);
         }
         Item haft = new Item(new Item.Properties().group(ItemGroup.MATERIALS));
         haft.setRegistryName(MKWeapons.MODID, "haft");

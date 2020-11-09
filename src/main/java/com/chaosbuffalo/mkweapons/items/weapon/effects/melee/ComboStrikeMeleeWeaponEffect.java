@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.CombatExtensionModule;
@@ -18,34 +18,33 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FuryStrikeWeaponEffect extends SwingWeaponEffect {
+public class ComboStrikeMeleeWeaponEffect extends SwingMeleeWeaponEffect {
 
-    public FuryStrikeWeaponEffect(int numberOfHits, double perHit) {
+    public ComboStrikeMeleeWeaponEffect(int numberOfHits, double perHit) {
         super(numberOfHits, perHit);
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TranslationTextComponent("mkweapons.effect.fury_strike.name")
+        tooltip.add(new TranslationTextComponent("mkweapons.effect.combo_strike.name")
                 .applyTextStyle(TextFormatting.GREEN));
-        if (Screen.hasShiftDown()) {
-            tooltip.add(new StringTextComponent(I18n.format("mkweapons.effect.fury_strike.description",
+        if (Screen.hasShiftDown()){
+            tooltip.add(new StringTextComponent(I18n.format("mkweapons.effect.combo_strike.description",
                     getPerHit() * 100.0f, getNumberOfHits())));
         }
     }
 
-
     @Override
-    public float modifyDamageDealt(float damage, IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        return MKCore.getEntityData(attacker).map(cap -> {
+    public void postAttack(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity attacker) {
+        MKCore.getEntityData(attacker).ifPresent(cap -> {
             CombatExtensionModule combatModule = cap.getCombatExtension();
             if (combatModule.isMidCombo()) {
                 int hit = combatModule.getCurrentSwingCount() % getNumberOfHits();
-                double damageIncrease = 1.0 + hit * getPerHit();
-                return damageIncrease * damage;
-            } else {
-                return damage;
+                double totalReduction = hit * getPerHit();
+                double cooldownPeriod = EntityUtils.getCooldownPeriod(attacker);
+                int newTicks = (int) Math.round(cooldownPeriod * totalReduction);
+                combatModule.setTicksSinceSwing(newTicks);
             }
-        }).orElse(damage).floatValue();
+        });
     }
 }

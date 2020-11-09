@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,12 +12,12 @@ public class MeleeWeaponType implements IMeleeWeaponType {
     private final float critChance;
     private final float reach;
     private final String name;
-    private final List<IWeaponEffect> effects;
+    private final List<IMeleeWeaponEffect> effects;
     private final boolean isTwoHanded;
 
     public MeleeWeaponType(String name, float damageMultiplier, float attackSpeed,
                            float critMultiplier, float critChance, float reach, boolean isTwoHanded,
-                           IWeaponEffect... effects){
+                           IMeleeWeaponEffect... effects){
         this.damageMultiplier = damageMultiplier;
         this.name = name;
         this.attackSpeed = attackSpeed;
@@ -38,7 +38,7 @@ public class MeleeWeaponType implements IMeleeWeaponType {
     }
 
     @Override
-    public List<IWeaponEffect> getWeaponEffects() {
+    public List<IMeleeWeaponEffect> getWeaponEffects() {
         return effects;
     }
 

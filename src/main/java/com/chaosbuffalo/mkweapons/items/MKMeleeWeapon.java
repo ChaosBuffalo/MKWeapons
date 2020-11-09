@@ -1,10 +1,9 @@
 package com.chaosbuffalo.mkweapons.items;
 
 import com.chaosbuffalo.mkcore.core.MKAttributes;
-import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
@@ -30,7 +29,7 @@ import java.util.UUID;
 public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     private final IMeleeWeaponType weaponType;
     private final MKTier mkTier;
-    private final List<IWeaponEffect> weaponEffects;
+    private final List<IMeleeWeaponEffect> weaponEffects;
     protected static final UUID ATTACK_REACH_MODIFIER = UUID.fromString("f74aa80c-43b8-4d00-a6ce-8d52694ff20c");
     protected static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("9b9c4389-0036-4beb-9dcc-5e11928ff499");
     protected static final UUID CRIT_MULT_MODIFIER = UUID.fromString("11fc07d2-7844-44f2-94ad-02479cff424d");
@@ -40,7 +39,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         this.weaponType = weaponType;
         this.mkTier = tier;
         this.weaponEffects = new ArrayList<>();
-        weaponEffects.addAll(tier.getWeaponEffects());
+        weaponEffects.addAll(tier.getMeleeWeaponEffects());
         weaponEffects.addAll(weaponType.getWeaponEffects());
         setRegistryName(weaponName);
     }
@@ -62,7 +61,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
 
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        for (IWeaponEffect effect : getWeaponEffects()){
+        for (IMeleeWeaponEffect effect : getWeaponEffects()){
             effect.onHit(this, stack, target, attacker);
         }
         return super.hitEntity(stack, target, attacker);
@@ -92,13 +91,13 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
                 tooltip.add(new TranslationTextComponent("mkweapons.two_handed.description"));
             }
         }
-        for (IWeaponEffect effect : weaponEffects){
+        for (IMeleeWeaponEffect effect : weaponEffects){
             effect.addInformation(stack, worldIn, tooltip, flagIn);
         }
     }
 
     @Override
-    public List<IWeaponEffect> getWeaponEffects() {
+    public List<IMeleeWeaponEffect> getWeaponEffects() {
         return weaponEffects;
     }
 }

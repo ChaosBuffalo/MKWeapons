@@ -1,7 +1,6 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
 
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -16,9 +15,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class UndeadDamageWeaponEffect implements IWeaponEffect{
+public class UndeadDamageMeleeWeaponEffect implements IMeleeWeaponEffect {
     private final float damageMultiplier;
-    public UndeadDamageWeaponEffect(float multiplier){
+    public UndeadDamageMeleeWeaponEffect(float multiplier){
         this.damageMultiplier = multiplier;
     }
 

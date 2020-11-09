@@ -70,5 +70,8 @@
   "item.mkweapons.battleaxe_diamond": "Diamond Battleaxe",
   "item.mkweapons.haft": "Haft",
   "mkweapons.two_handed.name": "Two-Handed",
-  "mkweapons.two_handed.description": "You cannot equip a shield with this weapon."
+  "mkweapons.two_handed.description": "You cannot equip a shield with this weapon.",
+  "mkweapons.bow_extra_damage.description": "Arrows deal an extra %.2f damage.",
+  "mkweapons.effect.rapid_fire.description": "Every successful shot reduces the draw time for the next shot by %.2f%% up to a maximum of %.2f%%.",
+  "mkweapons.effect.rapid_fire.name": "Rapid Fire"
 }

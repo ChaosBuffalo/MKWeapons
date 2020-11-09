@@ -1,16 +1,12 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.effects.status.StunEffect;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
-import com.chaosbuffalo.mkweapons.effects.BleedEffect;
-import com.chaosbuffalo.mkweapons.init.MKWeaponsParticles;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -25,11 +21,11 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StunWeaponEffect implements IWeaponEffect {
+public class StunMeleeWeaponEffect implements IMeleeWeaponEffect {
     private final int stunDuration;
     private final double stunChance;
 
-    public StunWeaponEffect(double stunChance, int stunSeconds){
+    public StunMeleeWeaponEffect(double stunChance, int stunSeconds){
         this.stunChance = stunChance;
         this.stunDuration = stunSeconds;
     }
