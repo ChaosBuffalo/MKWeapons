@@ -1,7 +1,0 @@
-{
-  "parent": "mkweapons:item/warhammer_base",
-  "textures": {
-    "0": "mkweapons:items/wood_tool",
-    "particle": "mkweapons:items/wood_tool"
-  }
-}

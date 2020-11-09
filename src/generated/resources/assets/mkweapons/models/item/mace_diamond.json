@@ -1,7 +1,0 @@
-{
-  "parent": "mkweapons:item/mace_base",
-  "textures": {
-    "0": "mkweapons:items/diamond_tool",
-    "particle": "mkweapons:items/diamond_tool"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "parent": "mkweapons:item/longsword_base",
-  "textures": {
-    "0": "mkweapons:items/gold_tool",
-    "particle": "mkweapons:items/gold_tool"
-  }
-}

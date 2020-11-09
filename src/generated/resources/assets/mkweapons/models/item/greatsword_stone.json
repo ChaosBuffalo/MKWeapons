@@ -1,7 +1,0 @@
-{
-  "parent": "mkweapons:item/greatsword_base",
-  "textures": {
-    "0": "mkweapons:items/stone_tool",
-    "particle": "mkweapons:items/stone_tool"
-  }
-}
