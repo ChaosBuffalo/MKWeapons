@@ -18,4 +18,8 @@ public interface IMKMeleeWeapon {
 
     List<IMeleeWeaponEffect> getWeaponEffects();
 
+    default boolean allowSweep(){
+        return false;
+    }
+
 }
