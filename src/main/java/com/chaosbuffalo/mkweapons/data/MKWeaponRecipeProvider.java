@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkweapons.data;
 
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
+import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
@@ -96,6 +97,9 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
         for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
             getRecipe(weapon).build(consumer);
         }
+        for (MKBow bow : MKWeaponsItems.BOWS){
+            getLongbowRecipe(bow).build(consumer);
+        }
     }
 
     private ShapedRecipeBuilder getHaftRecipe(){
@@ -107,6 +111,20 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
                 .patternLine("SSS")
                 .addCriterion("has_stick", this.hasItem(Items.STICK))
                 .addCriterion("has_leather", this.hasItem(Tags.Items.LEATHER));
+    }
+
+    private ShapedRecipeBuilder getLongbowRecipe(MKBow bow){
+        return ShapedRecipeBuilder.shapedRecipe(bow)
+                .key('H', MKWeaponsItems.Haft)
+                .key('I', bow.getMKTier().getMajorIngredient())
+                .key('S', Tags.Items.STRING)
+                .patternLine(" IS")
+                .patternLine("H S")
+                .patternLine(" IS")
+                .addCriterion("has_haft", this.hasItem(MKWeaponsItems.Haft))
+                .addCriterion("has_string", this.hasItem(Tags.Items.STRING))
+                .addCriterion("has_ingot", this.hasItem(bow.getMKTier().getMajorIngredient()))
+                ;
     }
 
     private ShapedRecipeBuilder getRecipe(MKMeleeWeapon weapon) {

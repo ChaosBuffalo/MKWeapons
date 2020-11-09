@@ -171,12 +171,12 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, -111, 0],
-			"translation": [0, -3, -2],
+			"translation": [0, -3, -1],
 			"scale": [0.81, 1.29, 0.81]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, 72, 0],
-			"translation": [0, -3, -2],
+			"translation": [0, -3, -1],
 			"scale": [0.81, 1.29, 0.81]
 		},
 		"firstperson_righthand": {

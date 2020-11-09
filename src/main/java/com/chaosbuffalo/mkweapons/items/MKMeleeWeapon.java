@@ -35,7 +35,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     protected static final UUID CRIT_MULT_MODIFIER = UUID.fromString("11fc07d2-7844-44f2-94ad-02479cff424d");
 
     public MKMeleeWeapon(ResourceLocation weaponName, MKTier tier, IMeleeWeaponType weaponType, Properties builder) {
-        super(tier, Math.round(weaponType.getDamageForTier(tier)), weaponType.getAttackSpeed(), builder);
+        super(tier, Math.round(weaponType.getDamageForTier(tier) - tier.getAttackDamage()), weaponType.getAttackSpeed(), builder);
         this.weaponType = weaponType;
         this.mkTier = tier;
         this.weaponEffects = new ArrayList<>();

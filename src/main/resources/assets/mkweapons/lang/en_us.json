@@ -73,5 +73,10 @@
   "mkweapons.two_handed.description": "You cannot equip a shield with this weapon.",
   "mkweapons.bow_extra_damage.description": "Arrows deal an extra %.2f damage.",
   "mkweapons.effect.rapid_fire.description": "Every successful shot reduces the draw time for the next shot by %.2f%% up to a maximum of %.2f%%.",
-  "mkweapons.effect.rapid_fire.name": "Rapid Fire"
+  "mkweapons.effect.rapid_fire.name": "Rapid Fire",
+  "item.mkweapons.longbow_iron": "Iron Longbow",
+  "item.mkweapons.longbow_gold": "Gold Longbow",
+  "item.mkweapons.longbow_diamond": "Diamond Longbow",
+  "item.mkweapons.longbow_wood": "Wood Longbow",
+  "item.mkweapons.longbow_stone": "Stone Longbow"
 }
