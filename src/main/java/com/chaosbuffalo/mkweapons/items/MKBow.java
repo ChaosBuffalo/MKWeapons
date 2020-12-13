@@ -1,14 +1,18 @@
 package com.chaosbuffalo.mkweapons.items;
 
-import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKBow;
+import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
+import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -29,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MKBow extends BowItem implements IMKBow {
+public class MKBow extends BowItem implements IMKRangedWeapon {
     private final List<IRangedWeaponEffect> weaponEffects;
     private final MKTier tier;
     private final float baseDrawTime;
@@ -43,19 +47,11 @@ public class MKBow extends BowItem implements IMKBow {
         this.baseLaunchVel = baseLaunchVel;
         this.weaponEffects = Arrays.asList(weaponEffects);
         this.tier = tier;
-        this.addPropertyOverride(new ResourceLocation("pull"), (itemStack, world, entity) -> {
-            if (entity == null) {
-                return 0.0F;
-            } else {
-                return !(entity.getActiveItemStack().getItem() instanceof MKBow) ? 0.0F :
-                        (float)(itemStack.getUseDuration() - entity.getItemInUseCount()) / getDrawTime(itemStack, entity);
-            }
-        });
     }
 
     public float getDrawTime(ItemStack item, LivingEntity entity){
         float time = baseDrawTime;
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects()){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(item)){
             time = weaponEffect.modifyDrawTime(time, item, entity);
         }
         return time;
@@ -72,7 +68,7 @@ public class MKBow extends BowItem implements IMKBow {
 
     public float getLaunchVelocity(ItemStack stack, LivingEntity entity){
         float vel = baseLaunchVel;
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects()){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
             vel = weaponEffect.modifyLaunchVelocity(vel, stack, entity);
         }
         return vel;
@@ -101,9 +97,9 @@ public class MKBow extends BowItem implements IMKBow {
                     if (!worldIn.isRemote) {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
-                        arrowEntity = customeArrow(arrowEntity);
-                        arrowEntity.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F,
-                                powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
+                        arrowEntity = customArrow(arrowEntity);
+                        arrowEntity.func_234612_a_(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
+                                0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
                             arrowEntity.setIsCritical(true);
                         }
@@ -144,15 +140,17 @@ public class MKBow extends BowItem implements IMKBow {
         }
     }
 
+
     @Override
-    public AbstractArrowEntity customeArrow(AbstractArrowEntity arrow) {
+    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
         // set item stack on cap here
-        if (arrow.getShooter() instanceof LivingEntity){
+        Entity shooter = arrow.func_234616_v_();
+        if (shooter instanceof LivingEntity){
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
-                    cap.setShootingWeapon(((LivingEntity) arrow.getShooter()).getHeldItemMainhand()));
+                    cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
         }
         arrow.setDamage(arrow.getDamage() + getMKTier().getAttackDamage());
-        return super.customeArrow(arrow);
+        return super.customArrow(arrow);
     }
 
     @Override
@@ -160,9 +158,9 @@ public class MKBow extends BowItem implements IMKBow {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if (getMKTier().getAttackDamage() > 0){
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.bow_extra_damage.description",
-                    getMKTier().getAttackDamage())).applyTextStyle(TextFormatting.GRAY));
+                    getMKTier().getAttackDamage())).mergeStyle(TextFormatting.GRAY));
         }
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects()){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
             weaponEffect.addInformation(stack, worldIn, tooltip, flagIn);
         }
     }
@@ -175,5 +173,23 @@ public class MKBow extends BowItem implements IMKBow {
     @Override
     public List<IRangedWeaponEffect> getWeaponEffects() {
         return weaponEffects;
+    }
+
+    @Override
+    public List<IRangedWeaponEffect> getWeaponEffects(ItemStack item) {
+        return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
+            if (cap.hasRangedWeaponEffects()){
+                return cap.getCachedRangedWeaponEffects();
+            } else {
+                return weaponEffects;
+            }
+        }).orElse(weaponEffects);
+    }
+
+    @Nullable
+    @Override
+    public MKAbility getAbility(ItemStack itemStack) {
+        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
+                .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
     }
 }

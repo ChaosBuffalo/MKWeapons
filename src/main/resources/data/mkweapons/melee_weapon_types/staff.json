@@ -1,0 +1,20 @@
+{
+  "damageMultiplier": 1.0,
+  "attackSpeed": -2.5,
+  "reach": 1.0,
+  "critMultiplier": 1.5,
+  "critChance": 0.05,
+  "isTwoHanded": true,
+  "effects": [
+    {
+      "type": "mkweapons:weapon_effect.stun",
+      "duration": 2,
+      "chance": 0.2
+    },
+    {
+      "type": "mkweapons:weapon_effect.combo_strike",
+      "numberOfHits": 5,
+      "perHit": 0.15
+    }
+  ]
+}

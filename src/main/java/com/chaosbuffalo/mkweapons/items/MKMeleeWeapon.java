@@ -1,16 +1,23 @@
 package com.chaosbuffalo.mkweapons.items;
 
+import com.chaosbuffalo.mkcore.MKCoreRegistry;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
+import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
@@ -45,23 +52,43 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     }
 
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType equipmentSlot) {
-        Multimap<String, AttributeModifier> map = super.getAttributeModifiers(equipmentSlot);
+    public float getAttackDamage() {
+        return Math.round(getWeaponType().getDamageForTier(getMKTier()) - getMKTier().getAttackDamage());
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType equipmentSlot) {
+        Multimap<Attribute, AttributeModifier> map = HashMultimap.create();
         if (equipmentSlot == EquipmentSlotType.MAINHAND) {
-            map.put(MKAttributes.ATTACK_REACH.getName(), new AttributeModifier(ATTACK_REACH_MODIFIER, "Weapon modifier",
-                    this.weaponType.getReach(), AttributeModifier.Operation.ADDITION));
-            map.put(MKAttributes.MELEE_CRIT.getName(), new AttributeModifier(CRIT_CHANCE_MODIFIER, "Weapon modifier",
-                    this.weaponType.getCritChance(), AttributeModifier.Operation.ADDITION));
-            map.put(MKAttributes.MELEE_CRIT_MULTIPLIER.getName(), new AttributeModifier(CRIT_MULT_MODIFIER, "Weapon modifier",
-                    this.weaponType.getCritMultiplier(), AttributeModifier.Operation.ADDITION));
+            map.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER,
+                    "Weapon modifier", getAttackDamage(), AttributeModifier.Operation.ADDITION));
+            map.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER,
+                    "Weapon modifier", getWeaponType().getAttackSpeed(), AttributeModifier.Operation.ADDITION));
+            map.put(MKAttributes.ATTACK_REACH, new AttributeModifier(ATTACK_REACH_MODIFIER,
+                    "Weapon modifier", getWeaponType().getReach(), AttributeModifier.Operation.ADDITION));
+            map.put(MKAttributes.MELEE_CRIT, new AttributeModifier(CRIT_CHANCE_MODIFIER,
+                    "Weapon modifier", getWeaponType().getCritChance(), AttributeModifier.Operation.ADDITION));
+            map.put(MKAttributes.MELEE_CRIT_MULTIPLIER, new AttributeModifier(CRIT_MULT_MODIFIER,
+                    "Weapon modifier", getWeaponType().getCritMultiplier(), AttributeModifier.Operation.ADDITION));
         }
         return map;
     }
 
+    @Override
+    public void reload(){
+        weaponEffects.clear();
+        weaponEffects.addAll(getMKTier().getMeleeWeaponEffects());
+        weaponEffects.addAll(getWeaponType().getWeaponEffects());
+    }
+
+    @Override
+    public List<IMeleeWeaponEffect> getWeaponEffects() {
+        return weaponEffects;
+    }
 
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        for (IMeleeWeaponEffect effect : getWeaponEffects()){
+        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
             effect.onHit(this, stack, target, attacker);
         }
         return super.hitEntity(stack, target, attacker);
@@ -81,23 +108,41 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
-                getWeaponType().getCritChance() * 100.0f)).applyTextStyle(TextFormatting.GRAY));
+                getWeaponType().getCritChance() * 100.0f)).mergeStyle(TextFormatting.GRAY));
         tooltip.add(new StringTextComponent(I18n.format("mkweapons.crit_multiplier.description",
-                getWeaponType().getCritMultiplier())).applyTextStyle(TextFormatting.GRAY));
+                getWeaponType().getCritMultiplier())).mergeStyle(TextFormatting.GRAY));
         if (getWeaponType().isTwoHanded()){
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
-                    .applyTextStyle(TextFormatting.GRAY));
+                    .mergeStyle(TextFormatting.GRAY));
             if (Screen.hasShiftDown()){
                 tooltip.add(new TranslationTextComponent("mkweapons.two_handed.description"));
             }
         }
-        for (IMeleeWeaponEffect effect : weaponEffects){
+        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
             effect.addInformation(stack, worldIn, tooltip, flagIn);
+        }
+        MKAbility ability = getAbility(stack);
+        if (ability != null){
+            tooltip.add(new StringTextComponent(I18n.format("mkweapons.grants_ability",
+                    ability.getAbilityName())).mergeStyle(TextFormatting.GOLD));
         }
     }
 
     @Override
-    public List<IMeleeWeaponEffect> getWeaponEffects() {
-        return weaponEffects;
+    public List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item) {
+        return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
+            if (cap.hasMeleeWeaponEffects()){
+                return cap.getCachedMeleeWeaponEffects();
+            } else {
+                return weaponEffects;
+            }
+        }).orElse(weaponEffects);
+    }
+
+    @Nullable
+    @Override
+    public MKAbility getAbility(ItemStack itemStack) {
+        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
+                .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
     }
 }

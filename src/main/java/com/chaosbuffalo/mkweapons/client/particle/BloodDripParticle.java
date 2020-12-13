@@ -1,12 +1,15 @@
 package com.chaosbuffalo.mkweapons.client.particle;
 
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class BloodDripParticle extends SpriteTexturedParticle {
 
-    private BloodDripParticle(World world, double posX, double posY, double posZ) {
+    private BloodDripParticle(ClientWorld world, double posX, double posY, double posZ) {
         super(world, posX, posY, posZ);
         this.setSize(0.01F, 0.01F);
         this.particleGravity = 0.06F;
@@ -53,7 +56,9 @@ public class BloodDripParticle extends SpriteTexturedParticle {
             this.spriteSet = spriteSet;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        @Nullable
+        @Override
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             BloodDripParticle drip = new BloodDripParticle(worldIn, x, y, z);
             drip.selectSpriteRandomly(this.spriteSet);
             return drip;

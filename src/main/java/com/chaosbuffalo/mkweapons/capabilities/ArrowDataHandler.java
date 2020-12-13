@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
