@@ -17,6 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -40,6 +41,7 @@ public class MKWeapons
         LootSlotManager.setupLootSlots();
         RandomizationSlotManager.setupRandomizationSlots();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         weaponTypeManager = new WeaponTypeManager();
         lootTierManager = new LootTierManager();
     }
@@ -49,6 +51,10 @@ public class MKWeapons
         PacketHandler.setupHandler();
         WeaponsCapabilities.registerCapabilities();
         MKWeaponsEventHandler.registerCombatTriggers();
+
+    }
+
+    private void clientSetup(final FMLClientSetupEvent event){
         MKWeaponsItems.registerItemProperties();
     }
 

@@ -51,3 +51,9 @@ Adds RPG weapons to MC.
     versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"
+[[dependencies.mkweapons]]
+    modId="mkcore"
+    mandatory=true
+    versionRange="[0.12,)"
+    ordering="NONE"
+    side="BOTH"

@@ -98,13 +98,13 @@ public class WeaponTypeManager extends JsonReloadListener {
             player.getAttributeManager().reapplyModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
         }
         for (ItemStack item : player.inventory.mainInventory){
-            if (item != ItemStack.EMPTY){
+            if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
         }
         for (ItemStack item : player.inventory.offHandInventory){
-            if (item != ItemStack.EMPTY){
+            if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
