@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.randomization.LootTierManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotManager;
+import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffectsExtension;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import com.chaosbuffalo.mkweapons.network.PacketHandler;
@@ -19,6 +20,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -32,6 +35,7 @@ public class MKWeapons
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "mkweapons";
+    public static final String REGISTER_MK_WEAPONS_EXTENSION = "register_mk_weapons_extension";
     public WeaponTypeManager weaponTypeManager;
     public LootTierManager lootTierManager;
 
@@ -42,6 +46,7 @@ public class MKWeapons
         RandomizationSlotManager.setupRandomizationSlots();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         weaponTypeManager = new WeaponTypeManager();
         lootTierManager = new LootTierManager();
     }
@@ -52,6 +57,20 @@ public class MKWeapons
         WeaponsCapabilities.registerCapabilities();
         MKWeaponsEventHandler.registerCombatTriggers();
 
+    }
+
+
+    private void processIMC(final InterModProcessEvent event)
+    {
+        LOGGER.info("MKWeapons.processIMC");
+        event.getIMCStream().forEach(m -> {
+            if (m.getMethod().equals(REGISTER_MK_WEAPONS_EXTENSION)) {
+                LOGGER.info("IMC register weapon extensions from mod {} {}", m.getSenderModId(),
+                        m.getMethod());
+                IWeaponEffectsExtension ext = (IWeaponEffectsExtension) m.getMessageSupplier().get();
+                ext.registerWeaponEffectsExtension();
+            }
+        });
     }
 
     private void clientSetup(final FMLClientSetupEvent event){

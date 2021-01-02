@@ -55,7 +55,7 @@ public class MeleeWeaponTypes {
     public static final MeleeWeaponType BATTLEAXE_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "battleaxe"),
             2.5f, -3.5f, 1.75f, 0.10f, 0.0f, true,
-            new BleedMeleeWeaponEffect(4.0f, 3, 4));
+            new BleedMeleeWeaponEffect(2.0f, 2, 4));
     public static final MeleeWeaponType MACE_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "mace"),
             1.75f, -2.1f, 1.25f, 0.05f, 0.0f, false,
