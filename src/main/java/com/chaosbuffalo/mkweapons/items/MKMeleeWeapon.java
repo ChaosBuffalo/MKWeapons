@@ -1,8 +1,10 @@
 package com.chaosbuffalo.mkweapons.items;
 
+import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
@@ -10,6 +12,7 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
@@ -29,14 +32,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     private final IMeleeWeaponType weaponType;
     private final MKTier mkTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
+    protected Multimap<Attribute, AttributeModifier> modifiers;
     protected static final UUID ATTACK_REACH_MODIFIER = UUID.fromString("f74aa80c-43b8-4d00-a6ce-8d52694ff20c");
     protected static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("9b9c4389-0036-4beb-9dcc-5e11928ff499");
     protected static final UUID CRIT_MULT_MODIFIER = UUID.fromString("11fc07d2-7844-44f2-94ad-02479cff424d");
@@ -46,9 +48,25 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         this.weaponType = weaponType;
         this.mkTier = tier;
         this.weaponEffects = new ArrayList<>();
+        recalculateModifiers();
         weaponEffects.addAll(tier.getMeleeWeaponEffects());
         weaponEffects.addAll(weaponType.getWeaponEffects());
         setRegistryName(weaponName);
+    }
+
+    protected void recalculateModifiers(){
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER,
+                "Weapon modifier", getAttackDamage(), AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER,
+                "Weapon modifier", getWeaponType().getAttackSpeed(), AttributeModifier.Operation.ADDITION));
+        builder.put(MKAttributes.ATTACK_REACH, new AttributeModifier(ATTACK_REACH_MODIFIER,
+                "Weapon modifier", getWeaponType().getReach(), AttributeModifier.Operation.ADDITION));
+        builder.put(MKAttributes.MELEE_CRIT, new AttributeModifier(CRIT_CHANCE_MODIFIER,
+                "Weapon modifier", getWeaponType().getCritChance(), AttributeModifier.Operation.ADDITION));
+        builder.put(MKAttributes.MELEE_CRIT_MULTIPLIER, new AttributeModifier(CRIT_MULT_MODIFIER,
+                "Weapon modifier", getWeaponType().getCritMultiplier(), AttributeModifier.Operation.ADDITION));
+        modifiers = builder.build();
     }
 
     @Override
@@ -58,20 +76,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType equipmentSlot) {
-        Multimap<Attribute, AttributeModifier> map = HashMultimap.create();
-        if (equipmentSlot == EquipmentSlotType.MAINHAND) {
-            map.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER,
-                    "Weapon modifier", getAttackDamage(), AttributeModifier.Operation.ADDITION));
-            map.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER,
-                    "Weapon modifier", getWeaponType().getAttackSpeed(), AttributeModifier.Operation.ADDITION));
-            map.put(MKAttributes.ATTACK_REACH, new AttributeModifier(ATTACK_REACH_MODIFIER,
-                    "Weapon modifier", getWeaponType().getReach(), AttributeModifier.Operation.ADDITION));
-            map.put(MKAttributes.MELEE_CRIT, new AttributeModifier(CRIT_CHANCE_MODIFIER,
-                    "Weapon modifier", getWeaponType().getCritChance(), AttributeModifier.Operation.ADDITION));
-            map.put(MKAttributes.MELEE_CRIT_MULTIPLIER, new AttributeModifier(CRIT_MULT_MODIFIER,
-                    "Weapon modifier", getWeaponType().getCritMultiplier(), AttributeModifier.Operation.ADDITION));
-        }
-        return map;
+        return equipmentSlot == EquipmentSlotType.MAINHAND ? this.modifiers : super.getAttributeModifiers(equipmentSlot);
     }
 
     @Override
@@ -79,6 +84,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         weaponEffects.clear();
         weaponEffects.addAll(getMKTier().getMeleeWeaponEffects());
         weaponEffects.addAll(getWeaponType().getWeaponEffects());
+        recalculateModifiers();
     }
 
     @Override
@@ -88,9 +94,14 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
 
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
-            effect.onHit(this, stack, target, attacker);
-        }
+        MKCore.getEntityData(attacker).ifPresent(cap -> {
+            if (cap.getCombatExtension().getEntityTicksSinceLastSwing() > EntityUtils.getCooldownPeriod(attacker)){
+                for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
+                    effect.onHit(this, stack, target, attacker);
+                }
+            }
+        });
+
         return super.hitEntity(stack, target, attacker);
     }
 
