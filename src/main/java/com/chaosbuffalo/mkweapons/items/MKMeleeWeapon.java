@@ -95,7 +95,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         MKCore.getEntityData(attacker).ifPresent(cap -> {
-            if (cap.getCombatExtension().getEntityTicksSinceLastSwing() > EntityUtils.getCooldownPeriod(attacker)){
+            if (cap.getCombatExtension().getEntityTicksSinceLastSwing() >= EntityUtils.getCooldownPeriod(attacker)){
                 for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
                     effect.onHit(this, stack, target, attacker);
                 }
