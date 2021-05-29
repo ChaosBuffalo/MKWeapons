@@ -98,7 +98,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
                         arrowEntity = customArrow(arrowEntity);
-                        arrowEntity.func_234612_a_(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
+                        arrowEntity.setDirectionAndMovement(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
                                 0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
                             arrowEntity.setIsCritical(true);
@@ -144,7 +144,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     @Override
     public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
         // set item stack on cap here
-        Entity shooter = arrow.func_234616_v_();
+        Entity shooter = arrow.getShooter();
         if (shooter instanceof LivingEntity){
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
                     cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
