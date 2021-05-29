@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.client.resources.I18n;
@@ -64,17 +65,25 @@ public class MKWeaponsEventHandler {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        Item from = event.getFrom().getItem();
+        Item to = event.getTo().getItem();
+        if (from instanceof IMKWeapon){
+            ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
+                    eff -> eff.onEntityUnequip(event.getEntityLiving()));
+        }
+        if (to instanceof IMKWeapon){
+            ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
+                    eff -> eff.onEntityEquip(event.getEntityLiving()));
+        }
         if (!(event.getEntityLiving() instanceof ServerPlayerEntity))
             return;
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
         checkShieldRestriction(player);
         if (event.getSlot() == EquipmentSlotType.MAINHAND){
-            Item from = event.getFrom().getItem();
             if (!(from instanceof IMKMeleeWeapon) && (from instanceof ToolItem || from instanceof SwordItem || from instanceof HoeItem) ){
                 player.getAttribute(MKAttributes.MELEE_CRIT).removeModifier(CRIT_CHANCE_MODIFIER);
                 player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).removeModifier(CRIT_MULT_MODIFIER);
             }
-            Item to = event.getTo().getItem();
             if (!(to instanceof IMKMeleeWeapon) && (to instanceof ToolItem || to instanceof SwordItem || to instanceof HoeItem)){
                 player.getAttribute(MKAttributes.MELEE_CRIT).applyNonPersistentModifier(createSlotModifier(
                         CRIT_CHANCE_MODIFIER, ItemUtils.getCritChanceForItem(event.getTo()),

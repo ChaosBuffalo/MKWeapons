@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkweapons.items;
 
-import com.chaosbuffalo.mkcore.mku.abilities.WhirlwindBlades;
+import com.chaosbuffalo.mkcore.test.abilities.EmberAbility;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.StunMeleeWeaponEffect;
@@ -28,7 +28,7 @@ public class TestNBTWeaponEffectItem extends Item {
             if (playerIn.getHeldItemOffhand().getItem() instanceof IMKMeleeWeapon){
                 playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap ->{
                     cap.addMeleeWeaponEffect(new StunMeleeWeaponEffect(0.5, 2));
-                    cap.setAbilityId(WhirlwindBlades.INSTANCE.getAbilityId());
+                    cap.setAbilityId(EmberAbility.INSTANCE.getAbilityId());
                 });
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) playerIn;
                 serverPlayer.connection.sendPacket(new SEntityEquipmentPacket(playerIn.getEntityId(),

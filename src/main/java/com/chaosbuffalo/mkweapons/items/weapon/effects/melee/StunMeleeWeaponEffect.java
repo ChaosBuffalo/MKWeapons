@@ -60,7 +60,7 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
         if (attacker.getRNG().nextDouble() > 1.0 - stunChance){
             SpellCast cast = com.chaosbuffalo.mkcore.effects.status.StunEffect.Create(attacker).setTarget(target);
             target.addPotionEffect(cast.toPotionEffect(stunDuration * GameConstants.TICKS_PER_SECOND,0));
-            PacketHandler.sendToTrackingMaybeSelf(
+            PacketHandler.sendToTrackingAndSelf(
                     new ParticleEffectSpawnPacket(
                             ParticleTypes.ENCHANTED_HIT,
                             ParticleEffects.CIRCLE_MOTION, 10, 1,

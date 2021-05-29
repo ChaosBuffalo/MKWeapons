@@ -21,6 +21,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
@@ -86,6 +87,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         weaponEffects.addAll(getWeaponType().getWeaponEffects());
         recalculateModifiers();
     }
+
 
     @Override
     public List<IMeleeWeaponEffect> getWeaponEffects() {

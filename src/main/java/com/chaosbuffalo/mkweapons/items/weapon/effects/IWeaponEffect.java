@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkweapons.items.weapon.effects;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -20,4 +21,8 @@ public interface IWeaponEffect {
     <D> D serialize(DynamicOps<D> ops);
 
     <D> void deserialize(Dynamic<D> dynamic);
+
+    default void onEntityEquip(LivingEntity entity) {}
+
+    default void onEntityUnequip(LivingEntity entity) {}
 }

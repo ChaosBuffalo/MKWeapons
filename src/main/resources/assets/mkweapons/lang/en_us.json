@@ -79,5 +79,11 @@
   "item.mkweapons.longbow_diamond": "Diamond Longbow",
   "item.mkweapons.longbow_wood": "Wood Longbow",
   "item.mkweapons.longbow_stone": "Stone Longbow",
-  "mkweapons.grants_ability": "Grants Ability: %s"
+  "mkweapons.grants_ability": "Grants Ability: %s",
+  "mkweapons.effect.bleed": "Bleeding Damage",
+  "effect.mkweapons.effect.bleed_damage": "Bleeding",
+  "mkweapons.modifier.description.percentage_base": "%s: %.2f%% (B)",
+  "mkweapons.modifier.description.percentage_total": "%s: %.2f%%",
+  "mkweapons.modifier.description.addition": "%s: %.2f"
+
 }

@@ -4,9 +4,12 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Optional;
@@ -41,6 +44,27 @@ public class AttributeOptionEntry {
                 ops.createString("UUID"), ops.createString(modifier.getID().toString()),
                 ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString())
         ));
+    }
+
+    private String getTranslationKeyForModifier(AttributeModifier.Operation op){
+        switch (op){
+            case MULTIPLY_BASE:
+                return "mkweapons.modifier.description.percentage_base";
+            case MULTIPLY_TOTAL:
+                return "mkweapons.modifier.description.percentage_total";
+            case ADDITION:
+            default:
+                return "mkweapons.modifier.description.addition";
+        }
+    }
+
+    public ITextComponent getDescription(){
+        String translationKey = getTranslationKeyForModifier(modifier.getOperation());
+        double amount = modifier.getAmount();
+        if (modifier.getOperation() != AttributeModifier.Operation.ADDITION){
+            amount *= 100.0f;
+        }
+        return new TranslationTextComponent(translationKey, I18n.format(attribute.getAttributeName()), amount);
     }
 
     public <D> void deserialize(Dynamic<D> dynamic){
