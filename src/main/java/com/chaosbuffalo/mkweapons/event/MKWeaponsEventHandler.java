@@ -6,9 +6,9 @@ import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.MKBow;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKBow;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.client.resources.I18n;
@@ -26,7 +26,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,7 +40,7 @@ public class MKWeaponsEventHandler {
     private static final UUID CRIT_MULT_MODIFIER = UUID.fromString("c167f8f7-7bfc-4232-a321-ba635a4eb46f");
 
     private static AttributeModifier createSlotModifier(UUID uuid, double amount, RangedAttribute mod) {
-        return new AttributeModifier(uuid, mod::getName, amount, AttributeModifier.Operation.ADDITION).setSaved(false);
+        return new AttributeModifier(uuid, mod.getAttributeName(), amount, AttributeModifier.Operation.ADDITION);
     }
 
     private static void handleProjectileDamage(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
@@ -49,9 +48,9 @@ public class MKWeaponsEventHandler {
         if (source.getImmediateSource() instanceof AbstractArrowEntity){
             AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
             MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
-                if (cap.getShootingWeapon() != ItemStack.EMPTY && cap.getShootingWeapon().getItem() instanceof IMKBow){
-                    IMKBow bow = (IMKBow) cap.getShootingWeapon().getItem();
-                    for (IRangedWeaponEffect effect : bow.getWeaponEffects()){
+                if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon){
+                    IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
+                    for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())){
                         effect.onProjectileHit(event, source, livingTarget, playerSource, sourceData,
                                 arrowEntity, cap.getShootingWeapon());
                     }
@@ -66,22 +65,30 @@ public class MKWeaponsEventHandler {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        Item from = event.getFrom().getItem();
+        Item to = event.getTo().getItem();
+        if (from instanceof IMKWeapon){
+            ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
+                    eff -> eff.onEntityUnequip(event.getEntityLiving()));
+        }
+        if (to instanceof IMKWeapon){
+            ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
+                    eff -> eff.onEntityEquip(event.getEntityLiving()));
+        }
         if (!(event.getEntityLiving() instanceof ServerPlayerEntity))
             return;
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
         checkShieldRestriction(player);
         if (event.getSlot() == EquipmentSlotType.MAINHAND){
-            Item from = event.getFrom().getItem();
             if (!(from instanceof IMKMeleeWeapon) && (from instanceof ToolItem || from instanceof SwordItem || from instanceof HoeItem) ){
                 player.getAttribute(MKAttributes.MELEE_CRIT).removeModifier(CRIT_CHANCE_MODIFIER);
                 player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).removeModifier(CRIT_MULT_MODIFIER);
             }
-            Item to = event.getTo().getItem();
             if (!(to instanceof IMKMeleeWeapon) && (to instanceof ToolItem || to instanceof SwordItem || to instanceof HoeItem)){
-                player.getAttribute(MKAttributes.MELEE_CRIT).applyModifier(createSlotModifier(
+                player.getAttribute(MKAttributes.MELEE_CRIT).applyNonPersistentModifier(createSlotModifier(
                         CRIT_CHANCE_MODIFIER, ItemUtils.getCritChanceForItem(event.getTo()),
                         MKAttributes.MELEE_CRIT));
-                player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).applyModifier(createSlotModifier(
+                player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).applyNonPersistentModifier(createSlotModifier(
                         CRIT_MULT_MODIFIER, ItemUtils.getCritMultiplierForItem(event.getTo()),
                         MKAttributes.MELEE_CRIT_MULTIPLIER));
             }
@@ -110,7 +117,7 @@ public class MKWeaponsEventHandler {
         ItemStack mainHand = entity.getHeldItemMainhand();
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
             Item item = mainHand.getItem();
-            for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
+            for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)){
                 effect.postAttack((IMKMeleeWeapon) item, mainHand, entity);
             }
         }
@@ -132,9 +139,9 @@ public class MKWeaponsEventHandler {
             }
         } else if (item instanceof ToolItem || item instanceof SwordItem || item instanceof HoeItem){
             event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
-                    ItemUtils.getCritChanceForItem(event.getItemStack()) * 100.0f)).applyTextStyle(TextFormatting.GRAY));
+                    ItemUtils.getCritChanceForItem(event.getItemStack()) * 100.0f)).mergeStyle(TextFormatting.GRAY));
             event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_multiplier.description",
-                    ItemUtils.getCritMultiplierForItem(event.getItemStack()))).applyTextStyle(TextFormatting.GRAY));
+                    ItemUtils.getCritMultiplierForItem(event.getItemStack()))).mergeStyle(TextFormatting.GRAY));
         }
     }
 
@@ -152,7 +159,7 @@ public class MKWeaponsEventHandler {
                 float newDamage = event.getAmount();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
                     Item item = mainHand.getItem();
-                    for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects()){
+                    for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)){
                         newDamage = effect.modifyDamageDealt(newDamage, (IMKMeleeWeapon) item,
                                 mainHand, livingTarget, attacker);
                     }

@@ -5,7 +5,7 @@ import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.effects.SpellPeriodicEffectBase;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
-import com.chaosbuffalo.mkcore.init.ModDamageTypes;
+import com.chaosbuffalo.mkcore.init.CoreDamageTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
@@ -28,7 +28,7 @@ public class BleedEffect extends SpellPeriodicEffectBase {
 
     protected BleedEffect() {
         super(GameConstants.TICKS_PER_SECOND, EffectType.HARMFUL, 123);
-        setRegistryName("effect.bleed_damage");
+        setRegistryName(MKWeapons.MODID, "effect.bleed_damage");
     }
 
     @SubscribeEvent
@@ -53,9 +53,9 @@ public class BleedEffect extends SpellPeriodicEffectBase {
     @Override
     public void doEffect(Entity applier, Entity caster, LivingEntity target, int i, SpellCast spellCast) {
         float damage = spellCast.getScaledValue(i);
-        target.attackEntityFrom(MKDamageSource.causeEffectDamage(ModDamageTypes.BleedDamage, "bleed",
+        target.attackEntityFrom(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
                 applier, caster,  spellCast.getFloat(SCALING_CONTRIBUTION)), damage);
-        PacketHandler.sendToTrackingMaybeSelf(
+        PacketHandler.sendToTrackingAndSelf(
                 new ParticleEffectSpawnPacket(
                         MKWeaponsParticles.DRIPPING_BLOOD,
                         ParticleEffects.DIRECTED_SPOUT, 8, 1,

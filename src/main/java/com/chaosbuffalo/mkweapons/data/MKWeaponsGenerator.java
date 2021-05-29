@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.data;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -15,6 +15,8 @@ public class MKWeaponsGenerator {
         if (event.includeServer()) {
             // recipes here
             gen.addProvider(new MKWeaponRecipeProvider(gen));
+            gen.addProvider(new MKWeaponTypesProvider(gen));
+            gen.addProvider(new LootTierProvider(gen));
         }
         if (event.includeClient()) {
             gen.addProvider(new MKWeaponModelProvider(gen, helper));

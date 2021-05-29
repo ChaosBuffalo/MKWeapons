@@ -1,0 +1,16 @@
+{
+  "damageMultiplier": 2.5,
+  "attackSpeed": -3.5,
+  "reach": 0.0,
+  "critMultiplier": 1.75,
+  "critChance": 0.1,
+  "isTwoHanded": true,
+  "effects": [
+    {
+      "type": "mkweapons:weapon_effect.bleed",
+      "damageMultiplier": 4.0,
+      "maxStacks": 3,
+      "durationSeconds": 4
+    }
+  ]
+}

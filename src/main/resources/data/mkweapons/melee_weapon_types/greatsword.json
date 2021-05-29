@@ -1,0 +1,14 @@
+{
+  "damageMultiplier": 2.0,
+  "attackSpeed": -3.2,
+  "reach": 1.0,
+  "critMultiplier": 1.75,
+  "critChance": 0.05,
+  "isTwoHanded": true,
+  "effects": [
+    {
+      "type": "mkweapons:weapon_effect.double_strike",
+      "chance": 0.2
+    }
+  ]
+}

@@ -7,9 +7,9 @@ import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.*;
 
@@ -63,7 +63,7 @@ public class MKWeaponModelProvider extends ItemModelProvider {
     private void makeWeaponModel(MKMeleeWeapon weapon) {
         String path = weapon.getRegistryName().getPath();
         getBuilder(path)
-                .parent(getExistingFile(modLoc(String.format("item/%s_base", weapon.getWeaponType().getName()))))
+                .parent(getExistingFile(modLoc(String.format("item/%s_base", weapon.getWeaponType().getName().getPath()))))
                 .texture("0", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())))
                 .texture("particle", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())));
     }

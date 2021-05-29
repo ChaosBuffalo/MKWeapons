@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PlayerEntity.class)
-public class NoSweepMixin {
+public class PlayerAttackMixins {
 
     @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getHeldItem(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"),
             method = "attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V")
@@ -20,5 +20,11 @@ public class NoSweepMixin {
             return ((IMKMeleeWeapon) stack.getItem()).allowSweep() ? stack : ItemStack.EMPTY;
         }
         return stack;
+    }
+
+    @Redirect(at = @At(value= "INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"),
+        method = "attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V")
+    private void proxyResetCooldown(PlayerEntity entity){
+
     }
 }

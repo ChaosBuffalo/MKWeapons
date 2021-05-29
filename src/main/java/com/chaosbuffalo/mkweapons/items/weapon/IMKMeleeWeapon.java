@@ -3,23 +3,23 @@ package com.chaosbuffalo.mkweapons.items.weapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public interface IMKMeleeWeapon {
+public interface IMKMeleeWeapon extends IMKWeapon {
 
     IMeleeWeaponType getWeaponType();
-
-    MKTier getMKTier();
 
     default float getDamageForTier() {
         return getWeaponType().getDamageForTier(getMKTier());
     }
 
-    List<IMeleeWeaponEffect> getWeaponEffects();
+    List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item);
 
     default boolean allowSweep(){
         return false;
     }
 
+    List<IMeleeWeaponEffect> getWeaponEffects();
 }

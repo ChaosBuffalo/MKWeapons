@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkweapons.data;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
@@ -123,7 +124,7 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
                 .patternLine(" IS")
                 .addCriterion("has_haft", this.hasItem(MKWeaponsItems.Haft))
                 .addCriterion("has_string", this.hasItem(Tags.Items.STRING))
-                .addCriterion("has_ingot", this.hasItem(bow.getMKTier().getMajorIngredient()))
+                .addCriterion("has_ingot", this.hasItem(bow.getMKTier().getTag()))
                 ;
     }
 
@@ -143,7 +144,7 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
         if (weaponRecipe.hasStick()){
             recipeBuilder.addCriterion("has_stick", this.hasItem(Items.STICK));
         }
-        recipeBuilder.addCriterion("has_ingot", this.hasItem(weapon.getMKTier().getMajorIngredient()));
+        recipeBuilder.addCriterion("has_ingot", this.hasItem(weapon.getMKTier().getTag()));
         return recipeBuilder;
     }
 }

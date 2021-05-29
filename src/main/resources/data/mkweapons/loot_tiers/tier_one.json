@@ -1,0 +1,75 @@
+{
+  "slotItems": {
+    "mkweapons:main_hand": [
+      "mkweapons:dagger_wood",
+      "mkweapons:katana_wood",
+      "mkweapons:mace_wood",
+      "mkweapons:staff_wood",
+      "mkweapons:warhammer_wood",
+      "mkweapons:longsword_wood",
+      "mkweapons:greatsword_wood",
+      "mkweapons:battleaxe_wood",
+      "mkweapons:spear_wood",
+      "mkweapons:dagger_stone",
+      "mkweapons:katana_stone",
+      "mkweapons:mace_stone",
+      "mkweapons:staff_stone",
+      "mkweapons:warhammer_stone",
+      "mkweapons:longsword_stone",
+      "mkweapons:greatsword_stone",
+      "mkweapons:battleaxe_stone",
+      "mkweapons:spear_stone"
+    ]
+  },
+  "options": [
+    {
+      "optionType": "mkweapons:attributes",
+      "slotName": "mkweapons:randomization.attributes",
+      "slots": [
+        "mkweapons:main_hand"
+      ],
+      "weight": 1.0,
+      "modifiers": [
+        {
+          "Name": "mkweapons:tier_one",
+          "Amount": 5.0,
+          "Operation": 0,
+          "UUID": "1e76182f-b6de-4a1d-8e3d-03b14beb33fa",
+          "AttributeName": "minecraft:generic.max_health"
+        }
+      ],
+      "testItem": "{id: \"mkweapons:dagger_gold\", Count: 1b, tag: {Damage: 0, Enchantments: [{lvl: 2s, id: \"minecraft:fire_aspect\"}]}}"
+    },
+    {
+      "optionType": "mkweapons:attributes",
+      "slotName": "mkweapons:randomization.attributes",
+      "slots": [
+        "mkweapons:head",
+        "mkweapons:main_hand",
+        "mkweapons:chest"
+      ],
+      "weight": 1.0,
+      "modifiers": [
+        {
+          "Name": "mkweapons:tier_one",
+          "Amount": 0.5,
+          "Operation": 0,
+          "UUID": "71be87e4-9d8f-489f-806e-83dad50a7bad",
+          "AttributeName": "mkcore:mana_regen"
+        }
+      ],
+      "testItem": "{id: \"mkweapons:dagger_gold\", Count: 1b, tag: {Damage: 0, Enchantments: [{lvl: 2s, id: \"minecraft:fire_aspect\"}]}}"
+    }
+  ],
+  "templates": [
+    {
+      "template": {
+        "templateType": "mkweapons:simple_template",
+        "slots": [
+          "mkweapons:randomization.attributes"
+        ]
+      },
+      "weight": 10.0
+    }
+  ]
+}

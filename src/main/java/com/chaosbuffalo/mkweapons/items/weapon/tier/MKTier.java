@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
@@ -13,17 +14,22 @@ public class MKTier implements IItemTier{
     private final IItemTier itemTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
     private final String name;
-    private final Tag<Item> majorIngredient;
+    private final ITag.INamedTag<Item> tag;
 
-    public MKTier(IItemTier tier, String name, Tag<Item> tag, IMeleeWeaponEffect... effects){
+    public MKTier(IItemTier tier, String name, ITag.INamedTag<Item> tag,
+                  IMeleeWeaponEffect... effects){
         itemTier = tier;
         this.name = name;
         weaponEffects = Arrays.asList(effects);
-        majorIngredient = tag;
+        this.tag = tag;
     }
 
-    public Tag<Item> getMajorIngredient() {
-        return majorIngredient;
+    public ITag.INamedTag<Item> getTag() {
+        return tag;
+    }
+
+    public Ingredient getMajorIngredient() {
+        return Ingredient.fromTag(tag);
     }
 
     public String getName() {
