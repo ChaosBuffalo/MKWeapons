@@ -1,7 +1,5 @@
 package com.chaosbuffalo.mkweapons.network;
 
-import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.network.PlayerDataSyncPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;

@@ -12,7 +12,6 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
@@ -74,8 +73,8 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        super.addInformation(stack, worldIn, tooltip);
         if (Screen.hasShiftDown()){
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.stun.description",
                     stunChance * 100.0, stunDuration)));

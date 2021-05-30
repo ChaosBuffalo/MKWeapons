@@ -3,8 +3,6 @@ package com.chaosbuffalo.mkweapons.items.weapon.effects;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -33,7 +31,7 @@ public abstract class BaseWeaponEffect implements IWeaponEffect{
 
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(String.format("%s.%s.name",
                 getType().getNamespace(), getType().getPath())).mergeStyle(color));
     }

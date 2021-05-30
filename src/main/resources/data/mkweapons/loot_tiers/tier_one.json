@@ -34,18 +34,17 @@
           "Name": "mkweapons:tier_one",
           "Amount": 5.0,
           "Operation": 0,
-          "UUID": "1e76182f-b6de-4a1d-8e3d-03b14beb33fa",
+          "UUID": "1c895da6-91d8-41ae-ae7f-d59f34373d93",
           "AttributeName": "minecraft:generic.max_health"
         }
-      ],
-      "testItem": "{id: \"mkweapons:dagger_gold\", Count: 1b, tag: {Damage: 0, Enchantments: [{lvl: 2s, id: \"minecraft:fire_aspect\"}]}}"
+      ]
     },
     {
       "optionType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
-        "mkweapons:head",
         "mkweapons:main_hand",
+        "mkweapons:head",
         "mkweapons:chest"
       ],
       "weight": 1.0,
@@ -54,11 +53,10 @@
           "Name": "mkweapons:tier_one",
           "Amount": 0.5,
           "Operation": 0,
-          "UUID": "71be87e4-9d8f-489f-806e-83dad50a7bad",
+          "UUID": "589dd071-fb95-41b9-8028-18203aface9c",
           "AttributeName": "mkcore:mana_regen"
         }
-      ],
-      "testItem": "{id: \"mkweapons:dagger_gold\", Count: 1b, tag: {Damage: 0, Enchantments: [{lvl: 2s, id: \"minecraft:fire_aspect\"}]}}"
+      ]
     }
   ],
   "templates": [
