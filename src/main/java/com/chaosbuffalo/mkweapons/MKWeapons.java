@@ -53,6 +53,7 @@ public class MKWeapons
         PacketHandler.setupHandler();
         WeaponsCapabilities.registerCapabilities();
         MKWeaponsEventHandler.registerCombatTriggers();
+        WeaponsCommands.registerArguments();
 
     }
 

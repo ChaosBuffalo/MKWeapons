@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class SyncWeaponTypesPacket {
-    private final Map<ResourceLocation, CompoundNBT> data;
+    public final Map<ResourceLocation, CompoundNBT> data;
 
 
     public SyncWeaponTypesPacket(Collection<IMeleeWeaponType> meleeTypes) {
@@ -54,26 +54,12 @@ public class SyncWeaponTypesPacket {
         }
     }
 
+
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         MKCore.LOGGER.debug("Handling player abilities update packet");
         ctx.enqueueWork(() -> {
-            if (Minecraft.getInstance().player != null){
-                WeaponTypeManager.handleMKWeaponReloadForPlayerPre(Minecraft.getInstance().player);
-            }
-            for (Map.Entry<ResourceLocation, CompoundNBT> meleeWeaponPair : data.entrySet()) {
-                IMeleeWeaponType weaponType = MeleeWeaponTypes.getWeaponType(meleeWeaponPair.getKey());
-                if (weaponType != null) {
-                    MKCore.LOGGER.debug("Updating melee weapon type with server data: {}", meleeWeaponPair.getKey());
-                    weaponType.deserialize(new Dynamic<>(NBTDynamicOps.INSTANCE, meleeWeaponPair.getValue()));
-                } else {
-                    MKCore.LOGGER.warn("Skipping melee weapon type update for {}", meleeWeaponPair.getKey());
-                }
-            }
-            WeaponTypeManager.refreshAllWeapons();
-            if (Minecraft.getInstance().player != null){
-                WeaponTypeManager.handleMKWeaponReloadForPlayerPost(Minecraft.getInstance().player);
-            }
+            ClientHandlerWeaponPacket.handlePacket(this);
         });
         ctx.setPacketHandled(true);
     }

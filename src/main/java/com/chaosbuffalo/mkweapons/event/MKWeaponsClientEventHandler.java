@@ -28,11 +28,11 @@ public class MKWeaponsClientEventHandler {
     public static void onTooltipEvent(ItemTooltipEvent event){
         if (event.getItemStack().getItem() instanceof MKMeleeWeapon){
             ((MKMeleeWeapon) event.getItemStack().getItem()).addToTooltip(event.getItemStack(),
-                    event.getPlayer().getEntityWorld(), event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
         if (event.getItemStack().getItem() instanceof MKBow){
             ((MKBow) event.getItemStack().getItem()).addToTooltip(event.getItemStack(),
-                    event.getPlayer().getEntityWorld(), event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
         Item item = event.getItemStack().getItem();
         if (item instanceof IMKMeleeWeapon){
