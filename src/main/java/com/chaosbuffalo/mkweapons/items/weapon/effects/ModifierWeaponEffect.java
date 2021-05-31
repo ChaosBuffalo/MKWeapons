@@ -1,11 +1,9 @@
 package com.chaosbuffalo.mkweapons.items.weapon.effects;
 
-import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEntry;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -42,8 +40,8 @@ public class ModifierWeaponEffect extends BaseWeaponEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        super.addInformation(stack, worldIn, tooltip);
         for (AttributeOptionEntry entry : modifiers){
             tooltip.add(entry.getDescription());
         }

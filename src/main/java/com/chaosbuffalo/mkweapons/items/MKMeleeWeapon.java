@@ -11,23 +11,18 @@ import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -117,13 +112,11 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         return mkTier;
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
-                getWeaponType().getCritChance() * 100.0f)).mergeStyle(TextFormatting.GRAY));
-        tooltip.add(new StringTextComponent(I18n.format("mkweapons.crit_multiplier.description",
-                getWeaponType().getCritMultiplier())).mergeStyle(TextFormatting.GRAY));
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
+        tooltip.add(new TranslationTextComponent("mkweapons.crit_chance.description",
+                getWeaponType().getCritChance() * 100.0f).mergeStyle(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("mkweapons.crit_multiplier.description",
+                getWeaponType().getCritMultiplier()).mergeStyle(TextFormatting.GRAY));
         if (getWeaponType().isTwoHanded()){
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
                     .mergeStyle(TextFormatting.GRAY));
@@ -132,14 +125,15 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
             }
         }
         for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
-            effect.addInformation(stack, worldIn, tooltip, flagIn);
+            effect.addInformation(stack, worldIn, tooltip);
         }
         MKAbility ability = getAbility(stack);
         if (ability != null){
-            tooltip.add(new StringTextComponent(I18n.format("mkweapons.grants_ability",
-                    ability.getAbilityName())).mergeStyle(TextFormatting.GOLD));
+            tooltip.add(new TranslationTextComponent("mkweapons.grants_ability",
+                    ability.getAbilityName()).mergeStyle(TextFormatting.GOLD));
         }
     }
+
 
     @Override
     public List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item) {

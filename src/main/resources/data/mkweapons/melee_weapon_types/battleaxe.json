@@ -8,8 +8,8 @@
   "effects": [
     {
       "type": "mkweapons:weapon_effect.bleed",
-      "damageMultiplier": 4.0,
-      "maxStacks": 3,
+      "damageMultiplier": 2.0,
+      "maxStacks": 2,
       "durationSeconds": 4
     }
   ]

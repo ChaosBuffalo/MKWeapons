@@ -8,8 +8,6 @@ import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -25,8 +23,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -98,7 +96,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
                         arrowEntity = customArrow(arrowEntity);
-                        arrowEntity.func_234612_a_(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
+                        arrowEntity.setDirectionAndMovement(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
                                 0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
                             arrowEntity.setIsCritical(true);
@@ -144,7 +142,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     @Override
     public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
         // set item stack on cap here
-        Entity shooter = arrow.func_234616_v_();
+        Entity shooter = arrow.getShooter();
         if (shooter instanceof LivingEntity){
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
                     cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
@@ -153,17 +151,16 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
         return super.customArrow(arrow);
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
         if (getMKTier().getAttackDamage() > 0){
-            tooltip.add(new StringTextComponent(I18n.format("mkweapons.bow_extra_damage.description",
-                    getMKTier().getAttackDamage())).mergeStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("mkweapons.bow_extra_damage.description",
+                    getMKTier().getAttackDamage()).mergeStyle(TextFormatting.GRAY));
         }
         for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
-            weaponEffect.addInformation(stack, worldIn, tooltip, flagIn);
+            weaponEffect.addInformation(stack, worldIn, tooltip);
         }
     }
+
 
     @Override
     public MKTier getMKTier() {

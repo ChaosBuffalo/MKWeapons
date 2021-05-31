@@ -11,7 +11,6 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -21,17 +20,11 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -123,27 +116,6 @@ public class MKWeaponsEventHandler {
         }
     }
 
-
-    @SubscribeEvent
-    public static void onToolTipEvent(ItemTooltipEvent event){
-        Item item = event.getItemStack().getItem();
-        if (item instanceof IMKMeleeWeapon){
-            List<ITextComponent> toRemove = new ArrayList<>();
-            for (ITextComponent component : event.getToolTip()){
-                if (component.getString().contains("Melee Crit")){
-                    toRemove.add(component);
-                }
-            }
-            for (ITextComponent component : toRemove){
-                event.getToolTip().remove(component);
-            }
-        } else if (item instanceof ToolItem || item instanceof SwordItem || item instanceof HoeItem){
-            event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
-                    ItemUtils.getCritChanceForItem(event.getItemStack()) * 100.0f)).mergeStyle(TextFormatting.GRAY));
-            event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_multiplier.description",
-                    ItemUtils.getCritMultiplierForItem(event.getItemStack()))).mergeStyle(TextFormatting.GRAY));
-        }
-    }
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {

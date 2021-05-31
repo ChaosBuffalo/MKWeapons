@@ -7,14 +7,12 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -32,8 +30,8 @@ public class ComboStrikeMeleeWeaponEffect extends SwingMeleeWeaponEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        super.addInformation(stack, worldIn, tooltip);
         if (Screen.hasShiftDown()){
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.combo_strike.description",
                     getPerHit() * 100.0f, getNumberOfHits())));
