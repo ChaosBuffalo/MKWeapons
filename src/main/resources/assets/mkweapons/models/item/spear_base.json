@@ -141,5 +141,13 @@
 			"origin": [8, 8, 8],
 			"children": [0, 1, 2, 3, 4, 5, 6, 7]
 		}
+	],
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/spear_base_blocking"
+		}
 	]
 }

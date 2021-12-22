@@ -9,6 +9,7 @@ import com.chaosbuffalo.mkweapons.items.TestNBTWeaponEffectItem;
 import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.RapidFireRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
+import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import net.minecraft.item.*;
@@ -89,6 +90,14 @@ public class MKWeaponsItems {
                 return entity != null && entity.isHandActive() && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F;
             });
         }
+
+        for (MKMeleeWeapon weapon : WEAPONS){
+            if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType()))
+            ItemModelsProperties.registerProperty(weapon, new ResourceLocation("blocking"),
+                    (itemStack, world, entity) -> entity != null && entity.isHandActive()
+                            && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
+        }
+
 
     }
 }

@@ -100,5 +100,13 @@
 			"translation": [0, -12.5, -0.5],
 			"scale": [1, 1.82, 1]
 		}
-	}
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/staff_base_blocking"
+		}
+	]
 }

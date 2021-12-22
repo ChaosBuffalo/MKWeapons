@@ -14,5 +14,7 @@
       "type": "mkweapons:weapon_effect.double_strike",
       "chance": 0.1
     }
-  ]
+  ],
+  "blockEfficiency": 0.75,
+  "maxPoise": 30.0
 }

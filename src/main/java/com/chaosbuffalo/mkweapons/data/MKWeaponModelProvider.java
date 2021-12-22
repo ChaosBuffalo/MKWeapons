@@ -4,6 +4,8 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponType;
+import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -62,10 +64,36 @@ public class MKWeaponModelProvider extends ItemModelProvider {
 
     private void makeWeaponModel(MKMeleeWeapon weapon) {
         String path = weapon.getRegistryName().getPath();
-        getBuilder(path)
+        List<String> subModels = Arrays.asList("blocking");
+        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())){
+
+            for (String subModel : subModels){
+                String subPath = String.format("%s_%s", path, subModel);
+                getBuilder(subPath)
+                        .parent(getExistingFile(modLoc(String.format("item/%s_base_%s", weapon.getWeaponType().getName().getPath(), subModel))))
+                        .texture("0", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())))
+                        .texture("particle", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())));
+            }
+        }
+
+
+        ItemModelBuilder builder = getBuilder(path)
                 .parent(getExistingFile(modLoc(String.format("item/%s_base", weapon.getWeaponType().getName().getPath()))))
                 .texture("0", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())))
                 .texture("particle", modLoc(String.format("items/%s_tool", weapon.getMKTier().getName())));
+
+        Map<String, Tuple<Integer, Double>> subModelKeys = new HashMap<>();
+        subModelKeys.put("blocking", new Tuple<>(1, -1.0));
+
+        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())){
+            for (String subModel : subModels){
+                Tuple<Integer, Double> predicates = subModelKeys.get(subModel);
+                ItemModelBuilder.OverrideBuilder override = builder.override().model(getExistingFile(modLoc(String.format("item/%s_%s",
+                        path, subModel))))
+                        .predicate(new ResourceLocation(subModel), predicates.getA());
+            }
+        }
+
     }
 
 }

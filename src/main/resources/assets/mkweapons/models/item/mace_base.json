@@ -239,5 +239,13 @@
 			"translation": [3, -2.5, 0],
 			"scale": [1.34, 1, 1]
 		}
-	}
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/mace_base_blocking"
+		}
+	]
 }

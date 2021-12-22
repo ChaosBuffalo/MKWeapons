@@ -20,6 +20,7 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,6 +52,7 @@ public class MKWeaponsEventHandler {
             });
         }
     }
+
 
     public static void registerCombatTriggers(){
         SpellTriggers.PLAYER_HURT_ENTITY.registerProjectile(MKWeaponsEventHandler::handleProjectileDamage);

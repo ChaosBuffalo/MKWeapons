@@ -22,6 +22,10 @@ public interface IMeleeWeaponType {
 
     boolean isTwoHanded();
 
+    float getBlockEfficiency();
+
+    float getMaxPoise();
+
     List<IMeleeWeaponEffect> getWeaponEffects();
 
     <D> D serialize(DynamicOps<D> ops);

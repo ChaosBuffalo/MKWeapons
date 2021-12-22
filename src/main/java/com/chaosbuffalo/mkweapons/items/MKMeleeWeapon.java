@@ -14,13 +14,19 @@ import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
+import net.minecraft.item.UseAction;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -38,6 +44,8 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     protected static final UUID ATTACK_REACH_MODIFIER = UUID.fromString("f74aa80c-43b8-4d00-a6ce-8d52694ff20c");
     protected static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("9b9c4389-0036-4beb-9dcc-5e11928ff499");
     protected static final UUID CRIT_MULT_MODIFIER = UUID.fromString("11fc07d2-7844-44f2-94ad-02479cff424d");
+    protected static final UUID MAX_POISE_MODIFIER = UUID.fromString("fbc2bba2-27d6-4de8-8962-2febb418c718");
+    protected static final UUID BLOCK_EFFICIENCY_MODIFIER = UUID.fromString("da287a85-0c12-459c-97a5-faea98bc3d6f");
 
     public MKMeleeWeapon(ResourceLocation weaponName, MKTier tier, IMeleeWeaponType weaponType, Properties builder) {
         super(tier, Math.round(weaponType.getDamageForTier(tier) - tier.getAttackDamage()), weaponType.getAttackSpeed(), builder);
@@ -62,6 +70,10 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
                 "Weapon modifier", getWeaponType().getCritChance(), AttributeModifier.Operation.ADDITION));
         builder.put(MKAttributes.MELEE_CRIT_MULTIPLIER, new AttributeModifier(CRIT_MULT_MODIFIER,
                 "Weapon modifier", getWeaponType().getCritMultiplier(), AttributeModifier.Operation.ADDITION));
+        builder.put(MKAttributes.MAX_POISE, new AttributeModifier(MAX_POISE_MODIFIER,
+                "Weapon Modifier", getWeaponType().getMaxPoise(), AttributeModifier.Operation.ADDITION));
+        builder.put(MKAttributes.BLOCK_EFFICIENCY, new AttributeModifier(BLOCK_EFFICIENCY_MODIFIER,
+                "Weapon Modifier", getWeaponType().getBlockEfficiency(), AttributeModifier.Operation.ADDITION));
         modifiers = builder.build();
     }
 
@@ -83,6 +95,10 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         recalculateModifiers();
     }
 
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+        return false;
+    }
 
     @Override
     public List<IMeleeWeaponEffect> getWeaponEffects() {
@@ -103,6 +119,36 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     }
 
     @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BLOCK;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getHeldItem(handIn);
+        ItemStack offhand = playerIn.getHeldItemOffhand();
+        if (offhand.getItem() instanceof ShieldItem){
+            return ActionResult.resultPass(itemstack);
+        }
+        if (MKCore.getPlayer(playerIn).map(x -> x.getStats().isPoiseBroke()).orElse(false)){
+            return ActionResult.resultPass(itemstack);
+        } else {
+            playerIn.setActiveHand(handIn);
+            return ActionResult.resultConsume(itemstack);
+        }
+
+    }
+
+//    //rot: 0 +50, -29
+//    //translation -5.75, +1.5, 0
+
+
+    @Override
     public IMeleeWeaponType getWeaponType() {
         return weaponType;
     }
@@ -117,6 +163,10 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
                 getWeaponType().getCritChance() * 100.0f).mergeStyle(TextFormatting.GRAY));
         tooltip.add(new TranslationTextComponent("mkweapons.crit_multiplier.description",
                 getWeaponType().getCritMultiplier()).mergeStyle(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("mkcore.max_poise.description",
+                getWeaponType().getMaxPoise()).mergeStyle(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("mkcore.block_efficiency.description",
+                getWeaponType().getBlockEfficiency() * 100.0).mergeStyle(TextFormatting.GRAY));
         if (getWeaponType().isTwoHanded()){
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
                     .mergeStyle(TextFormatting.GRAY));
