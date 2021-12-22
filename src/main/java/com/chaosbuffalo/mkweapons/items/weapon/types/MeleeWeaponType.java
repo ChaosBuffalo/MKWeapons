@@ -19,12 +19,15 @@ public class MeleeWeaponType implements IMeleeWeaponType {
     private float critMultiplier;
     private float critChance;
     private float reach;
+    private float blockEfficiency;
+    private float maxPoise;
     private final ResourceLocation name;
     private final List<IMeleeWeaponEffect> effects;
     private boolean isTwoHanded;
 
     public MeleeWeaponType(ResourceLocation name, float damageMultiplier, float attackSpeed,
                            float critMultiplier, float critChance, float reach, boolean isTwoHanded,
+                           float blockEfficiency, float maxPoise,
                            IMeleeWeaponEffect... effects){
         this.damageMultiplier = damageMultiplier;
         this.name = name;
@@ -32,6 +35,8 @@ public class MeleeWeaponType implements IMeleeWeaponType {
         this.critMultiplier = critMultiplier;
         this.critChance = critChance;
         this.reach = reach;
+        this.maxPoise = maxPoise;
+        this.blockEfficiency = blockEfficiency;
         this.effects = new ArrayList<>();
         this.effects.addAll(Arrays.asList(effects));
         this.isTwoHanded = isTwoHanded;
@@ -53,18 +58,18 @@ public class MeleeWeaponType implements IMeleeWeaponType {
 
     @Override
     public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(ops.createMap(ImmutableMap.of(
-                ops.createString("damageMultiplier"), ops.createFloat(getDamageMultiplier()),
-                ops.createString("attackSpeed"), ops.createFloat(getAttackSpeed()),
-                ops.createString("reach"), ops.createFloat(getReach()),
-                ops.createString("critMultiplier"), ops.createFloat(getCritMultiplier()),
-                ops.createString("critChance"), ops.createFloat(getCritChance())
-                )),
-                ImmutableMap.of(
-                        ops.createString("isTwoHanded"), ops.createBoolean(isTwoHanded()),
-                        ops.createString("effects"),
-                        ops.createList(getWeaponEffects().stream().map(effect -> effect.serialize(ops)))
-                )).result().orElse(ops.createMap(ImmutableMap.of()));
+        ImmutableMap.Builder<D, D> builder = ImmutableMap.builder();
+        builder.put( ops.createString("damageMultiplier"), ops.createFloat(getDamageMultiplier()));
+        builder.put(ops.createString("attackSpeed"), ops.createFloat(getAttackSpeed()));
+        builder.put(ops.createString("reach"), ops.createFloat(getReach()));
+        builder.put(ops.createString("critMultiplier"), ops.createFloat(getCritMultiplier()));
+        builder.put(ops.createString("critChance"), ops.createFloat(getCritChance()));
+        builder.put(ops.createString("isTwoHanded"), ops.createBoolean(isTwoHanded()));
+        builder.put(ops.createString("effects"), ops.createList(getWeaponEffects().stream().map(effect -> effect.serialize(ops))));
+        builder.put(ops.createString("blockEfficiency"), ops.createFloat(getBlockEfficiency()));
+        builder.put(ops.createString("maxPoise"), ops.createFloat(getMaxPoise()));
+
+        return ops.createMap(builder.build());
     }
 
     @Override
@@ -75,6 +80,8 @@ public class MeleeWeaponType implements IMeleeWeaponType {
         critChance = dynamic.get("critChance").asFloat(0.05f);
         critMultiplier = dynamic.get("critMultiplier").asFloat(1.5f);
         isTwoHanded = dynamic.get("isTwoHanded").asBoolean(false);
+        blockEfficiency = dynamic.get("blockEfficiency").asFloat(0.75f);
+        maxPoise = dynamic.get("maxPoise").asFloat(20.0f);
         List<IMeleeWeaponEffect> deserializedEffects = dynamic.get("effects").asList(d -> {
             IWeaponEffect effect = WeaponEffects.deserializeEffect(d);
             if (effect instanceof IMeleeWeaponEffect){
@@ -116,6 +123,14 @@ public class MeleeWeaponType implements IMeleeWeaponType {
     @Override
     public float getReach() {
         return reach;
+    }
+
+    public float getBlockEfficiency() {
+        return blockEfficiency;
+    }
+
+    public float getMaxPoise() {
+        return maxPoise;
     }
 
     @Override

@@ -12,5 +12,7 @@
       "maxStacks": 2,
       "durationSeconds": 4
     }
-  ]
+  ],
+  "blockEfficiency": 0.8,
+  "maxPoise": 25.0
 }

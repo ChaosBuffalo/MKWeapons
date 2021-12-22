@@ -15,5 +15,7 @@
       "duration": 5,
       "chance": 0.1
     }
-  ]
+  ],
+  "blockEfficiency": 0.8,
+  "maxPoise": 25.0
 }

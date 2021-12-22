@@ -132,5 +132,13 @@
 			"translation": [0, 0, -1],
 			"scale": [1.36, 1.62, 0.63]
 		}
-	}
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/dagger_base_blocking"
+		}
+	]
 }

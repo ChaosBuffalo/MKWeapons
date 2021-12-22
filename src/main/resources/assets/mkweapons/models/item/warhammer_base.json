@@ -136,5 +136,13 @@
 			"translation": [2, -2, -1.5],
 			"scale": [1.56, 1.74, 1.74]
 		}
-	}
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/warhammer_base_blocking"
+		}
+	]
 }

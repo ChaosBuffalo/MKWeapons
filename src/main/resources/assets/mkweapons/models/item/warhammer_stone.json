@@ -3,5 +3,13 @@
   "textures": {
     "0": "mkweapons:items/stone_tool",
     "particle": "mkweapons:items/stone_tool"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "minecraft:blocking": 1.0
+      },
+      "model": "mkweapons:item/warhammer_stone_blocking"
+    }
+  ]
 }

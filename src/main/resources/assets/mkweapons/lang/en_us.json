@@ -84,6 +84,8 @@
   "effect.mkweapons.effect.bleed_damage": "Bleeding",
   "mkweapons.modifier.description.percentage_base": "%s: %.2f%% (B)",
   "mkweapons.modifier.description.percentage_total": "%s: %.2f%%",
-  "mkweapons.modifier.description.addition": "%s: %.2f"
+  "mkweapons.modifier.description.addition": "%s: %.2f",
+  "mkweapons.block_efficiency.description": "Block Efficiency: %.1f%%",
+  "mkweapons.max_poise.description": "Max Poise: %.0f"
 
 }

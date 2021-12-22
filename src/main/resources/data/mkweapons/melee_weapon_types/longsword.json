@@ -11,5 +11,7 @@
       "numberOfHits": 5,
       "perHit": 0.25
     }
-  ]
+  ],
+  "blockEfficiency": 0.75,
+  "maxPoise": 25.0
 }

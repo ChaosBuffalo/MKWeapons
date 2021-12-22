@@ -95,5 +95,13 @@
 			"origin": [14.15754, 24.91602, 20.48911],
 			"children": [0, 1, 2, 3]
 		}
+	],
+	"overrides": [
+		{
+			"predicate": {
+				"blocking": 1
+			},
+			"model": "mkweapons:item/katana_base_blocking"
+		}
 	]
 }
