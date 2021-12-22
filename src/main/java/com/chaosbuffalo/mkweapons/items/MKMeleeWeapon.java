@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkcore.item.ILimitItemTooltip;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
@@ -36,7 +37,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
+public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitItemTooltip {
     private final IMeleeWeaponType weaponType;
     private final MKTier mkTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
@@ -166,7 +167,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
         tooltip.add(new TranslationTextComponent("mkcore.max_poise.description",
                 getWeaponType().getMaxPoise()).mergeStyle(TextFormatting.GRAY));
         tooltip.add(new TranslationTextComponent("mkcore.block_efficiency.description",
-                getWeaponType().getBlockEfficiency() * 100.0).mergeStyle(TextFormatting.GRAY));
+                getWeaponType().getBlockEfficiency() * 100.0f).mergeStyle(TextFormatting.GRAY));
         if (getWeaponType().isTwoHanded()){
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
                     .mergeStyle(TextFormatting.GRAY));
@@ -201,5 +202,22 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon {
     public MKAbility getAbility(ItemStack itemStack) {
         return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                 .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> limitTooltip(ItemStack itemStack, EquipmentSlotType equipmentSlotType, Multimap<Attribute, AttributeModifier> multimap) {
+        if (multimap.containsKey(MKAttributes.BLOCK_EFFICIENCY)){
+            multimap.removeAll(MKAttributes.BLOCK_EFFICIENCY);
+        }
+        if (multimap.containsKey(MKAttributes.MAX_POISE)){
+            multimap.removeAll(MKAttributes.MAX_POISE);
+        }
+        if (multimap.containsKey(MKAttributes.MELEE_CRIT)){
+            multimap.removeAll(MKAttributes.MELEE_CRIT);
+        }
+        if (multimap.containsKey(MKAttributes.MELEE_CRIT_MULTIPLIER)){
+            multimap.removeAll(MKAttributes.MELEE_CRIT_MULTIPLIER);
+        }
+        return multimap;
     }
 }

@@ -35,17 +35,18 @@ public class MKWeaponsClientEventHandler {
                     event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
         Item item = event.getItemStack().getItem();
-        if (item instanceof IMKMeleeWeapon){
-            List<ITextComponent> toRemove = new ArrayList<>();
-            for (ITextComponent component : event.getToolTip()){
-                if (component.getString().contains("Melee Crit")){
-                    toRemove.add(component);
-                }
-            }
-            for (ITextComponent component : toRemove){
-                event.getToolTip().remove(component);
-            }
-        } else if (item instanceof ToolItem || item instanceof SwordItem || item instanceof HoeItem){
+//        if (item instanceof IMKMeleeWeapon){
+//            List<ITextComponent> toRemove = new ArrayList<>();
+//            for (ITextComponent component : event.getToolTip()){
+//                if (component.getString().contains("Melee Crit")){
+//                    toRemove.add(component);
+//                }
+//            }
+//            for (ITextComponent component : toRemove){
+//                event.getToolTip().remove(component);
+//            }
+//        } else
+        if (!(item instanceof IMKMeleeWeapon) && (item instanceof ToolItem || item instanceof SwordItem)){
             event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
                     ItemUtils.getCritChanceForItem(event.getItemStack()) * 100.0f)).mergeStyle(TextFormatting.GRAY));
             event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_multiplier.description",
