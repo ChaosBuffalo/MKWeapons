@@ -1,5 +1,6 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.effects;
 
+import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
@@ -13,12 +14,12 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BaseWeaponEffect implements IWeaponEffect{
+public abstract class BaseItemEffect implements IItemEffect {
 
     private final ResourceLocation name;
     private final TextFormatting color;
 
-    public BaseWeaponEffect(ResourceLocation name, TextFormatting color){
+    public BaseItemEffect(ResourceLocation name, TextFormatting color){
         this.name = name;
         this.color = color;
     }

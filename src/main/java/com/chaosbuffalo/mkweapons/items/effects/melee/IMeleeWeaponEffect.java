@@ -1,12 +1,12 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
+package com.chaosbuffalo.mkweapons.items.effects.melee;
 
+import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 
 
-public interface IMeleeWeaponEffect extends IWeaponEffect {
+public interface IMeleeWeaponEffect extends IItemEffect {
 
     default void onHit(IMKMeleeWeapon weapon, ItemStack stack,
                        LivingEntity target, LivingEntity attacker) { }

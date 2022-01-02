@@ -54,9 +54,11 @@ public class LootGenCommand {
             if (slot != null){
                 LootConstructor constructor = tier.generateConstructorForSlot(player.getRNG(), slot);
                 ItemStack stack = constructor.constructItem();
-                boolean wasAdded = player.addItemStackToInventory(stack);
-                if (!wasAdded){
-                    player.dropItem(stack, false);
+                if (!stack.isEmpty()){
+                    boolean wasAdded = player.addItemStackToInventory(stack);
+                    if (!wasAdded){
+                        player.dropItem(stack, false);
+                    }
                 }
             } else {
                 player.sendMessage(new StringTextComponent("Loot Slot Not Found."), Util.DUMMY_UUID);

@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -64,7 +65,7 @@ public class AttributeOptionEntry {
         if (modifier.getOperation() != AttributeModifier.Operation.ADDITION){
             amount *= 100.0f;
         }
-        return new TranslationTextComponent(translationKey, I18n.format(attribute.getAttributeName()), amount);
+        return new TranslationTextComponent(translationKey, I18n.format(attribute.getAttributeName()), amount).mergeStyle(TextFormatting.GRAY);
     }
 
     public <D> void deserialize(Dynamic<D> dynamic){

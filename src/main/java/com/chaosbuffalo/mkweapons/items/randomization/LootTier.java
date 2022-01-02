@@ -23,39 +23,56 @@ import java.util.stream.Collectors;
 
 public class LootTier {
     private final ResourceLocation name;
-    private final Map<LootSlot, List<Item>> potentialItemsForSlot;
+    private final Map<LootSlot, List<RandomizationItemEntry>> potentialItemsForSlot;
     private final List<IRandomizationOption> options;
-    private final List<RandomizationTemplateEntry> templates;
+    private final Map<ResourceLocation, RandomizationTemplateEntry> templates;
 
     public LootTier(ResourceLocation name){
         this.name = name;
         this.potentialItemsForSlot = new HashMap<>();
         this.options = new ArrayList<>();
-        this.templates = new ArrayList<>();
+        this.templates = new HashMap<>();
+    }
+
+    public ItemStack chooseItemForSlot(LootSlot slot, Random random){
+        List<RandomizationItemEntry> potentials = potentialItemsForSlot.get(slot);
+        if (potentials == null || potentials.isEmpty()){
+            return ItemStack.EMPTY;
+        } else {
+            RandomCollection<ItemStack> choices = new RandomCollection<>();
+            for (RandomizationItemEntry entry : potentials){
+                choices.add(entry.weight, entry.item);
+            }
+            return choices.next(random);
+        }
     }
 
     @Nullable
-    public Item chooseItemForSlot(LootSlot slot, Random random){
-        List<Item> potentials = potentialItemsForSlot.get(slot);
-        if (potentials.isEmpty()){
-            return null;
-        } else {
-            return potentials.get(random.nextInt(potentials.size()));
-        }
-    }
-
     public RandomizationTemplate chooseTemplate(Random random){
         RandomCollection<RandomizationTemplate> choices = new RandomCollection<>();
-        for (RandomizationTemplateEntry entry : templates){
+        for (RandomizationTemplateEntry entry : templates.values()){
             choices.add(entry.weight, entry.template);
         }
-        return choices.next(random);
+        if (choices.size() > 0) {
+            return choices.next(random);
+        } else {
+            return null;
+        }
+
     }
 
-    public LootConstructor generateConstructorForSlot(Random random, LootSlot slot){
-        Item item = chooseItemForSlot(slot, random);
-        RandomizationTemplate template = chooseTemplate(random);
-        ItemStack stack = new ItemStack(item);
+    @Nullable
+    public LootConstructor generateConstructorForSlot(Random random, LootSlot slot, ResourceLocation templateName){
+        RandomizationTemplate template = getTemplate(templateName);
+        if (template != null){
+            return generateConstructorForSlot(random, slot, template);
+        } else {
+            return null;
+        }
+    }
+
+    public LootConstructor generateConstructorForSlot(Random random, LootSlot slot, RandomizationTemplate template){
+        ItemStack stack = chooseItemForSlot(slot, random).copy();
         List<IRandomizationOption> chosenOptions = new ArrayList<>();
         for (IRandomizationSlot randomizationSlot : template.getRandomizationSlots()){
             List<IRandomizationOption> options = this.options.stream().filter(x ->
@@ -70,17 +87,41 @@ public class LootTier {
                 chosenOptions.add(optionChoices.next(random));
             }
         }
-        return new LootConstructor(item, slot, chosenOptions);
+        return new LootConstructor(stack, slot, chosenOptions);
+    }
+
+    @Nullable
+    public LootConstructor generateConstructorForSlot(Random random, LootSlot slot){
+        RandomizationTemplate template = chooseTemplate(random);
+        if (template == null){
+            return null;
+        } else {
+            return generateConstructorForSlot(random, slot, template);
+        }
     }
 
     public void addItemToSlot(LootSlot slot, Item item){
-        List<Item> slotItems = potentialItemsForSlot.computeIfAbsent(slot,
+        addItemStackToSlot(slot, new ItemStack(item), 1.0);
+    }
+
+    public void addItemStackToSlot(LootSlot slot, ItemStack item, double weight){
+        List<RandomizationItemEntry> slotItems = potentialItemsForSlot.computeIfAbsent(slot,
                 (slotArg) -> new ArrayList<>());
-        slotItems.add(item);
+        slotItems.add(new RandomizationItemEntry(item, weight));
     }
 
     public void addTemplate(RandomizationTemplate template, double weight){
-        this.templates.add(new RandomizationTemplateEntry(template, weight));
+        this.templates.put(template.getName(), new RandomizationTemplateEntry(template, weight));
+    }
+
+    public void addTemplateEntry(RandomizationTemplateEntry entry){
+        this.templates.put(entry.template.getName(), entry);
+    }
+
+    @Nullable
+    public RandomizationTemplate getTemplate(ResourceLocation name){
+        RandomizationTemplateEntry entry = templates.get(name);
+        return entry != null ? entry.template : null;
     }
 
     public ResourceLocation getName() {
@@ -97,14 +138,14 @@ public class LootTier {
                 ops.createMap(potentialItemsForSlot.entrySet().stream().map(lootSlotListEntry ->
                         Pair.of(lootSlotListEntry.getKey().getName(),
                                 lootSlotListEntry.getValue().stream()
-                                .map(x -> ops.createString(x.getRegistryName().toString()))
+                                .map(x -> x.serialize(ops))
                                 .collect(Collectors.toList()))
                 ).collect(Collectors.toMap(pair -> ops.createString(pair.getFirst().toString()),
                         pair -> ops.createList(pair.getSecond().stream())))),
                 ops.createString("options"),
                 ops.createList(options.stream().map(option -> option.serialize(ops))),
                 ops.createString("templates"),
-                ops.createList(templates.stream().map(template -> ops.createMap(ImmutableMap.of(
+                ops.createList(templates.values().stream().map(template -> ops.createMap(ImmutableMap.of(
                         ops.createString("template"), template.template.serialize(ops),
                         ops.createString("weight"), ops.createDouble(template.weight)
                 ))))
@@ -133,19 +174,22 @@ public class LootTier {
         this.templates.clear();
         for (RandomizationTemplateEntry template : templates){
             if (template != null){
-                this.templates.add(template);
+                addTemplateEntry(template);
             }
         }
-        Map<LootSlot, List<Item>> slotMap = dynamic.get("slotItems").asMap(
+        Map<LootSlot, List<RandomizationItemEntry>> slotMap = dynamic.get("slotItems").asMap(
                 (d -> d.asString().result().map(slotName -> LootSlotManager.getSlotFromName(new ResourceLocation(slotName)))
                                 .orElse(LootSlotManager.INVALID)),
-                (d -> d.asList(x -> x.asString().result().map(name ->
-                        ForgeRegistries.ITEMS.getValue(new ResourceLocation(name))).orElse(null))));
+                (d -> d.asList(x -> {
+                    RandomizationItemEntry newEntry = new RandomizationItemEntry();
+                    newEntry.deserialize(x);
+                    return newEntry;
+                })));
 
         potentialItemsForSlot.clear();
-        for (Map.Entry<LootSlot, List<Item>> entry : slotMap.entrySet()){
+        for (Map.Entry<LootSlot, List<RandomizationItemEntry>> entry : slotMap.entrySet()){
             if (entry.getKey() != LootSlotManager.INVALID){
-                potentialItemsForSlot.put(entry.getKey(), entry.getValue().stream().filter(Objects::nonNull)
+                potentialItemsForSlot.put(entry.getKey(), entry.getValue().stream().filter(x -> !x.item.isEmpty())
                         .collect(Collectors.toList()));
             }
         }

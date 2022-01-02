@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.ranged;
+package com.chaosbuffalo.mkweapons.items.effects.ranged;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkweapons.MKWeapons;

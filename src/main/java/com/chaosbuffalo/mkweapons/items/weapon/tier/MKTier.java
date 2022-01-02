@@ -1,11 +1,10 @@
 package com.chaosbuffalo.mkweapons.items.weapon.tier;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,8 +1,9 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
+package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.effects.SpellCast;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.network.MKParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
@@ -16,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -28,6 +30,7 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     private int stunDuration;
     private double stunChance;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.stun");
+    public static final ResourceLocation PARTICLES = new ResourceLocation(MKWeapons.MODID, "stun_effect");
 
     public StunMeleeWeaponEffect(double stunChance, int stunSeconds){
         this();
@@ -56,17 +59,13 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
 
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (attacker.getRNG().nextDouble() > 1.0 - stunChance){
+        if (attacker.getRNG().nextDouble() >= (1.0 - stunChance)){
             SpellCast cast = com.chaosbuffalo.mkcore.effects.status.StunEffect.Create(attacker).setTarget(target);
             target.addPotionEffect(cast.toPotionEffect(stunDuration * GameConstants.TICKS_PER_SECOND,0));
-            PacketHandler.sendToTrackingAndSelf(
-                    new ParticleEffectSpawnPacket(
-                            ParticleTypes.ENCHANTED_HIT,
-                            ParticleEffects.CIRCLE_MOTION, 10, 1,
-                            target.getPosX(), target.getPosY() + target.getEyeHeight(),
-                            target.getPosZ(), target.getWidth() / 2.0, 0.5, target.getWidth() / 2.0, .25,
-                            target.getUpVector(0)), target);
-
+            PacketHandler.sendToTrackingAndSelf(new MKParticleEffectSpawnPacket(
+                            new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES,
+                            target.getEntityId()),
+                    target);
         }
 
 

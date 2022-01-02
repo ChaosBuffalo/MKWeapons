@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.*;
+import com.chaosbuffalo.mkweapons.items.effects.melee.*;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;

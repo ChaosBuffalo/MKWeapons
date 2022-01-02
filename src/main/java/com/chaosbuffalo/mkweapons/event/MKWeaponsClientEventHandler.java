@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.HoeItem;
@@ -26,26 +27,20 @@ public class MKWeaponsClientEventHandler {
 
     @SubscribeEvent
     public static void onTooltipEvent(ItemTooltipEvent event){
-        if (event.getItemStack().getItem() instanceof MKMeleeWeapon){
-            ((MKMeleeWeapon) event.getItemStack().getItem()).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
-        }
-        if (event.getItemStack().getItem() instanceof MKBow){
-            ((MKBow) event.getItemStack().getItem()).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
-        }
         Item item = event.getItemStack().getItem();
-//        if (item instanceof IMKMeleeWeapon){
-//            List<ITextComponent> toRemove = new ArrayList<>();
-//            for (ITextComponent component : event.getToolTip()){
-//                if (component.getString().contains("Melee Crit")){
-//                    toRemove.add(component);
-//                }
-//            }
-//            for (ITextComponent component : toRemove){
-//                event.getToolTip().remove(component);
-//            }
-//        } else
+        if (item instanceof MKMeleeWeapon){
+            ((MKMeleeWeapon) item).addToTooltip(event.getItemStack(),
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+        }
+        if (item instanceof MKBow){
+            ((MKBow) item).addToTooltip(event.getItemStack(),
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+        }
+        if (item instanceof MKArmorItem){
+            ((MKArmorItem) item).addToTooltip(event.getItemStack(),
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+        }
+
         if (!(item instanceof IMKMeleeWeapon) && (item instanceof ToolItem || item instanceof SwordItem)){
             event.getToolTip().add(new StringTextComponent(I18n.format("mkweapons.crit_chance.description",
                     ItemUtils.getCritChanceForItem(event.getItemStack()) * 100.0f)).mergeStyle(TextFormatting.GRAY));

@@ -1,8 +1,7 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import com.chaosbuffalo.mkcore.abilities.MKAbility;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;

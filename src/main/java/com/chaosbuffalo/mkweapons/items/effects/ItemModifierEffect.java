@@ -1,5 +1,6 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.effects;
 
+import com.chaosbuffalo.mkweapons.items.effects.BaseItemEffect;
 import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEntry;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
@@ -18,10 +19,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModifierWeaponEffect extends BaseWeaponEffect {
+public class ItemModifierEffect extends BaseItemEffect {
     protected final List<AttributeOptionEntry> modifiers;
 
-    public ModifierWeaponEffect(ResourceLocation name, TextFormatting color) {
+    public ItemModifierEffect(ResourceLocation name, TextFormatting color) {
         super(name, color);
         modifiers = new ArrayList<>();
     }
@@ -41,7 +42,7 @@ public class ModifierWeaponEffect extends BaseWeaponEffect {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        super.addInformation(stack, worldIn, tooltip);
+//        super.addInformation(stack, worldIn, tooltip);
         for (AttributeOptionEntry entry : modifiers){
             tooltip.add(entry.getDescription());
         }
@@ -68,7 +69,10 @@ public class ModifierWeaponEffect extends BaseWeaponEffect {
         for (AttributeOptionEntry entry : modifiers){
             ModifiableAttributeInstance attr = entity.getAttribute(entry.getAttribute());
             if (attr != null){
-                attr.applyNonPersistentModifier(entry.getModifier());
+                if (!attr.hasModifier(entry.getModifier())){
+                    attr.applyNonPersistentModifier(entry.getModifier());
+                }
+
             }
         }
     }
