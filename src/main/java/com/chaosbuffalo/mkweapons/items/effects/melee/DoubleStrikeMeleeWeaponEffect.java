@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
+package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.core.CombatExtensionModule;
@@ -74,7 +74,8 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
             return;
         }
         MKCore.getEntityData(attacker).ifPresent(cap -> {
-            if (attacker.getRNG().nextDouble() >= 1.0 - chance){
+            double roll = attacker.getRNG().nextDouble();
+            if (roll >= (1.0 - chance)){
                 CombatExtensionModule combatModule = cap.getCombatExtension();
                 double cooldownPeriod = EntityUtils.getCooldownPeriod(attacker);
                 combatModule.addEntityTicksSinceLastSwing((int) cooldownPeriod);

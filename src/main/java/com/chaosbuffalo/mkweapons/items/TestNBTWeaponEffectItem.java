@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkweapons.items;
 import com.chaosbuffalo.mkcore.test.abilities.EmberAbility;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.StunMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.StunMeleeWeaponEffect;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.player.PlayerEntity;

@@ -86,6 +86,8 @@
   "mkweapons.modifier.description.percentage_total": "%s: %.2f%%",
   "mkweapons.modifier.description.addition": "%s: %.2f",
   "mkweapons.block_efficiency.description": "Block Efficiency: %.1f%%",
-  "mkweapons.max_poise.description": "Max Poise: %.0f"
-
+  "mkweapons.max_poise.description": "Max Poise: %.0f",
+  "mkweapons.weapon_effect.armor_modifier.name": "Attributes:",
+  "mkweapons.weapon_effect.melee_modifier.name": "Attributes:",
+  "mkweapons.weapon_effect.ranged_modifier.name": "Attributes:"
 }

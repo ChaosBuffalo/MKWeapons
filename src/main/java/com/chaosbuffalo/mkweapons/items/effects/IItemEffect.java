@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.effects;
 
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface IWeaponEffect {
+public interface IItemEffect {
 
     ResourceLocation getType();
 

@@ -1,9 +1,11 @@
 package com.chaosbuffalo.mkweapons.event;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.capabilities.ArmorDataProvider;
 import com.chaosbuffalo.mkweapons.capabilities.ArrowDataProvider;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponDataProvider;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import net.minecraft.entity.Entity;
@@ -29,6 +31,10 @@ public class WeaponsCapabilityHandler {
         if (event.getObject().getItem() instanceof IMKWeapon){
             event.addCapability(WeaponsCapabilities.MK_WEAPON_CAP_ID,
                     new WeaponDataProvider(event.getObject()));
+        }
+        if (event.getObject().getItem() instanceof IMKArmor){
+            event.addCapability(WeaponsCapabilities.MK_ARMOR_CAP_ID,
+                    new ArmorDataProvider(event.getObject()));
         }
     }
 }

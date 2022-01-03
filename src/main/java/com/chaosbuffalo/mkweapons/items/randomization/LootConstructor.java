@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.randomization;
 
+import com.chaosbuffalo.mkcore.utils.SerializationUtils;
 import com.chaosbuffalo.mkweapons.items.randomization.options.IRandomizationOption;
 import com.chaosbuffalo.mkweapons.items.randomization.options.RandomizationOptionManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
@@ -17,11 +18,11 @@ import java.util.List;
 
 public class LootConstructor {
 
-    private Item item;
+    private ItemStack item;
     private LootSlot slot;
     private List<IRandomizationOption> options;
 
-    public LootConstructor(Item item, LootSlot slot, List<IRandomizationOption> options){
+    public LootConstructor(ItemStack item, LootSlot slot, List<IRandomizationOption> options){
         this.item = item;
         this.slot = slot;
         this.options = new ArrayList<>();
@@ -35,10 +36,10 @@ public class LootConstructor {
     }
 
     public ItemStack constructItem(){
-        if (item == null || slot.equals(LootSlotManager.INVALID)){
+        if (item.isEmpty() || slot.equals(LootSlotManager.INVALID)){
             return ItemStack.EMPTY;
         }
-        ItemStack newItem = new ItemStack(item);
+        ItemStack newItem = item.copy();
         for (IRandomizationOption option : options){
             option.applyToItemStackForSlot(newItem, slot);
         }
@@ -48,7 +49,7 @@ public class LootConstructor {
     public <D> D serialize(DynamicOps<D> ops){
         return ops.createMap(ImmutableMap.of(
                 ops.createString("slot"), ops.createString(slot.getName().toString()),
-                ops.createString("item"), ops.createString(item.getRegistryName().toString()),
+                ops.createString("item"), SerializationUtils.serializeItemStack(ops, item),
                 ops.createString("options"), ops.createList(options.stream().map(option -> option.serialize(ops)))
         ));
     }
@@ -62,9 +63,7 @@ public class LootConstructor {
                 this.options.add(option);
             }
         }
-        item = dynamic.get("item").asString().result().map(
-                name -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(name)))
-                .orElse(null);
+        item = dynamic.get("itemStack").map(SerializationUtils::deserializeItemStack).result().orElse(ItemStack.EMPTY);
         slot = dynamic.get("slot").asString().result().map(
                 slotName -> LootSlotManager.getSlotFromName(new ResourceLocation(slotName)))
                 .orElse(LootSlotManager.INVALID);

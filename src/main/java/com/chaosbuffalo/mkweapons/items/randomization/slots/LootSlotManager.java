@@ -27,6 +27,8 @@ public class LootSlotManager {
             EquipmentSlotType.FEET);
     public static final LootSlot INVALID = new LootSlot(INVALID_LOOT_SLOT, (ent) -> ItemStack.EMPTY,
             (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
+    public static final LootSlot ITEMS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "items"),
+            (ent) -> ItemStack.EMPTY, (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
 
     public static final Map<ResourceLocation, LootSlot> SLOTS = new HashMap<>();
 
@@ -46,6 +48,7 @@ public class LootSlotManager {
         addLootSlot(HEAD);
         addLootSlot(FEET);
         addLootSlot(INVALID);
+        addLootSlot(ITEMS);
     }
 
 

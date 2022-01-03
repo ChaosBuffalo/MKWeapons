@@ -6,11 +6,12 @@ import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -20,7 +21,6 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,22 +64,34 @@ public class MKWeaponsEventHandler {
         Item to = event.getTo().getItem();
         if (from instanceof IMKWeapon){
             ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
-                    eff -> eff.onEntityUnequip(event.getEntityLiving()));
+                    eff -> eff.onEntityUnequip(event.getEntityLiving())
+            );
         }
         if (to instanceof IMKWeapon){
             ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
-                    eff -> eff.onEntityEquip(event.getEntityLiving()));
+                    eff -> eff.onEntityEquip(event.getEntityLiving())
+            );
+        }
+        if (from instanceof IMKArmor){
+            ((IMKArmor) from).getArmorEffects(event.getFrom()).forEach(
+                    eff -> eff.onEntityUnequip(event.getEntityLiving())
+            );
+        }
+        if (to instanceof IMKArmor){
+            ((IMKArmor) to).getArmorEffects(event.getTo()).forEach(
+                    eff -> eff.onEntityEquip(event.getEntityLiving())
+            );
         }
         if (!(event.getEntityLiving() instanceof ServerPlayerEntity))
             return;
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
         checkShieldRestriction(player);
         if (event.getSlot() == EquipmentSlotType.MAINHAND){
-            if (!(from instanceof IMKMeleeWeapon) && (from instanceof ToolItem || from instanceof SwordItem || from instanceof HoeItem) ){
+            if (!(from instanceof IMKMeleeWeapon) && (from instanceof ToolItem || from instanceof SwordItem) ){
                 player.getAttribute(MKAttributes.MELEE_CRIT).removeModifier(CRIT_CHANCE_MODIFIER);
                 player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).removeModifier(CRIT_MULT_MODIFIER);
             }
-            if (!(to instanceof IMKMeleeWeapon) && (to instanceof ToolItem || to instanceof SwordItem || to instanceof HoeItem)){
+            if (!(to instanceof IMKMeleeWeapon) && (to instanceof ToolItem || to instanceof SwordItem)){
                 player.getAttribute(MKAttributes.MELEE_CRIT).applyNonPersistentModifier(createSlotModifier(
                         CRIT_CHANCE_MODIFIER, ItemUtils.getCritChanceForItem(event.getTo()),
                         MKAttributes.MELEE_CRIT));

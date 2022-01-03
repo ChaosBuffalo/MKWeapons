@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import net.minecraft.item.ItemStack;
 

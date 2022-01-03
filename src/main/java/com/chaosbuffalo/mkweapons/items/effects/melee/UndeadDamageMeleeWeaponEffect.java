@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
+package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;

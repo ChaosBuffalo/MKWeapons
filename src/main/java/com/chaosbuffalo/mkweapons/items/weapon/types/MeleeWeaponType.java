@@ -1,9 +1,9 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.WeaponEffects;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
@@ -83,7 +83,7 @@ public class MeleeWeaponType implements IMeleeWeaponType {
         blockEfficiency = dynamic.get("blockEfficiency").asFloat(0.75f);
         maxPoise = dynamic.get("maxPoise").asFloat(20.0f);
         List<IMeleeWeaponEffect> deserializedEffects = dynamic.get("effects").asList(d -> {
-            IWeaponEffect effect = WeaponEffects.deserializeEffect(d);
+            IItemEffect effect = ItemEffects.deserializeEffect(d);
             if (effect instanceof IMeleeWeaponEffect){
                 return (IMeleeWeaponEffect) effect;
             } else {

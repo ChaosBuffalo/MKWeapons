@@ -2,12 +2,12 @@ package com.chaosbuffalo.mkweapons.capabilities;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.IWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.WeaponEffects;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -157,7 +157,7 @@ public class WeaponDataHandler implements IWeaponData {
         if (nbt.contains("melee_effects")){
             ListNBT effectList = nbt.getList("melee_effects", Constants.NBT.TAG_COMPOUND);
             for (INBT effectNBT : effectList){
-                IWeaponEffect effect = WeaponEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
+                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IMeleeWeaponEffect){
                     meleeWeaponEffects.add((IMeleeWeaponEffect) effect);
                 } else {
@@ -169,7 +169,7 @@ public class WeaponDataHandler implements IWeaponData {
         if (nbt.contains("ranged_effects")){
             ListNBT rangedEffectList = nbt.getList("ranged_effects", Constants.NBT.TAG_COMPOUND);
             for (INBT effectNBT : rangedEffectList){
-                IWeaponEffect effect = WeaponEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
+                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IRangedWeaponEffect){
                     rangedWeaponEffects.add((IRangedWeaponEffect) effect);
                 } else {

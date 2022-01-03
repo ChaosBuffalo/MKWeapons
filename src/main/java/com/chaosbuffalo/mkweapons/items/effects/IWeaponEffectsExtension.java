@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects;
+package com.chaosbuffalo.mkweapons.items.effects;
 
 public interface IWeaponEffectsExtension {
 

@@ -1,4 +1,4 @@
-package com.chaosbuffalo.mkweapons.items.weapon.effects.melee;
+package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 
 import com.google.common.collect.ImmutableMap;

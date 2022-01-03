@@ -1,6 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
-import com.chaosbuffalo.mkweapons.items.weapon.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.item.IItemTier;

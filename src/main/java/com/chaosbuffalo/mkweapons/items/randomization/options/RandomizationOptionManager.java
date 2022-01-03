@@ -19,6 +19,7 @@ public class RandomizationOptionManager {
 
     static {
         addOptionDeserializer(AttributeOption.NAME, AttributeOption::new);
+        addOptionDeserializer(ItemEffectAttributeOption.NAME, ItemEffectAttributeOption::new);
     }
 
     public static <D> IRandomizationOption deserializeOption(Dynamic<D> dynamic){
