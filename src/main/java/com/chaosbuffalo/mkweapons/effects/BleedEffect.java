@@ -1,66 +1,69 @@
 package com.chaosbuffalo.mkweapons.effects;
 
-import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.damage.MKDamageSource;
-import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.effects.SpellPeriodicEffectBase;
+import com.chaosbuffalo.mkcore.effects.*;
 import com.chaosbuffalo.mkcore.fx.ParticleEffects;
 import com.chaosbuffalo.mkcore.init.CoreDamageTypes;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsParticles;
-import com.chaosbuffalo.targeting_api.TargetingContext;
-import com.chaosbuffalo.targeting_api.TargetingContexts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.UUID;
+
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class BleedEffect extends SpellPeriodicEffectBase {
-    public static final String SCALING_CONTRIBUTION = "bleed.scaling_contribution";
+public class BleedEffect extends MKEffect {
 
     public static final BleedEffect INSTANCE = new BleedEffect();
 
-    protected BleedEffect() {
-        super(GameConstants.TICKS_PER_SECOND, EffectType.HARMFUL, 123);
-        setRegistryName(MKWeapons.MODID, "effect.bleed_damage");
-    }
-
     @SubscribeEvent
-    public static void register(RegistryEvent.Register<Effect> event) {
+    public static void register(RegistryEvent.Register<MKEffect> event) {
         event.getRegistry().register(INSTANCE);
     }
 
-    @Override
-    public TargetingContext getTargetContext() {
-        return TargetingContexts.ALL;
-    }
-
-    public static SpellCast Create(Entity source, float baseDamage, float scaling) {
-        return Create(source, baseDamage, scaling, 1.0f);
-    }
-
-    public static SpellCast Create(Entity source, float baseDamage, float scaling, float modifierScaling) {
-        return INSTANCE.newSpellCast(source).setScalingParameters(baseDamage, scaling)
-                .setFloat(SCALING_CONTRIBUTION, modifierScaling);
+    private BleedEffect() {
+        super(EffectType.HARMFUL);
+        setRegistryName("effect.bleed_damage");
     }
 
     @Override
-    public void doEffect(Entity applier, Entity caster, LivingEntity target, int i, SpellCast spellCast) {
-        float damage = spellCast.getScaledValue(i);
-        target.attackEntityFrom(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
-                applier, caster,  spellCast.getFloat(SCALING_CONTRIBUTION)), damage);
-        PacketHandler.sendToTrackingAndSelf(
-                new ParticleEffectSpawnPacket(
-                        MKWeaponsParticles.DRIPPING_BLOOD,
-                        ParticleEffects.DIRECTED_SPOUT, 8, 1,
-                        target.getPosX(), target.getPosY() + target.getHeight() * .75,
-                        target.getPosZ(), target.getWidth() / 2.0, 0.5, target.getWidth() / 2.0, 3,
-                        target.getUpVector(0)), target);
+    public MKEffectBuilder<State> builder(UUID sourceId) {
+        return new MKEffectBuilder<>(this, sourceId, this::makeState);
+    }
+
+    @Override
+    public State makeState() {
+        return new State();
+    }
+
+    public static class State extends ScalingValueEffectState {
+        private Entity source;
+
+        @Override
+        public boolean performEffect(IMKEntityData targetData, MKActiveEffect activeEffect) {
+            source = findEntity(source, activeEffect.getSourceId(), targetData);
+
+            float damage = getScaledValue(activeEffect.getStackCount());
+            //MKWeapons.LOGGER.info("bleed damage {} {} from {}", damage, activeEffect, source);
+            LivingEntity target = targetData.getEntity();
+            target.attackEntityFrom(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
+                    source, source, getModifierScale()), damage);
+
+            PacketHandler.sendToTrackingAndSelf(
+                    new ParticleEffectSpawnPacket(
+                            MKWeaponsParticles.DRIPPING_BLOOD,
+                            ParticleEffects.DIRECTED_SPOUT, 8, 1,
+                            target.getPosX(), target.getPosY() + target.getHeight() * .75,
+                            target.getPosZ(), target.getWidth() / 2.0, 0.5, target.getWidth() / 2.0, 3,
+                            target.getUpVector(0)), target);
+            return true;
+        }
     }
 }

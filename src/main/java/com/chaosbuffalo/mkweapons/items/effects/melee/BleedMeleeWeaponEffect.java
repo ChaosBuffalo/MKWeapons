@@ -1,7 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.effects.SpellCast;
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.effects.MKActiveEffect;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.effects.BleedEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -72,17 +72,19 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack,
                       LivingEntity target, LivingEntity attacker) {
-        EffectInstance effect = target.getActivePotionEffect(BleedEffect.INSTANCE);
         float damagePerSecond = damageMultiplier * weapon.getDamageForTier() / durationSeconds;
-        SpellCast cast = BleedEffect.Create(attacker, damagePerSecond, damagePerSecond).setTarget(target);
-        EffectInstance newEffect;
-        if (effect == null){
-           newEffect = cast.toPotionEffect(GameConstants.TICKS_PER_SECOND * durationSeconds + 10, 0);
-        } else {
-            int amplifier = Math.min(effect.getAmplifier() + 1, maxStacks);
-            newEffect = cast.toPotionEffect(GameConstants.TICKS_PER_SECOND * durationSeconds + 10, amplifier);
-        }
-        target.addPotionEffect(newEffect);
+
+        MKCore.getEntityData(target).ifPresent(targetData -> {
+            MKActiveEffect effect = BleedEffect.INSTANCE.builder(attacker.getUniqueID())
+                    .state(s -> {
+                        s.setMaxStacks(maxStacks);
+                        s.setScalingParameters(damagePerSecond, damagePerSecond, 1.0f);
+                    })
+                    .periodic(GameConstants.TICKS_PER_SECOND) // tick every second
+                    .timed(GameConstants.TICKS_PER_SECOND * durationSeconds + 10)
+                    .createApplication();
+            targetData.getEffects().addEffect(effect);
+        });
     }
 
     @Override
