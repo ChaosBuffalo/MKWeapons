@@ -1,11 +1,11 @@
 package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
-import com.chaosbuffalo.mkcore.effects.SpellCast;
-import com.chaosbuffalo.mkcore.fx.ParticleEffects;
+import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.effects.MKEffectBuilder;
+import com.chaosbuffalo.mkcore.effects.status.StunEffect;
 import com.chaosbuffalo.mkcore.network.MKParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkcore.network.PacketHandler;
-import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.ImmutableMap;
@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -59,16 +58,13 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
 
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (attacker.getRNG().nextDouble() >= (1.0 - stunChance)){
-            SpellCast cast = com.chaosbuffalo.mkcore.effects.status.StunEffect.Create(attacker).setTarget(target);
-            target.addPotionEffect(cast.toPotionEffect(stunDuration * GameConstants.TICKS_PER_SECOND,0));
+        if (attacker.getRNG().nextDouble() >= (1.0 - stunChance)) {
+            MKEffectBuilder<?> stun = StunEffect.INSTANCE.builder(attacker.getUniqueID())
+                    .timed(stunDuration * GameConstants.TICKS_PER_SECOND);
+            MKCore.getEntityData(target).ifPresent(targetData -> targetData.getEffects().addEffect(stun));
             PacketHandler.sendToTrackingAndSelf(new MKParticleEffectSpawnPacket(
-                            new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES,
-                            target.getEntityId()),
-                    target);
+                            new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES, target.getEntityId()), target);
         }
-
-
     }
 
     @Override
