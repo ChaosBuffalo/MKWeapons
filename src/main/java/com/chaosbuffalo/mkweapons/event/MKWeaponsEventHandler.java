@@ -14,6 +14,7 @@ import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -33,7 +34,7 @@ public class MKWeaponsEventHandler {
     private static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("3935094f-87c5-49a8-bcde-ea29ce3bb5f9");
     private static final UUID CRIT_MULT_MODIFIER = UUID.fromString("c167f8f7-7bfc-4232-a321-ba635a4eb46f");
 
-    private static AttributeModifier createSlotModifier(UUID uuid, double amount, RangedAttribute mod) {
+    private static AttributeModifier createSlotModifier(UUID uuid, double amount, Attribute mod) {
         return new AttributeModifier(uuid, mod.getAttributeName(), amount, AttributeModifier.Operation.ADDITION);
     }
 
