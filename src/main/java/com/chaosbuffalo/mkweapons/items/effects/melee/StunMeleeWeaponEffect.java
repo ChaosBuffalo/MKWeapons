@@ -59,7 +59,7 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker.getRNG().nextDouble() >= (1.0 - stunChance)) {
-            MKEffectBuilder<?> stun = StunEffect.INSTANCE.builder(attacker.getUniqueID())
+            MKEffectBuilder<?> stun = StunEffect.from(attacker)
                     .timed(stunDuration * GameConstants.TICKS_PER_SECOND);
             MKCore.getEntityData(target).ifPresent(targetData -> targetData.getEffects().addEffect(stun));
             PacketHandler.sendToTrackingAndSelf(new MKParticleEffectSpawnPacket(

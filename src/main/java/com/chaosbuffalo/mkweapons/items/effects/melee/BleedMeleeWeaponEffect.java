@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
-import com.chaosbuffalo.mkcore.effects.MKActiveEffect;
+import com.chaosbuffalo.mkcore.effects.MKEffectBuilder;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.effects.BleedEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
@@ -66,7 +66,7 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
                 ops.createString("damageMultiplier"), ops.createFloat(damageMultiplier),
                 ops.createString("maxStacks"), ops.createInt(maxStacks),
                 ops.createString("durationSeconds"), ops.createInt(durationSeconds)
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+        )).result().orElse(ops.emptyMap());
     }
 
     @Override
@@ -75,14 +75,9 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
         float damagePerSecond = damageMultiplier * weapon.getDamageForTier() / durationSeconds;
 
         MKCore.getEntityData(target).ifPresent(targetData -> {
-            MKActiveEffect effect = BleedEffect.INSTANCE.builder(attacker.getUniqueID())
-                    .state(s -> {
-                        s.setMaxStacks(maxStacks);
-                        s.setScalingParameters(damagePerSecond, damagePerSecond, 1.0f);
-                    })
+            MKEffectBuilder<?> effect = BleedEffect.from(attacker, maxStacks, damagePerSecond, damagePerSecond, 1f)
                     .periodic(GameConstants.TICKS_PER_SECOND) // tick every second
-                    .timed(GameConstants.TICKS_PER_SECOND * durationSeconds + 10)
-                    .createApplication();
+                    .timed(GameConstants.TICKS_PER_SECOND * durationSeconds + 10);
             targetData.getEffects().addEffect(effect);
         });
     }
