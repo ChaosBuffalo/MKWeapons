@@ -43,11 +43,13 @@ public class MKWeaponsEventHandler {
         if (source.getImmediateSource() instanceof AbstractArrowEntity){
             AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
             MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
-                if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon){
-                    IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
-                    for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())){
-                        effect.onProjectileHit(event, source, livingTarget, playerSource, sourceData,
-                                arrowEntity, cap.getShootingWeapon());
+                if (!livingTarget.isActiveItemStackBlocking()){
+                    if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon){
+                        IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
+                        for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())){
+                            effect.onProjectileHit(event, source, livingTarget, playerSource, sourceData,
+                                    arrowEntity, cap.getShootingWeapon());
+                        }
                     }
                 }
             });
