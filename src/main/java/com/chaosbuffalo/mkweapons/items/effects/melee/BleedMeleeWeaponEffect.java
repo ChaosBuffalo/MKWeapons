@@ -2,6 +2,8 @@ package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.GameConstants;
 import com.chaosbuffalo.mkcore.MKCore;
+import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.effects.MKEffectBuilder;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.effects.BleedEffect;
@@ -29,14 +31,14 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     private int durationSeconds;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.bleed");
 
-    public BleedMeleeWeaponEffect(float damageMultiplier, int maxStacks, int durationSeconds){
+    public BleedMeleeWeaponEffect(float damageMultiplier, int maxStacks, int durationSeconds) {
         this();
         this.damageMultiplier = damageMultiplier;
         this.maxStacks = maxStacks;
         this.durationSeconds = durationSeconds;
     }
 
-    public BleedMeleeWeaponEffect(){
+    public BleedMeleeWeaponEffect() {
         super(NAME, TextFormatting.DARK_RED);
     }
 
@@ -73,11 +75,13 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack,
                       LivingEntity target, LivingEntity attacker) {
         float damagePerSecond = damageMultiplier * weapon.getDamageForTier() / durationSeconds;
-
+        float skill = MKAbility.getSkillLevel(attacker, MKAttributes.PANKRATION);
+        MKCore.getPlayer(attacker).ifPresent(x -> x.getSkills().tryIncreaseSkill(MKAttributes.PANKRATION));
         MKCore.getEntityData(target).ifPresent(targetData -> {
             MKEffectBuilder<?> effect = BleedEffect.from(attacker, maxStacks, damagePerSecond, damagePerSecond, 1f)
                     .periodic(GameConstants.TICKS_PER_SECOND) // tick every second
-                    .timed(GameConstants.TICKS_PER_SECOND * durationSeconds + 10);
+                    .timed(GameConstants.TICKS_PER_SECOND * durationSeconds + 10)
+                    .skillLevel(skill);
             targetData.getEffects().addEffect(effect);
         });
     }
@@ -85,7 +89,7 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.bleed.description",
                     damageMultiplier, durationSeconds, maxStacks)));
         }

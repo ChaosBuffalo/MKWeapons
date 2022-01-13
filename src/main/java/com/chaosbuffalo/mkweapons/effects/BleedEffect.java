@@ -61,7 +61,7 @@ public class BleedEffect extends MKEffect {
 
         @Override
         public boolean performEffect(IMKEntityData targetData, MKActiveEffect activeEffect) {
-            float damage = getScaledValue(activeEffect.getStackCount());
+            float damage = getScaledValue(activeEffect.getStackCount(), activeEffect.getSkillLevel());
             //MKWeapons.LOGGER.info("bleed damage {} {} from {}", damage, activeEffect, source);
             LivingEntity target = targetData.getEntity();
             target.attackEntityFrom(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
