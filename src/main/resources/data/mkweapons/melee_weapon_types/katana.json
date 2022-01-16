@@ -2,7 +2,7 @@
   "damageMultiplier": 1.5,
   "attackSpeed": -2.2,
   "reach": 0.0,
-  "critMultiplier": 2.0,
+  "critMultiplier": 1.0,
   "critChance": 0.1,
   "isTwoHanded": true,
   "effects": [
