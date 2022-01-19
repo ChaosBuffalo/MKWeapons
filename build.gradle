@@ -121,6 +121,10 @@ dependencies {
     implementation fg.deobf("com.chaosbuffalo.mkwidgets:mkwidgets-${mc_version}:${mk_widgets_version}")
     implementation fg.deobf("com.chaosbuffalo.mkcore:mkcore-${mc_version}:${mk_core_version}")
 
+    if (System.getProperty("idea.sync.active") != "true") {
+        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    }
+
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
 
