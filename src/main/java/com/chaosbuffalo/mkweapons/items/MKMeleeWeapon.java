@@ -166,6 +166,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
                     x.deserializeNBT((CompoundNBT) weaponNbt));
         }
+        super.readShareTag(stack, nbt);
     }
 
 //    //rot: 0 +50, -29

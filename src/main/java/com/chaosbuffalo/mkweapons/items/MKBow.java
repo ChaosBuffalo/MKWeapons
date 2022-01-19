@@ -60,8 +60,9 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
+        ItemStack copy = stack.copy();
+        CompoundNBT tag = copy.getOrCreateTag();
+        copy.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
         return tag;
     }
 
@@ -72,6 +73,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
                     x.deserializeNBT((CompoundNBT) weaponNbt));
         }
+        super.readShareTag(stack, nbt);
     }
 
     public float getPowerFactor(int useTicks, ItemStack stack, LivingEntity entity){

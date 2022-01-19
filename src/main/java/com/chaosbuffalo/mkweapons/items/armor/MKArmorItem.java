@@ -71,6 +71,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
             stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x ->
                     x.deserializeNBT((CompoundNBT) armorNbt));
         }
+        super.readShareTag(stack, nbt);
     }
 
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
