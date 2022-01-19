@@ -18,6 +18,8 @@ import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -53,6 +55,23 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
             time = weaponEffect.modifyDrawTime(time, item, entity);
         }
         return time;
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT tag = stack.getOrCreateTag();
+        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
+        return tag;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        if (nbt != null && nbt.contains("weaponCap")){
+            INBT weaponNbt = nbt.get("weaponCap");
+            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
+                    x.deserializeNBT((CompoundNBT) weaponNbt));
+        }
     }
 
     public float getPowerFactor(int useTicks, ItemStack stack, LivingEntity entity){

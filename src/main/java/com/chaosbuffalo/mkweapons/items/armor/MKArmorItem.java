@@ -10,8 +10,11 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -50,6 +53,23 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     protected void buildAttributes(ImmutableMultimap.Builder<Attribute, AttributeModifier> builder,
                                    EquipmentSlotType slot, IArmorMaterial material, UUID slotUUID){
 
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT tag = stack.getOrCreateTag();
+        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x -> tag.put("armorCap", x.serializeNBT()));
+        return tag;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        if (nbt != null && nbt.contains("armorCap")){
+            INBT armorNbt = nbt.get("armorCap");
+            stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x ->
+                    x.deserializeNBT((CompoundNBT) armorNbt));
+        }
     }
 
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
