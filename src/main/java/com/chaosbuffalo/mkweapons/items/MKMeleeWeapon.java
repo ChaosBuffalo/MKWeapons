@@ -27,6 +27,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.UseAction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -146,6 +148,23 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
             return ActionResult.resultConsume(itemstack);
         }
 
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT tag = stack.getOrCreateTag();
+        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
+        return tag;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        if (nbt != null && nbt.contains("weaponCap")){
+            INBT weaponNbt = nbt.get("weaponCap");
+            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
+                    x.deserializeNBT((CompoundNBT) weaponNbt));
+        }
     }
 
 //    //rot: 0 +50, -29

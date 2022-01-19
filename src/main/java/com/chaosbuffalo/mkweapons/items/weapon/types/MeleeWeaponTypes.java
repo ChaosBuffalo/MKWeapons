@@ -45,7 +45,7 @@ public class MeleeWeaponTypes {
             new ComboStrikeMeleeWeaponEffect(3, .50));
     public static final MeleeWeaponType STAFF_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "staff"),
-            1.0f, -2.5f, 0.5f, 0.05f, 1.0f, true,
+            1.75f, -2.5f, 0.5f, 0.05f, 1.0f, true,
             0.85f, 30f,
             new StunMeleeWeaponEffect(.20, 2),
             new ComboStrikeMeleeWeaponEffect(5, .15));
