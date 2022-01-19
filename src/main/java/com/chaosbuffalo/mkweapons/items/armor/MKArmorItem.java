@@ -58,8 +58,9 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x -> tag.put("armorCap", x.serializeNBT()));
+        ItemStack copy = stack.copy();
+        CompoundNBT tag = copy.getOrCreateTag();
+        copy.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x -> tag.put("armorCap", x.serializeNBT()));
         return tag;
     }
 

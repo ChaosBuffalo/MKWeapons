@@ -153,8 +153,9 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
+        ItemStack copy = stack.copy();
+        CompoundNBT tag = copy.getOrCreateTag();
+        copy.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
         return tag;
     }
 
