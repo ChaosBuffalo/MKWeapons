@@ -9,10 +9,10 @@ import com.chaosbuffalo.mkcore.item.ILimitItemTooltip;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
-import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
+import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,7 +28,6 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -38,7 +37,9 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitItemTooltip, IImplementsBlocking {
     private final IMeleeWeaponType weaponType;
@@ -153,17 +154,34 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
-        return tag;
+        // This needs to be handled carefully.
+        // If an SEntityEquipmentPacket is created in LivingEntity#func_241342_a_ and sent to all tracking entities
+        // the eventual ItemStack serialization may be performed by multiple network threads, causing a
+        // ConcurrentModificationException in CompoundNBT if they insert data into the ItemStack's tag simultaneously.
+        // Work around this by returning a new CompoundNBT for each call, embedding the original share tag and putting
+        // our data next to it without modifying the actual ItemStack tag
+
+        CompoundNBT newTag = new CompoundNBT();
+        CompoundNBT original = super.getShareTag(stack);
+        if (original != null) {
+            newTag.put("share", original);
+        }
+        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+                newTag.put("weaponCap", weaponData.serializeNBT()));
+        return newTag;
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
-        if (nbt != null && nbt.contains("weaponCap")){
-            INBT weaponNbt = nbt.get("weaponCap");
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
-                    x.deserializeNBT((CompoundNBT) weaponNbt));
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+        if (shareTag == null)
+            return;
+
+        if (shareTag.contains("share")) {
+            super.readShareTag(stack, shareTag.getCompound("share"));
+        }
+        if (shareTag.contains("weaponCap")) {
+            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+                    weaponData.deserializeNBT(shareTag.getCompound("weaponCap")));
         }
     }
 

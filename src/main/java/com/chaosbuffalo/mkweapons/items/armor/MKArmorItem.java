@@ -1,4 +1,5 @@
 package com.chaosbuffalo.mkweapons.items.armor;
+
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.armor.IArmorEffect;
 import com.google.common.collect.ImmutableMultimap;
@@ -11,10 +12,8 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -58,17 +57,28 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x -> tag.put("armorCap", x.serializeNBT()));
-        return tag;
+        // See comment in MKMeleeWeapon#getShareTag
+        CompoundNBT newTag = new CompoundNBT();
+        CompoundNBT original = super.getShareTag(stack);
+        if (original != null) {
+            newTag.put("share", original);
+        }
+        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(armorData ->
+                newTag.put("armorCap", armorData.serializeNBT()));
+        return newTag;
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
-        if (nbt != null && nbt.contains("armorCap")){
-            INBT armorNbt = nbt.get("armorCap");
-            stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x ->
-                    x.deserializeNBT((CompoundNBT) armorNbt));
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+        if (shareTag == null)
+            return;
+
+        if (shareTag.contains("share")) {
+            super.readShareTag(stack, shareTag.getCompound("share"));
+        }
+        if (shareTag.contains("armorCap")) {
+            stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(armorData ->
+                    armorData.deserializeNBT(shareTag.getCompound("armorCap")));
         }
     }
 

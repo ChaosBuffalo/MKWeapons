@@ -1,24 +1,78 @@
 {
   "slotItems": {
     "mkweapons:main_hand": [
-      "mkweapons:dagger_wood",
-      "mkweapons:katana_wood",
-      "mkweapons:mace_wood",
-      "mkweapons:staff_wood",
-      "mkweapons:warhammer_wood",
-      "mkweapons:longsword_wood",
-      "mkweapons:greatsword_wood",
-      "mkweapons:battleaxe_wood",
-      "mkweapons:spear_wood",
-      "mkweapons:dagger_stone",
-      "mkweapons:katana_stone",
-      "mkweapons:mace_stone",
-      "mkweapons:staff_stone",
-      "mkweapons:warhammer_stone",
-      "mkweapons:longsword_stone",
-      "mkweapons:greatsword_stone",
-      "mkweapons:battleaxe_stone",
-      "mkweapons:spear_stone"
+      {
+        "itemStack": "{id: \"mkweapons:dagger_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:katana_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:mace_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:staff_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:warhammer_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:longsword_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:greatsword_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:battleaxe_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:spear_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:dagger_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:katana_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:mace_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:staff_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:warhammer_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:longsword_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:greatsword_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:battleaxe_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:spear_wood\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      }
     ]
   },
   "options": [
@@ -34,7 +88,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 5.0,
           "Operation": 0,
-          "UUID": "1c895da6-91d8-41ae-ae7f-d59f34373d93",
+          "UUID": "b74793ac-f8ee-44f6-9d1e-37681379641f",
           "AttributeName": "minecraft:generic.max_health"
         }
       ]
@@ -43,9 +97,9 @@
       "optionType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
-        "mkweapons:main_hand",
         "mkweapons:head",
-        "mkweapons:chest"
+        "mkweapons:chest",
+        "mkweapons:main_hand"
       ],
       "weight": 1.0,
       "modifiers": [
@@ -53,7 +107,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 0.5,
           "Operation": 0,
-          "UUID": "589dd071-fb95-41b9-8028-18203aface9c",
+          "UUID": "8efeec65-46c5-496f-92b3-f0d2428cea81",
           "AttributeName": "mkcore:mana_regen"
         }
       ]

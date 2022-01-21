@@ -5,8 +5,8 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -19,7 +19,6 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -60,17 +59,28 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
-        return tag;
+        // See comment in MKMeleeWeapon#getShareTag
+        CompoundNBT newTag = new CompoundNBT();
+        CompoundNBT original = super.getShareTag(stack);
+        if (original != null) {
+            newTag.put("share", original);
+        }
+        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+                newTag.put("weaponCap", weaponData.serializeNBT()));
+        return newTag;
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
-        if (nbt != null && nbt.contains("weaponCap")){
-            INBT weaponNbt = nbt.get("weaponCap");
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
-                    x.deserializeNBT((CompoundNBT) weaponNbt));
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+        if (shareTag == null)
+            return;
+
+        if (shareTag.contains("share")) {
+            super.readShareTag(stack, shareTag.getCompound("share"));
+        }
+        if (shareTag.contains("weaponCap")) {
+            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+                    weaponData.deserializeNBT(shareTag.getCompound("weaponCap")));
         }
     }
 
