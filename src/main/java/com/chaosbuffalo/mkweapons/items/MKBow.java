@@ -60,9 +60,14 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        ItemStack copy = stack.copy();
-        CompoundNBT tag = copy.getOrCreateTag();
-        copy.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
+        CompoundNBT sup = super.getShareTag(stack);
+        CompoundNBT tag;
+        if (sup == null){
+            tag = new CompoundNBT();
+        } else {
+            tag = sup.copy();
+        }
+        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x -> tag.put("weaponCap", x.serializeNBT()));
         return tag;
     }
 

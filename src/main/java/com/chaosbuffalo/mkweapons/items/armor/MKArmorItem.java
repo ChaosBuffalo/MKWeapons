@@ -1,4 +1,5 @@
 package com.chaosbuffalo.mkweapons.items.armor;
+import com.chaosbuffalo.mkweapons.capabilities.IArmorData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.armor.IArmorEffect;
 import com.google.common.collect.ImmutableMultimap;
@@ -19,6 +20,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class MKArmorItem extends ArmorItem implements IMKArmor {
@@ -58,9 +60,15 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     @Nullable
     @Override
     public CompoundNBT getShareTag(ItemStack stack) {
-        ItemStack copy = stack.copy();
-        CompoundNBT tag = copy.getOrCreateTag();
-        copy.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(x -> tag.put("armorCap", x.serializeNBT()));
+        CompoundNBT sup = super.getShareTag(stack);
+        CompoundNBT tag;
+        if (sup == null){
+            tag = new CompoundNBT();
+        } else {
+            tag = sup.copy();
+        }
+        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
+                iArmorData -> tag.put("armorCap", iArmorData.serializeNBT()));
         return tag;
     }
 
