@@ -1,42 +1,31 @@
 package com.chaosbuffalo.mkweapons.event;
 
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
-import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
-import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.UUID;
-
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MKWeaponsEventHandler {
-    private static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("3935094f-87c5-49a8-bcde-ea29ce3bb5f9");
-    private static final UUID CRIT_MULT_MODIFIER = UUID.fromString("c167f8f7-7bfc-4232-a321-ba635a4eb46f");
-
-    private static AttributeModifier createSlotModifier(UUID uuid, double amount, Attribute mod) {
-        return new AttributeModifier(uuid, mod.getAttributeName(), amount, AttributeModifier.Operation.ADDITION);
-    }
 
     private static void handleProjectileDamage(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
                                                ServerPlayerEntity playerSource, IMKEntityData sourceData){
@@ -89,21 +78,6 @@ public class MKWeaponsEventHandler {
             return;
         ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
         checkShieldRestriction(player);
-        if (event.getSlot() == EquipmentSlotType.MAINHAND){
-            if (!(from instanceof IMKMeleeWeapon) && (from instanceof ToolItem || from instanceof SwordItem) ){
-                player.getAttribute(MKAttributes.MELEE_CRIT).removeModifier(CRIT_CHANCE_MODIFIER);
-                player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).removeModifier(CRIT_MULT_MODIFIER);
-            }
-            if (!(to instanceof IMKMeleeWeapon) && (to instanceof ToolItem || to instanceof SwordItem)){
-                player.getAttribute(MKAttributes.MELEE_CRIT).applyNonPersistentModifier(createSlotModifier(
-                        CRIT_CHANCE_MODIFIER, ItemUtils.getCritChanceForItem(event.getTo()),
-                        MKAttributes.MELEE_CRIT));
-                player.getAttribute(MKAttributes.MELEE_CRIT_MULTIPLIER).applyNonPersistentModifier(createSlotModifier(
-                        CRIT_MULT_MODIFIER, ItemUtils.getCritMultiplierForItem(event.getTo()),
-                        MKAttributes.MELEE_CRIT_MULTIPLIER));
-            }
-
-        }
     }
 
     private static void checkShieldRestriction(ServerPlayerEntity player) {
