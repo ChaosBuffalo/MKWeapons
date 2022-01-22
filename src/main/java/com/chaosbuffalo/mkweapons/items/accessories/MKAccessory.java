@@ -2,7 +2,6 @@ package com.chaosbuffalo.mkweapons.items.accessories;
 
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemProvider;
-import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -71,6 +70,7 @@ public class MKAccessory extends Item {
         }
         return Optional.empty();
     }
+
 
     @Nullable
     @Override

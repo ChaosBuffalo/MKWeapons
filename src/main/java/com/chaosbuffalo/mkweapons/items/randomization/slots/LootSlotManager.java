@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class LootSlotManager {
             (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
     public static final LootSlot ITEMS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "items"),
             (ent) -> ItemStack.EMPTY, (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
+    public static final LootSlot RINGS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "rings"),
+            (ent) -> ItemStack.EMPTY, (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
 
     public static final Map<ResourceLocation, LootSlot> SLOTS = new HashMap<>();
 
@@ -49,6 +52,7 @@ public class LootSlotManager {
         addLootSlot(FEET);
         addLootSlot(INVALID);
         addLootSlot(ITEMS);
+        addLootSlot(RINGS);
     }
 
 

@@ -17,6 +17,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,8 +105,9 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        if (nbt.contains("accesory_effects")){
-            ListNBT effectList = nbt.getList("accesory_effects", Constants.NBT.TAG_COMPOUND);
+        if (nbt.contains("accessory_effects")){
+            ListNBT effectList = nbt.getList("accessory_effects", Constants.NBT.TAG_COMPOUND);
+            effects.clear();
             for (INBT effectNBT : effectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IAccessoryEffect){

@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.TestNBTWeaponEffectItem;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
@@ -43,6 +44,9 @@ public class MKWeaponsItems {
     @ObjectHolder("haft")
     public static Item Haft;
 
+    @ObjectHolder("copper_ring")
+    public static Item CopperRing;
+
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> evt){
         Set<Tuple<String, MKTier>> materials = new HashSet<>();
@@ -73,6 +77,9 @@ public class MKWeaponsItems {
         TestNBTWeaponEffectItem testNBTWeaponEffectItem = new TestNBTWeaponEffectItem(new Item.Properties());
         testNBTWeaponEffectItem.setRegistryName(MKWeapons.MODID, "test_nbt_effect");
         evt.getRegistry().register(testNBTWeaponEffectItem);
+        MKAccessory accessory = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        accessory.setRegistryName(MKWeapons.MODID, "copper_ring");
+        evt.getRegistry().register(accessory);
     }
 
     public static void registerItemProperties(){

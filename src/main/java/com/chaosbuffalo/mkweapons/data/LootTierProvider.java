@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.randomization.LootTier;
 import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOption;
+import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.templates.RandomizationTemplate;
@@ -54,6 +55,7 @@ public class LootTierProvider implements IDataProvider {
         healthAttribute.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(tier.getName().toString(),
                 5, AttributeModifier.Operation.ADDITION));
         healthAttribute.addApplicableSlot(LootSlotManager.MAIN_HAND);
+        healthAttribute.addApplicableSlot(LootSlotManager.RINGS);
         tier.addRandomizationOption(healthAttribute);
         AttributeOption manaRegen = new AttributeOption();
         manaRegen.addAttributeModifier(MKAttributes.MANA_REGEN, new AttributeModifier(tier.getName().toString(),
@@ -64,6 +66,9 @@ public class LootTierProvider implements IDataProvider {
         tier.addRandomizationOption(manaRegen);
         tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
                 RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+
+        tier.addItemToSlot(LootSlotManager.RINGS, MKWeaponsItems.CopperRing);
+
         return tier;
     }
 
