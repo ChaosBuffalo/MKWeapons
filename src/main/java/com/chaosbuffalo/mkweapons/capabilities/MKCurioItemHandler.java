@@ -6,7 +6,6 @@ import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -17,7 +16,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +33,7 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
         isCacheDirty = true;
     }
 
-    public List<IAccessoryEffect> getEffects() {
+    private List<IAccessoryEffect> getStackEffects() {
         return effects;
     }
 
@@ -45,14 +43,14 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
 
     @Override
     public void onEquip(SlotContext slotContext, ItemStack prevStack) {
-        for (IAccessoryEffect effect : getCachedEffects()){
+        for (IAccessoryEffect effect : getEffects()){
             effect.onEntityEquip(slotContext.getWearer());
         }
     }
 
     @Override
     public void onUnequip(SlotContext slotContext, ItemStack newStack) {
-        for (IAccessoryEffect effect : getCachedEffects()){
+        for (IAccessoryEffect effect : getEffects()){
             effect.onEntityUnequip(slotContext.getWearer());
         }
     }
@@ -75,13 +73,13 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
         return (MKAccessory) getItemStack().getItem();
     }
 
-    public List<IAccessoryEffect> getCachedEffects() {
+    public List<IAccessoryEffect> getEffects() {
         if (isCacheDirty){
             cachedEffects.clear();
             if (getItemStack().getItem() instanceof MKAccessory){
                 cachedEffects.addAll(((MKAccessory) getItemStack().getItem()).getAccessoryEffects());
             }
-            cachedEffects.addAll(getEffects());
+            cachedEffects.addAll(getStackEffects());
             isCacheDirty = false;
         }
         return cachedEffects;
@@ -96,7 +94,7 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         ListNBT effectList = new ListNBT();
-        for (IAccessoryEffect effect : getEffects()){
+        for (IAccessoryEffect effect : getStackEffects()){
             effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("accessory_effects", effectList);

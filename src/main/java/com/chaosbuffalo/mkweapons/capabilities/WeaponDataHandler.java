@@ -49,19 +49,18 @@ public class WeaponDataHandler implements IWeaponData {
         return itemStack;
     }
 
-    @Override
-    public List<IMeleeWeaponEffect> getMeleeWeaponEffects() {
+    private List<IMeleeWeaponEffect> getStackMeleeEffects() {
         return meleeWeaponEffects;
     }
 
     @Override
-    public List<IMeleeWeaponEffect> getCachedMeleeWeaponEffects() {
+    public List<IMeleeWeaponEffect> getMeleeEffects() {
         if (isCacheDirty){
             cachedMeleeWeaponEffects.clear();
             if (getItemStack().getItem() instanceof IMKMeleeWeapon){
                 cachedMeleeWeaponEffects.addAll(((IMKMeleeWeapon) getItemStack().getItem()).getWeaponEffects());
             }
-            cachedMeleeWeaponEffects.addAll(getMeleeWeaponEffects());
+            cachedMeleeWeaponEffects.addAll(getStackMeleeEffects());
             isCacheDirty = false;
         }
         return cachedMeleeWeaponEffects;
@@ -116,19 +115,18 @@ public class WeaponDataHandler implements IWeaponData {
         markCacheDirty();
     }
 
-    @Override
-    public List<IRangedWeaponEffect> getRangedWeaponEffects() {
+    private List<IRangedWeaponEffect> getStackRangedEffects() {
         return rangedWeaponEffects;
     }
 
     @Override
-    public List<IRangedWeaponEffect> getCachedRangedWeaponEffects() {
+    public List<IRangedWeaponEffect> getRangedEffects() {
         if (isCacheDirty){
             cachedRangedWeaponEffects.clear();
             if (getItemStack().getItem() instanceof IMKRangedWeapon){
                 cachedRangedWeaponEffects.addAll(((IMKRangedWeapon) getItemStack().getItem()).getWeaponEffects());
             }
-            cachedRangedWeaponEffects.addAll(getRangedWeaponEffects());
+            cachedRangedWeaponEffects.addAll(getStackRangedEffects());
             isCacheDirty = false;
         }
         return cachedRangedWeaponEffects;
@@ -138,12 +136,12 @@ public class WeaponDataHandler implements IWeaponData {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         ListNBT effectList = new ListNBT();
-        for (IMeleeWeaponEffect effect : getMeleeWeaponEffects()){
+        for (IMeleeWeaponEffect effect : getStackMeleeEffects()){
             effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("melee_effects", effectList);
         ListNBT rangedEffectList = new ListNBT();
-        for (IRangedWeaponEffect effect : getRangedWeaponEffects()){
+        for (IRangedWeaponEffect effect : getStackRangedEffects()){
             rangedEffectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("ranged_effects", rangedEffectList);

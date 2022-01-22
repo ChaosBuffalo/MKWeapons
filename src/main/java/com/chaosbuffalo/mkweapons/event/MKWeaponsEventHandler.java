@@ -141,7 +141,7 @@ public class MKWeaponsEventHandler {
     public static void onLivingCast(LivingCompleteAbilityEvent event){
         List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(event.getEntityLiving());
         for (MKCurioItemHandler handler : curios){
-            for (IAccessoryEffect effect : handler.getCachedEffects()){
+            for (IAccessoryEffect effect : handler.getEffects()){
                 effect.livingCompleteAbility(event.getEntityLiving(), event.getEntityData(), handler.getAccessory(),
                         handler.getItemStack(), event.getAbility());
             }
@@ -171,7 +171,7 @@ public class MKWeaponsEventHandler {
             }
             List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(livingSource);
             for (MKCurioItemHandler handler : curios){
-                for (IAccessoryEffect effect : handler.getCachedEffects()){
+                for (IAccessoryEffect effect : handler.getEffects()){
                     newDamage = effect.modifyDamageDealt(newDamage, handler.getAccessory(),
                             handler.getItemStack(), livingTarget, livingSource);
                 }

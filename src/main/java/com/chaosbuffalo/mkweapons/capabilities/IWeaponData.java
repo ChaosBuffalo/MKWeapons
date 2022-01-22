@@ -15,9 +15,7 @@ public interface IWeaponData extends INBTSerializable<CompoundNBT> {
 
     ItemStack getItemStack();
 
-    List<IMeleeWeaponEffect> getMeleeWeaponEffects();
-
-    List<IMeleeWeaponEffect> getCachedMeleeWeaponEffects();
+    List<IMeleeWeaponEffect> getMeleeEffects();
 
     ResourceLocation getAbilityName();
 
@@ -37,7 +35,5 @@ public interface IWeaponData extends INBTSerializable<CompoundNBT> {
 
     void removeRangedWeaponEffect(int index);
 
-    List<IRangedWeaponEffect> getRangedWeaponEffects();
-
-    List<IRangedWeaponEffect> getCachedRangedWeaponEffects();
+    List<IRangedWeaponEffect> getRangedEffects();
 }

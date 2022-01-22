@@ -42,19 +42,18 @@ public class ArmorDataHandler implements IArmorData {
         return itemStack;
     }
 
-    @Override
-    public List<IArmorEffect> getArmorEffects() {
+    private List<IArmorEffect> getStackArmorEffects() {
         return armorEffects;
     }
 
     @Override
-    public List<IArmorEffect> getCachedArmorEffects() {
+    public List<IArmorEffect> getArmorEffects() {
         if (isCacheDirty){
             cachedArmorEffects.clear();
             if (getItemStack().getItem() instanceof IMKArmor){
                 cachedArmorEffects.addAll(((IMKArmor) getItemStack().getItem()).getArmorEffects());
             }
-            cachedArmorEffects.addAll(getArmorEffects());
+            cachedArmorEffects.addAll(getStackArmorEffects());
             isCacheDirty = false;
         }
         return cachedArmorEffects;
@@ -90,7 +89,7 @@ public class ArmorDataHandler implements IArmorData {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         ListNBT effectList = new ListNBT();
-        for (IArmorEffect effect : getArmorEffects()){
+        for (IArmorEffect effect : getStackArmorEffects()){
             effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("armor_effects", effectList);

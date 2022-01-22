@@ -33,7 +33,7 @@ public class MKAccessory extends Item {
     public List<? extends IAccessoryEffect> getAccessoryEffects(ItemStack item){
         return item.getCapability(CuriosCapability.ITEM).map(cap -> {
             if (cap instanceof MKCurioItemHandler) {
-                return ((MKCurioItemHandler) cap).getCachedEffects();
+                return ((MKCurioItemHandler) cap).getEffects();
             } else {
                 return effects;
             }
