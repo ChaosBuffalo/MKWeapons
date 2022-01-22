@@ -88,7 +88,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 5.0,
           "Operation": 0,
-          "UUID": "b74793ac-f8ee-44f6-9d1e-37681379641f",
+          "UUID": "53dbe1f4-ed16-471e-9d82-2c30e890c374",
           "AttributeName": "minecraft:generic.max_health"
         }
       ]
@@ -107,7 +107,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 0.5,
           "Operation": 0,
-          "UUID": "8efeec65-46c5-496f-92b3-f0d2428cea81",
+          "UUID": "92e1e31e-50aa-478b-b2cd-cc00ead4e430",
           "AttributeName": "mkcore:mana_regen"
         }
       ]

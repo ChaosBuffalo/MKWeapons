@@ -39,8 +39,8 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         setChance(dynamic.get("chance").asDouble(0.05));
     }
 
@@ -52,12 +52,13 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
         this.chance = chance;
     }
 
+
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("chance"), ops.createDouble(getChance()))).result()
-                .orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("chance"), ops.createDouble(getChance()));
     }
+
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {

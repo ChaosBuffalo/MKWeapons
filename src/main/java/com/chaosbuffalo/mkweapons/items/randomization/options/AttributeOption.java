@@ -2,7 +2,9 @@ package com.chaosbuffalo.mkweapons.items.randomization.options;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
+import com.chaosbuffalo.mkweapons.items.effects.accesory.AccessoryModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.armor.ArmorModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.MeleeModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedModifierEffect;
@@ -52,6 +54,10 @@ public class AttributeOption extends BaseRandomizationOption {
         } else if (stack.getItem() instanceof IMKArmor){
             stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
                     cap -> cap.addArmorEffect(new ArmorModifierEffect(modifiers))
+            );
+        } else if (stack.getItem() instanceof MKAccessory){
+            MKAccessory.getAccessoryHandler(stack).ifPresent(
+                    cap -> cap.addEffect(new AccessoryModifierEffect(modifiers))
             );
         }
     }

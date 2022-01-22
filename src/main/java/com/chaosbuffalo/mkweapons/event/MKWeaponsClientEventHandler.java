@@ -4,23 +4,19 @@ import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MKWeaponsClientEventHandler {
@@ -38,6 +34,10 @@ public class MKWeaponsClientEventHandler {
         }
         if (item instanceof MKArmorItem){
             ((MKArmorItem) item).addToTooltip(event.getItemStack(),
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+        }
+        if (item instanceof MKAccessory){
+            ((MKAccessory) item).addToTooltip(event.getItemStack(),
                     event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
 

@@ -32,16 +32,15 @@ public class UndeadDamageMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         damageMultiplier = dynamic.get("multiplier").asFloat(1.5f);
     }
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("multiplier"), ops.createFloat(damageMultiplier)
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("multiplier"), ops.createFloat(damageMultiplier));
     }
 
     @Override

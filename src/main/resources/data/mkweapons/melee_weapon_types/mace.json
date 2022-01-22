@@ -7,11 +7,11 @@
   "isTwoHanded": false,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.undead_damage",
+      "itemEffectType": "mkweapons:weapon_effect.undead_damage",
       "multiplier": 1.5
     },
     {
-      "type": "mkweapons:weapon_effect.double_strike",
+      "itemEffectType": "mkweapons:weapon_effect.double_strike",
       "chance": 0.1
     }
   ],

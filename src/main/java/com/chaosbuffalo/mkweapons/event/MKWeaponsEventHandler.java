@@ -3,10 +3,14 @@ package com.chaosbuffalo.mkweapons.event;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
+import com.chaosbuffalo.mkcore.events.LivingCompleteAbilityEvent;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
+import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
@@ -16,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -27,6 +30,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -133,6 +137,17 @@ public class MKWeaponsEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onLivingCast(LivingCompleteAbilityEvent event){
+        List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(event.getEntityLiving());
+        for (MKCurioItemHandler handler : curios){
+            for (IAccessoryEffect effect : handler.getCachedEffects()){
+                effect.livingCompleteAbility(event.getEntityLiving(), event.getEntityData(), handler.getAccessory(),
+                        handler.getItemStack(), event.getAbility());
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
@@ -140,21 +155,28 @@ public class MKWeaponsEventHandler {
         if (livingTarget.world.isRemote)
             return;
         DamageSource source = event.getSource();
-        if (SpellTriggers.isMinecraftPhysicalDamage(source)){
-            Entity trueSource = source.getTrueSource();
-            if (trueSource instanceof LivingEntity){
-                LivingEntity attacker = (LivingEntity)trueSource;
-                ItemStack mainHand = attacker.getHeldItemMainhand();
-                float newDamage = event.getAmount();
+        Entity trueSource = source.getTrueSource();
+        float newDamage = event.getAmount();
+        if (trueSource instanceof LivingEntity){
+            LivingEntity livingSource = (LivingEntity)trueSource;
+            if (SpellTriggers.isMinecraftPhysicalDamage(source)){
+                ItemStack mainHand = livingSource.getHeldItemMainhand();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
                     Item item = mainHand.getItem();
                     for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)){
                         newDamage = effect.modifyDamageDealt(newDamage, (IMKMeleeWeapon) item,
-                                mainHand, livingTarget, attacker);
+                                mainHand, livingTarget, livingSource);
                     }
                 }
-                event.setAmount(newDamage);
+            }
+            List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(livingSource);
+            for (MKCurioItemHandler handler : curios){
+                for (IAccessoryEffect effect : handler.getCachedEffects()){
+                    newDamage = effect.modifyDamageDealt(newDamage, handler.getAccessory(),
+                            handler.getItemStack(), livingTarget, livingSource);
+                }
             }
         }
+        event.setAmount(newDamage);
     }
 }

@@ -89,5 +89,8 @@
   "mkweapons.max_poise.description": "Max Poise: %.0f",
   "mkweapons.weapon_effect.armor_modifier.name": "Attributes:",
   "mkweapons.weapon_effect.melee_modifier.name": "Attributes:",
-  "mkweapons.weapon_effect.ranged_modifier.name": "Attributes:"
+  "mkweapons.weapon_effect.ranged_modifier.name": "Attributes:",
+  "mkweapons.accessory_effect.restore_mana.description": "Has a %s chance on cast of restoring %s of the mana cost.",
+  "mkweapons.accessory_effect.restore_mana.name": "Restore Mana",
+  "mkweapons.accessory_effect.restore_mana.message": "Your %s glows faintly as you feel your mana return."
 }

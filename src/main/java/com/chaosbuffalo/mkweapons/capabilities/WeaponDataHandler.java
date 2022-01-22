@@ -159,9 +159,9 @@ public class WeaponDataHandler implements IWeaponData {
             for (INBT effectNBT : effectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IMeleeWeaponEffect){
-                    meleeWeaponEffects.add((IMeleeWeaponEffect) effect);
+                    addMeleeWeaponEffect((IMeleeWeaponEffect) effect);
                 } else {
-                    MKWeapons.LOGGER.error("Failed to deserialize melee effect of type {} for item {}", effect.getType(),
+                    MKWeapons.LOGGER.error("Failed to deserialize melee effect of type {} for item {}", effect.getTypeName(),
                             getItemStack());
                 }
             }
@@ -171,9 +171,9 @@ public class WeaponDataHandler implements IWeaponData {
             for (INBT effectNBT : rangedEffectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IRangedWeaponEffect){
-                    rangedWeaponEffects.add((IRangedWeaponEffect) effect);
+                    addRangedWeaponEffect((IRangedWeaponEffect) effect);
                 } else {
-                    MKWeapons.LOGGER.error("Failed to deserialize ranged effect of type {} for item {}", effect.getType(),
+                    MKWeapons.LOGGER.error("Failed to deserialize ranged effect of type {} for item {}", effect.getTypeName(),
                             getItemStack());
                 }
             }

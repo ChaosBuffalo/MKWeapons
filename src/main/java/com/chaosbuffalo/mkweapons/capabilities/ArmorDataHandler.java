@@ -104,9 +104,9 @@ public class ArmorDataHandler implements IArmorData {
             for (INBT effectNBT : effectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
                 if (effect instanceof IArmorEffect){
-                    armorEffects.add((IArmorEffect) effect);
+                    addArmorEffect((IArmorEffect) effect);
                 } else {
-                    MKWeapons.LOGGER.error("Failed to deserialize armor effect of type {} for item {}", effect.getType(),
+                    MKWeapons.LOGGER.error("Failed to deserialize armor effect of type {} for item {}", effect.getTypeName(),
                             getItemStack());
                 }
             }

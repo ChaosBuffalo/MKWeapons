@@ -34,18 +34,17 @@ public class RapidFireRangedWeaponEffect extends BaseRangedWeaponEffect{
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         maxHits = dynamic.get("maxHits").asInt(5);
         perHitReduction = dynamic.get("perHit").asFloat(.10f);
     }
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("maxHits"), ops.createInt(maxHits),
-                ops.createString("perHit"), ops.createFloat(perHitReduction)
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("maxHits"), ops.createInt(maxHits));
+        builder.put(ops.createString("perHit"), ops.createFloat(perHitReduction));
     }
 
     @Override
