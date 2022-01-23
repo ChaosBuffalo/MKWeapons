@@ -94,6 +94,13 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+        return stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
+                .orElse(getAttributeModifiers(slot));
+    }
+
+
+    @Override
     public List<IArmorEffect> getArmorEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(cap -> {
             if (cap.hasArmorEffects()){

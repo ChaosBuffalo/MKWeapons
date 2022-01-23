@@ -4,10 +4,8 @@ import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEnt
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -38,12 +36,13 @@ public class ItemModifierEffect extends BaseItemEffect {
         modifiers.add(new AttributeOptionEntry(attribute, attributeModifier));
     }
 
+    public List<AttributeOptionEntry> getModifiers() {
+        return modifiers;
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-//        super.addInformation(stack, worldIn, tooltip);
-        for (AttributeOptionEntry entry : modifiers){
-            tooltip.add(entry.getDescription());
-        }
+
     }
 
     @Override
@@ -58,29 +57,6 @@ public class ItemModifierEffect extends BaseItemEffect {
         for (AttributeOptionEntry mod : deserialized){
             if (mod != null){
                 modifiers.add(mod);
-            }
-        }
-    }
-
-    @Override
-    public void onEntityEquip(LivingEntity entity) {
-        for (AttributeOptionEntry entry : modifiers){
-            ModifiableAttributeInstance attr = entity.getAttribute(entry.getAttribute());
-            if (attr != null){
-                if (!attr.hasModifier(entry.getModifier())){
-                    attr.applyNonPersistentModifier(entry.getModifier());
-                }
-
-            }
-        }
-    }
-
-    @Override
-    public void onEntityUnequip(LivingEntity entity) {
-        for (AttributeOptionEntry entry : modifiers){
-            ModifiableAttributeInstance attr = entity.getAttribute(entry.getAttribute());
-            if (attr != null) {
-                attr.removeModifier(entry.getModifier());
             }
         }
     }
