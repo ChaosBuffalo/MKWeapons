@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkweapons.capabilities;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
@@ -147,20 +148,23 @@ public class WeaponDataHandler implements IWeaponData {
         Multimap<Attribute, AttributeModifier> newMods = HashMultimap.create();
         newMods.putAll(modifiers);
         if (slot == EquipmentSlotType.MAINHAND){
-            for (IRangedWeaponEffect weaponEffect : getRangedEffects()) {
-                if (weaponEffect instanceof ItemModifierEffect) {
-                    ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
-                    modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
+            if (itemStack.getItem() instanceof MKMeleeWeapon){
+                for (IMeleeWeaponEffect weaponEffect : getMeleeEffects()) {
+                    if (weaponEffect instanceof ItemModifierEffect) {
+                        ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
+                        modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
+                    }
+                }
+            } else {
+                for (IRangedWeaponEffect weaponEffect : getRangedEffects()) {
+                    if (weaponEffect instanceof ItemModifierEffect) {
+                        ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
+                        modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
+                    }
                 }
             }
-            for (IMeleeWeaponEffect weaponEffect : getMeleeEffects()) {
-                if (weaponEffect instanceof ItemModifierEffect) {
-                    ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
-                    modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
-                }
-            }
-            this.modifiers.put(slot, newMods);
         }
+        this.modifiers.put(slot, newMods);
     }
 
     @Override

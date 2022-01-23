@@ -93,8 +93,8 @@ public class ArmorDataHandler implements IArmorData {
                     modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
                 }
             }
-            this.modifiers.put(slot, newMods);
         }
+        this.modifiers.put(slot, newMods);
     }
 
     private MKArmorItem getArmorItem(){
