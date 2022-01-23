@@ -40,7 +40,11 @@ public class ItemEffects {
     @Nullable
     public static <D> IItemEffect deserializeEffect(Dynamic<D> dynamic){
         ResourceLocation type = BaseItemEffect.getType(dynamic);
-        IItemEffect weaponEffect = ITEM_EFFECT_DESERIALIZERS.get(type).get();
+        Supplier<IItemEffect> deserializer = ITEM_EFFECT_DESERIALIZERS.get(type);
+        if (deserializer == null){
+            return null;
+        }
+        IItemEffect weaponEffect = deserializer.get();
         if (weaponEffect != null){
             weaponEffect.deserialize(dynamic);
         }

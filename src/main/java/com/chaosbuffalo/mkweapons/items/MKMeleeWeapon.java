@@ -95,9 +95,9 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     @Override
     public void reload(){
         weaponEffects.clear();
+        recalculateModifiers();
         weaponEffects.addAll(getMKTier().getMeleeWeaponEffects());
         weaponEffects.addAll(getWeaponType().getWeaponEffects());
-        recalculateModifiers();
     }
 
     @Override
@@ -123,6 +123,12 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         });
 
         return super.hitEntity(stack, target, attacker);
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+        return stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
+                .orElse(getAttributeModifiers(slot));
     }
 
     @Override

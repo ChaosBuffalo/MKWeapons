@@ -4,8 +4,13 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.serialization.Dynamic;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -16,14 +21,14 @@ import net.minecraftforge.common.util.INBTSerializable;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT> {
 
     private final ItemStack stack;
     private final List<IAccessoryEffect> effects;
     private final List<IAccessoryEffect> cachedEffects;
+    private final Map<String, Multimap<Attribute, AttributeModifier>> modifiers = new HashMap<>();
     private boolean isCacheDirty;
 
     public MKCurioItemHandler(ItemStack itemStack){
@@ -62,6 +67,7 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
 
     public void markCacheDirty() {
         isCacheDirty = true;
+        modifiers.clear();
     }
 
     public void removeEffect(int index) {
@@ -89,6 +95,24 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
         return !effects.isEmpty();
     }
 
+    private void loadSlotModifiers(String slotId){
+        Multimap<Attribute, AttributeModifier> newMods = HashMultimap.create();
+        for (IAccessoryEffect weaponEffect : getEffects()) {
+            if (weaponEffect instanceof ItemModifierEffect) {
+                ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
+                modEffect.getModifiers().forEach(e -> newMods.put(e.getAttribute(), e.getModifier()));
+            }
+        }
+        this.modifiers.put(slotId, newMods);
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(SlotContext slotContext, UUID uuid) {
+        if (!modifiers.containsKey(slotContext.getIdentifier())){
+            loadSlotModifiers(slotContext.getIdentifier());
+        }
+        return modifiers.get(slotContext.getIdentifier());
+    }
 
     @Override
     public CompoundNBT serializeNBT() {

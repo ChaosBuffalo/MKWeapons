@@ -5,15 +5,21 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
@@ -100,6 +106,13 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
         }
         return vel;
     }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+        return stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
+                .orElse(getAttributeModifiers(slot));
+    }
+
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {

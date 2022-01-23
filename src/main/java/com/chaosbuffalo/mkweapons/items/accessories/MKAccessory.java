@@ -2,8 +2,13 @@ package com.chaosbuffalo.mkweapons.items.accessories;
 
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemProvider;
+import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
+import com.google.common.collect.Multimap;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
