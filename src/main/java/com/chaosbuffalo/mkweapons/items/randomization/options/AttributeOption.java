@@ -23,20 +23,31 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AttributeOption extends BaseRandomizationOption {
 
     private final List<AttributeOptionEntry> modifiers;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "attributes");
+    private boolean uniqueMods;
 
 
     public AttributeOption(){
         this(RandomizationSlotManager.ATTRIBUTE_SLOT);
+        uniqueMods = true;
     }
 
     public AttributeOption(IRandomizationSlot slot){
         super(NAME, slot);
         modifiers = new ArrayList<>();
+    }
+
+    public void setUniqueMods(boolean uniqueMods) {
+        this.uniqueMods = uniqueMods;
+    }
+
+    public List<AttributeOptionEntry> getModifiers() {
+        return uniqueMods ? modifiers.stream().map(AttributeOptionEntry::copy).collect(Collectors.toList()) : modifiers;
     }
 
     public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
@@ -47,39 +58,33 @@ public class AttributeOption extends BaseRandomizationOption {
     public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
         if (stack.getItem() instanceof IMKMeleeWeapon){
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addMeleeWeaponEffect(new MeleeModifierEffect(modifiers)));
+                    cap -> cap.addMeleeWeaponEffect(new MeleeModifierEffect(getModifiers())));
         } else if (stack.getItem() instanceof IMKRangedWeapon){
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addRangedWeaponEffect(new RangedModifierEffect(modifiers)));
+                    cap -> cap.addRangedWeaponEffect(new RangedModifierEffect(getModifiers())));
         } else if (stack.getItem() instanceof IMKArmor){
             stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addArmorEffect(new ArmorModifierEffect(modifiers))
+                    cap -> cap.addArmorEffect(new ArmorModifierEffect(getModifiers()))
             );
         } else if (stack.getItem() instanceof MKAccessory){
             MKAccessory.getAccessoryHandler(stack).ifPresent(
-                    cap -> cap.addEffect(new AccessoryModifierEffect(modifiers))
+                    cap -> cap.addEffect(new AccessoryModifierEffect(getModifiers()))
             );
         }
     }
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-//        CompoundNBT fakeCap = new CompoundNBT();
-//        CompoundNBT weaponsCap = new CompoundNBT();
-//        fakeCap.put(WeaponsCapabilities.MK_WEAPON_CAP_ID.toString(), weaponsCap);
-//        ItemStack testStack = new ItemStack(MKWeaponsItems.WEAPONS.get(0), 1, fakeCap);
-//        testStack.addEnchantment(Enchantments.FIRE_ASPECT, 2);
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("modifiers"),
-                ops.createList(modifiers.stream().map(mod -> mod.serialize(ops)))
-//                ops.createString("testItem"),
-//                SerializationUtils.serializeItemStack(ops, testStack)
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("modifiers"),
+                ops.createList(modifiers.stream().map(mod -> mod.serialize(ops))));
+        builder.put(ops.createString("unique"), ops.createBoolean(uniqueMods));
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
+        uniqueMods = dynamic.get("unique").asBoolean(true);
         List<AttributeOptionEntry> deserialized = dynamic.get("modifiers").asList(dyn -> {
             AttributeOptionEntry entry = new AttributeOptionEntry();
             entry.deserialize(dyn);
@@ -91,10 +96,5 @@ public class AttributeOption extends BaseRandomizationOption {
                 modifiers.add(mod);
             }
         }
-//        ItemStack test = dynamic.get("testItem").get().result().map(SerializationUtils::deserializeItemStack)
-//                .orElse(ItemStack.EMPTY);
-//        MKWeapons.LOGGER.info("Test item {} ", test);
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.randomization;
 
 import com.chaosbuffalo.mkcore.utils.RandomCollection;
+import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.randomization.options.IRandomizationOption;
 import com.chaosbuffalo.mkweapons.items.randomization.options.RandomizationOptionManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.IRandomizationSlot;
@@ -48,10 +49,12 @@ public class LootTier {
     }
 
     @Nullable
-    public RandomizationTemplate chooseTemplate(Random random){
+    public RandomizationTemplate chooseTemplate(Random random, LootSlot slot){
         RandomCollection<RandomizationTemplate> choices = new RandomCollection<>();
         for (RandomizationTemplateEntry entry : templates.values()){
-            choices.add(entry.weight, entry.template);
+            if (entry.template.getLootSlot().equals(slot)){
+                choices.add(entry.weight, entry.template);
+            }
         }
         if (choices.size() > 0) {
             return choices.next(random);
@@ -85,6 +88,9 @@ public class LootTier {
             }
             if (optionChoices.size() > 0){
                 chosenOptions.add(optionChoices.next(random));
+            } else {
+                MKWeapons.LOGGER.debug("No choices for slot: {} in template: {} generated loot slot: {}",
+                        randomizationSlot.getName(), template.getName(), slot.getName());
             }
         }
         return new LootConstructor(stack, slot, chosenOptions);
@@ -92,7 +98,7 @@ public class LootTier {
 
     @Nullable
     public LootConstructor generateConstructorForSlot(Random random, LootSlot slot){
-        RandomizationTemplate template = chooseTemplate(random);
+        RandomizationTemplate template = chooseTemplate(random, slot);
         if (template == null){
             return null;
         } else {

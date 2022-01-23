@@ -8,6 +8,7 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffe
 import com.mojang.serialization.Dynamic;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -36,6 +37,7 @@ public class ItemEffects {
         addWeaponEffectDeserializer(AccessoryModifierEffect.NAME, AccessoryModifierEffect::new);
     }
 
+    @Nullable
     public static <D> IItemEffect deserializeEffect(Dynamic<D> dynamic){
         ResourceLocation type = BaseItemEffect.getType(dynamic);
         IItemEffect weaponEffect = ITEM_EFFECT_DESERIALIZERS.get(type).get();

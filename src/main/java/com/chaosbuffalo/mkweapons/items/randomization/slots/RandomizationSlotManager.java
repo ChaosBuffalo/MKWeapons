@@ -15,6 +15,15 @@ public class RandomizationSlotManager {
     public static final IRandomizationSlot ATTRIBUTE_SLOT = new RandomizationSlot(
             new ResourceLocation(MKWeapons.MODID, "randomization.attributes"), TextFormatting.DARK_GREEN);
 
+    public static final IRandomizationSlot EFFECT_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.effect"), TextFormatting.AQUA);
+
+    public static final IRandomizationSlot ABILITY_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.ability"), TextFormatting.AQUA);
+
+    public static final IRandomizationSlot NAME_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.name"), TextFormatting.WHITE);
+
     public static final Map<ResourceLocation, IRandomizationSlot> SLOTS = new HashMap<>();
 
     public static void addRandomizatiotSlot(IRandomizationSlot slot){
@@ -27,5 +36,8 @@ public class RandomizationSlotManager {
 
     public static void setupRandomizationSlots(){
         addRandomizatiotSlot(ATTRIBUTE_SLOT);
+        addRandomizatiotSlot(EFFECT_SLOT);
+        addRandomizatiotSlot(ABILITY_SLOT);
+        addRandomizatiotSlot(NAME_SLOT);
     }
 }

@@ -26,12 +26,13 @@ public class LootSlotManager {
             EquipmentSlotType.HEAD);
     public static final LootSlot FEET = new LootSlot(new ResourceLocation(MKWeapons.MODID, "feet"),
             EquipmentSlotType.FEET);
-    public static final LootSlot INVALID = new LootSlot(INVALID_LOOT_SLOT, (ent) -> ItemStack.EMPTY,
-            (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
+    public static final LootSlot INVALID = new LootSlot(INVALID_LOOT_SLOT, (ent, item) -> {});
     public static final LootSlot ITEMS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "items"),
-            (ent) -> ItemStack.EMPTY, (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
+            (ent, item) -> {});
     public static final LootSlot RINGS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "rings"),
-            (ent) -> ItemStack.EMPTY, (ent, item) -> {}, ((attributeModifier, s, itemStack) -> {}));
+            (ent, item) -> {});
+    public static final LootSlot EARRINGS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "earrings"),
+            (ent, item) -> {});
 
     public static final Map<ResourceLocation, LootSlot> SLOTS = new HashMap<>();
 
@@ -53,8 +54,6 @@ public class LootSlotManager {
         addLootSlot(INVALID);
         addLootSlot(ITEMS);
         addLootSlot(RINGS);
+        addLootSlot(EARRINGS);
     }
-
-
-
 }

@@ -32,6 +32,11 @@ public class MKWeaponModelProvider extends ItemModelProvider {
             makeBowModels(bow);
         }
         makeSimpleItem(MKWeaponsItems.CopperRing);
+        makeSimpleItem(MKWeaponsItems.GoldEarring);
+        makeSimpleItem(MKWeaponsItems.GoldRing);
+        makeSimpleItem(MKWeaponsItems.RoseGoldRing);
+        makeSimpleItem(MKWeaponsItems.SilverRing);
+        makeSimpleItem(MKWeaponsItems.SilverEarring);
     }
 
     private void makeSimpleItem(Item item){

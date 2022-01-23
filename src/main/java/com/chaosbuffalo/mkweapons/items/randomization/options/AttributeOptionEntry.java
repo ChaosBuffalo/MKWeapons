@@ -37,6 +37,10 @@ public class AttributeOptionEntry {
         return attribute;
     }
 
+    public AttributeOptionEntry copy(){
+        return new AttributeOptionEntry(getAttribute(), new AttributeModifier(UUID.randomUUID(), modifier.getName(), modifier.getAmount(), modifier.getOperation()));
+    }
+
     public <D> D serialize(DynamicOps<D> ops){
         return ops.createMap(ImmutableMap.of(
                 ops.createString("Name"), ops.createString(modifier.getName()),

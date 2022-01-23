@@ -65,6 +65,16 @@ public class LootTierProvider implements IDataProvider {
         manaRegen.addApplicableSlot(LootSlotManager.HEAD);
         tier.addRandomizationOption(manaRegen);
         tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
+                LootSlotManager.RINGS,
+                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
+                LootSlotManager.MAIN_HAND,
+                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
+                LootSlotManager.CHEST,
+                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
+                LootSlotManager.HEAD,
                 RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
 
         tier.addItemToSlot(LootSlotManager.RINGS, MKWeaponsItems.CopperRing);
