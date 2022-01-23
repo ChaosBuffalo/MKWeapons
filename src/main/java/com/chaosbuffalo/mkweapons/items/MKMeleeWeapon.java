@@ -199,27 +199,19 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         return mkTier;
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
-        tooltip.add(new TranslationTextComponent("mkweapons.crit_chance.description",
-                getWeaponType().getCritChance() * 100.0f).mergeStyle(TextFormatting.GRAY));
-        tooltip.add(new TranslationTextComponent("mkweapons.crit_multiplier.description",
-                getWeaponType().getCritMultiplier()).mergeStyle(TextFormatting.GRAY));
-        tooltip.add(new TranslationTextComponent("mkcore.max_poise.description",
-                getWeaponType().getMaxPoise()).mergeStyle(TextFormatting.GRAY));
-        tooltip.add(new TranslationTextComponent("mkcore.block_efficiency.description",
-                getWeaponType().getBlockEfficiency() * 100.0f).mergeStyle(TextFormatting.GRAY));
-        if (getWeaponType().isTwoHanded()){
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        if (getWeaponType().isTwoHanded()) {
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
                     .mergeStyle(TextFormatting.GRAY));
-            if (Screen.hasShiftDown()){
+            if (Screen.hasShiftDown()) {
                 tooltip.add(new TranslationTextComponent("mkweapons.two_handed.description"));
             }
         }
-        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
+        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)) {
             effect.addInformation(stack, worldIn, tooltip);
         }
         MKAbility ability = getAbility(stack);
-        if (ability != null){
+        if (ability != null) {
             tooltip.add(new TranslationTextComponent("mkweapons.grants_ability",
                     ability.getAbilityName()).mergeStyle(TextFormatting.GOLD));
         }
