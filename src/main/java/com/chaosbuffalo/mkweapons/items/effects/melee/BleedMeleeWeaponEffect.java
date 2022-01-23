@@ -55,20 +55,19 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         setMaxStacks(dynamic.get("maxStacks").asInt(5));
         setDurationSeconds(dynamic.get("durationSeconds").asInt(5));
         setDamageMultiplier(dynamic.get("damageMultiplier").asFloat(2.0f));
     }
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("damageMultiplier"), ops.createFloat(damageMultiplier),
-                ops.createString("maxStacks"), ops.createInt(maxStacks),
-                ops.createString("durationSeconds"), ops.createInt(durationSeconds)
-        )).result().orElse(ops.emptyMap());
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("damageMultiplier"), ops.createFloat(damageMultiplier));
+        builder.put(ops.createString("maxStacks"), ops.createInt(maxStacks));
+        builder.put(ops.createString("durationSeconds"), ops.createInt(durationSeconds));
     }
 
     @Override

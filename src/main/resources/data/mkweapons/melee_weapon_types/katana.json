@@ -7,7 +7,7 @@
   "isTwoHanded": true,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.combo_strike",
+      "itemEffectType": "mkweapons:weapon_effect.combo_strike",
       "numberOfHits": 5,
       "perHit": 0.25
     }

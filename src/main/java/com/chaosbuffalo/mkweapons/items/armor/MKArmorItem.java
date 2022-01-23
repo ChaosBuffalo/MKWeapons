@@ -97,7 +97,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     public List<IArmorEffect> getArmorEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(cap -> {
             if (cap.hasArmorEffects()){
-                return cap.getCachedArmorEffects();
+                return cap.getArmorEffects();
             } else {
                 return armorEffects;
             }

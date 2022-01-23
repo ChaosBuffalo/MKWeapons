@@ -7,13 +7,13 @@
   "isTwoHanded": false,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.bleed",
+      "itemEffectType": "mkweapons:weapon_effect.bleed",
       "damageMultiplier": 1.5,
       "maxStacks": 5,
       "durationSeconds": 5
     },
     {
-      "type": "mkweapons:weapon_effect.fury_strike",
+      "itemEffectType": "mkweapons:weapon_effect.fury_strike",
       "numberOfHits": 3,
       "perHit": 0.4
     }

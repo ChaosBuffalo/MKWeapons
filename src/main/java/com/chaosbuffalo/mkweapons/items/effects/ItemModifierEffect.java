@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkweapons.items.effects;
 
-import com.chaosbuffalo.mkweapons.items.effects.BaseItemEffect;
 import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEntry;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
@@ -29,11 +28,10 @@ public class ItemModifierEffect extends BaseItemEffect {
 
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-                ops.createString("modifiers"),
-                ops.createList(modifiers.stream().map(mod -> mod.serialize(ops)))
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("modifiers"),
+                ops.createList(modifiers.stream().map(mod -> mod.serialize(ops))));
     }
 
     public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
@@ -49,8 +47,8 @@ public class ItemModifierEffect extends BaseItemEffect {
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         List<AttributeOptionEntry> deserialized = dynamic.get("modifiers").asList(dyn -> {
             AttributeOptionEntry entry = new AttributeOptionEntry();
             entry.deserialize(dyn);

@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkweapons.capabilities.IArrowData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.command.WeaponsCommands;
 import com.chaosbuffalo.mkweapons.event.MKWeaponsEventHandler;
+import com.chaosbuffalo.mkweapons.extensions.MKWCuriosExtension;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.randomization.LootTierManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
@@ -20,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -44,8 +46,10 @@ public class MKWeapons
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         weaponTypeManager = new WeaponTypeManager();
         lootTierManager = new LootTierManager();
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -58,6 +62,10 @@ public class MKWeapons
     }
 
 
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+        MKWCuriosExtension.sendExtension();
+    }
+
     private void processIMC(final InterModProcessEvent event)
     {
         LOGGER.info("MKWeapons.processIMC");
@@ -69,6 +77,7 @@ public class MKWeapons
                 ext.registerWeaponEffectsExtension();
             }
         });
+
     }
 
     private void clientSetup(final FMLClientSetupEvent event){

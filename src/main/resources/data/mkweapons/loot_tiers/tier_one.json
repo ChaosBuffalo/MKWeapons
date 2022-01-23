@@ -1,42 +1,12 @@
 {
   "slotItems": {
+    "mkweapons:rings": [
+      {
+        "itemStack": "{id: \"mkweapons:copper_ring\", Count: 1b}",
+        "weight": 1.0
+      }
+    ],
     "mkweapons:main_hand": [
-      {
-        "itemStack": "{id: \"mkweapons:dagger_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:katana_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:mace_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:staff_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:warhammer_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:longsword_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:greatsword_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:battleaxe_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
-      {
-        "itemStack": "{id: \"mkweapons:spear_stone\", Count: 1b, tag: {Damage: 0}}",
-        "weight": 1.0
-      },
       {
         "itemStack": "{id: \"mkweapons:dagger_wood\", Count: 1b, tag: {Damage: 0}}",
         "weight": 1.0
@@ -72,6 +42,42 @@
       {
         "itemStack": "{id: \"mkweapons:spear_wood\", Count: 1b, tag: {Damage: 0}}",
         "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:dagger_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:katana_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:mace_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:staff_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:warhammer_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:longsword_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:greatsword_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:battleaxe_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
+      },
+      {
+        "itemStack": "{id: \"mkweapons:spear_stone\", Count: 1b, tag: {Damage: 0}}",
+        "weight": 1.0
       }
     ]
   },
@@ -80,7 +86,8 @@
       "optionType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
-        "mkweapons:main_hand"
+        "mkweapons:main_hand",
+        "mkweapons:rings"
       ],
       "weight": 1.0,
       "modifiers": [
@@ -88,7 +95,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 5.0,
           "Operation": 0,
-          "UUID": "b74793ac-f8ee-44f6-9d1e-37681379641f",
+          "UUID": "a7664d80-4b68-4a19-9305-e1de8f1f61c1",
           "AttributeName": "minecraft:generic.max_health"
         }
       ]
@@ -97,9 +104,9 @@
       "optionType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
-        "mkweapons:head",
+        "mkweapons:main_hand",
         "mkweapons:chest",
-        "mkweapons:main_hand"
+        "mkweapons:head"
       ],
       "weight": 1.0,
       "modifiers": [
@@ -107,7 +114,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 0.5,
           "Operation": 0,
-          "UUID": "8efeec65-46c5-496f-92b3-f0d2428cea81",
+          "UUID": "2e77c911-e7e9-4b8e-89f7-cbcc7a267401",
           "AttributeName": "mkcore:mana_regen"
         }
       ]
