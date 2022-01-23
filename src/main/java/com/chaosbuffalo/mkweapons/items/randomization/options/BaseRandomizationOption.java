@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.randomization.options;
 
+import com.chaosbuffalo.mkcore.serialization.IDynamicMapTypedSerializer;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.IRandomizationSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
@@ -21,6 +22,7 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     private final Set<LootSlot> applicableSlots;
     private IRandomizationSlot slot;
     private double weight;
+    private static final String TYPE_ENTRY_NAME = "randomizationType";
 
     public BaseRandomizationOption(ResourceLocation typeName, IRandomizationSlot slot){
         this(typeName, slot, 1.0);
@@ -73,7 +75,15 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        builder.put(ops.createString("slotName"), ops.createString(getSlot().getName().toString()));
+        builder.put(ops.createString("slots"), ops.createList(applicableSlots.stream().map(x ->
+                ops.createString(x.getName().toString()))));
+        builder.put(ops.createString("weight"), ops.createDouble(getWeight()));
+    }
+
+    @Override
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
         List<String> slotNames = dynamic.get("slots").asList(d ->
                 d.asString(LootSlotManager.INVALID_LOOT_SLOT.toString()));
         applicableSlots.clear();
@@ -93,22 +103,21 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     }
 
     @Override
+    public ResourceLocation getTypeName() {
+        return typeName;
+    }
+
+    @Override
+    public String getTypeEntryName() {
+        return TYPE_ENTRY_NAME;
+    }
+
+    @Override
     public Set<LootSlot> getApplicableSlots() {
         return applicableSlots;
     }
 
-    @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.createMap(ImmutableMap.of(
-                ops.createString("optionType"), ops.createString(getName().toString()),
-                ops.createString("slotName"), ops.createString(getSlot().getName().toString()),
-                ops.createString("slots"), ops.createList(applicableSlots.stream().map(x ->
-                        ops.createString(x.getName().toString()))),
-                ops.createString("weight"), ops.createDouble(getWeight())
-        ));
-    }
-
-    public static <D> ResourceLocation readType(Dynamic<D> dynamic){
-        return new ResourceLocation(dynamic.get("optionType").asString(INVALID_OPTION.toString()));
+    public static <D> ResourceLocation getType(Dynamic<D> dynamic) {
+        return IDynamicMapTypedSerializer.getType(dynamic, TYPE_ENTRY_NAME).orElse(INVALID_OPTION);
     }
 }

@@ -93,5 +93,12 @@
   "mkweapons.accessory_effect.restore_mana.description": "Has a %s chance on cast of restoring %s of the mana cost.",
   "mkweapons.accessory_effect.restore_mana.name": "Restore Mana",
   "mkweapons.accessory_effect.restore_mana.message": "Your %s glows faintly as you feel your mana return.",
-  "item.mkweapons.copper_ring": "Copper Ring"
+  "item.mkweapons.copper_ring": "Copper Ring",
+  "item.mkweapons.gold_ring": "Gold Ring",
+  "item.mkweapons.silver_ring": "Silver Ring",
+  "item.mkweapons.rose_gold_ring": "Rose Gold Ring",
+  "item.mkweapons.gold_earring": "Gold Earring",
+  "item.mkweapons.silver_earring": "Silver Earring",
+  "curios.identifier.earring": "Earring",
+  "mkweapons.prefix.format": "%s %s"
 }

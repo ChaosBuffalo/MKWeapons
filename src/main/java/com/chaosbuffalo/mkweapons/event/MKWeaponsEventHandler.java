@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkweapons.event;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
-import com.chaosbuffalo.mkcore.events.LivingCompleteAbilityEvent;
+import com.chaosbuffalo.mkcore.events.EntityAbilityEvent;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.ItemUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
@@ -138,7 +138,7 @@ public class MKWeaponsEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLivingCast(LivingCompleteAbilityEvent event){
+    public static void onLivingCast(EntityAbilityEvent.EntityCompleteAbilityEvent event){
         List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(event.getEntityLiving());
         for (MKCurioItemHandler handler : curios){
             for (IAccessoryEffect effect : handler.getEffects()){

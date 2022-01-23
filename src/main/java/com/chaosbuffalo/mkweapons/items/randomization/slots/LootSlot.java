@@ -14,24 +14,15 @@ import java.util.function.Function;
 
 public class LootSlot {
     private final ResourceLocation name;
-    private final Function<LivingEntity, ItemStack> slotGetter;
     private final BiConsumer<LivingEntity, ItemStack> slotSetter;
-    private final TriConsumer<AttributeModifier, Attribute, ItemStack> addAttributeModifierToStack;
 
-    public LootSlot(ResourceLocation name, Function<LivingEntity, ItemStack> slotGetter,
-                    BiConsumer<LivingEntity, ItemStack> slotSetter,
-                    TriConsumer<AttributeModifier, Attribute, ItemStack> addAttributeModifierToStack){
+    public LootSlot(ResourceLocation name, BiConsumer<LivingEntity, ItemStack> slotSetter){
         this.name = name;
-        this.slotGetter = slotGetter;
         this.slotSetter = slotSetter;
-        this.addAttributeModifierToStack = addAttributeModifierToStack;
     }
 
     public LootSlot(ResourceLocation name, EquipmentSlotType slotType){
-        this(name, (entity) -> entity.getItemStackFromSlot(slotType),
-                (entity, itemStack) -> entity.setItemStackToSlot(slotType, itemStack),
-                (attributeModifier, attr, itemStack) ->
-                        itemStack.addAttributeModifier(attr, attributeModifier, slotType));
+        this(name, (entity, itemStack) -> entity.setItemStackToSlot(slotType, itemStack));
     }
 
     public ResourceLocation getName() {
@@ -42,11 +33,4 @@ public class LootSlot {
         slotSetter.accept(entity, item);
     }
 
-    public ItemStack getItemInSlot(LivingEntity entity){
-        return slotGetter.apply(entity);
-    }
-
-    public void addAttributeModifierForSlotToItem(AttributeModifier modifier, Attribute attr, ItemStack itemStack){
-        addAttributeModifierToStack.accept(modifier, attr, itemStack);
-    }
 }
