@@ -222,7 +222,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     public List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
             if (cap.hasMeleeWeaponEffects()){
-                return cap.getCachedMeleeWeaponEffects();
+                return cap.getMeleeEffects();
             } else {
                 return weaponEffects;
             }

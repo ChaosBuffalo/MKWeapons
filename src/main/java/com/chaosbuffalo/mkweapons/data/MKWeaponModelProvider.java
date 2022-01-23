@@ -4,9 +4,11 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -29,6 +31,20 @@ public class MKWeaponModelProvider extends ItemModelProvider {
         for (MKBow bow : MKWeaponsItems.BOWS){
             makeBowModels(bow);
         }
+        makeSimpleItem(MKWeaponsItems.CopperRing);
+        makeSimpleItem(MKWeaponsItems.GoldEarring);
+        makeSimpleItem(MKWeaponsItems.GoldRing);
+        makeSimpleItem(MKWeaponsItems.RoseGoldRing);
+        makeSimpleItem(MKWeaponsItems.SilverRing);
+        makeSimpleItem(MKWeaponsItems.SilverEarring);
+    }
+
+    private void makeSimpleItem(Item item){
+        String path = item.getRegistryName().getPath();
+        ItemModelBuilder builder = singleTexture(path, new ResourceLocation(MKWeapons.MODID, "jewelry_base"), "layer0",
+                modLoc(String.format("items/%s", path)));
+
+
     }
 
     private void makeBowModels(MKBow bow){

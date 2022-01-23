@@ -205,7 +205,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     public List<IRangedWeaponEffect> getWeaponEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
             if (cap.hasRangedWeaponEffects()){
-                return cap.getCachedRangedWeaponEffects();
+                return cap.getRangedEffects();
             } else {
                 return weaponEffects;
             }

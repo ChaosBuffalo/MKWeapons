@@ -88,7 +88,7 @@ public class MeleeWeaponType implements IMeleeWeaponType {
                 return (IMeleeWeaponEffect) effect;
             } else {
                 MKWeapons.LOGGER.error("Failed to deserialize {} not a melee effect type for {}",
-                        effect.getType(), getName());
+                        effect.getTypeName(), getName());
                 return null;
             }
         });

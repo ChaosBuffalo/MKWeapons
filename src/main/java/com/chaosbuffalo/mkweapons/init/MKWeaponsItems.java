@@ -2,15 +2,19 @@ package com.chaosbuffalo.mkweapons.init;
 
 
 import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.TestNBTWeaponEffectItem;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
@@ -21,16 +25,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ObjectHolder(MKWeapons.MODID)
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MKWeaponsItems {
 
     public static List<MKMeleeWeapon> WEAPONS = new ArrayList<>();
+    private static final UUID RANGED_WEP_UUID = UUID.fromString("dbaf479e-515e-4ebc-94dd-eb5a4014bb64");
 
     public static MKTier IRON_TIER = new MKTier(ItemTier.IRON, "iron", Tags.Items.INGOTS_IRON);
     public static MKTier WOOD_TIER = new MKTier(ItemTier.WOOD, "wood", ItemTags.PLANKS);
@@ -40,8 +42,37 @@ public class MKWeaponsItems {
 
     public static List<MKBow> BOWS = new ArrayList<>();
 
+    public static Map<MKTier, Map<IMeleeWeaponType, Item>> WEAPON_LOOKUP = new HashMap<>();
+
     @ObjectHolder("haft")
     public static Item Haft;
+
+    @ObjectHolder("copper_ring")
+    public static Item CopperRing;
+
+    @ObjectHolder("gold_ring")
+    public static Item GoldRing;
+
+    @ObjectHolder("rose_gold_ring")
+    public static Item RoseGoldRing;
+
+    @ObjectHolder("silver_ring")
+    public static Item SilverRing;
+
+    @ObjectHolder("silver_earring")
+    public static Item SilverEarring;
+
+    @ObjectHolder("gold_earring")
+    public static Item GoldEarring;
+
+    public static void putWeaponForLookup(MKTier tier, IMeleeWeaponType weaponType, Item item){
+        WEAPON_LOOKUP.putIfAbsent(tier, new HashMap<>());
+        WEAPON_LOOKUP.get(tier).put(weaponType, item);
+    }
+
+    public static Item lookupWeapon(MKTier tier, IMeleeWeaponType weaponType){
+        return WEAPON_LOOKUP.get(tier).get(weaponType);
+    }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> evt){
@@ -58,12 +89,20 @@ public class MKWeaponsItems {
                         (new Item.Properties()).group(ItemGroup.COMBAT));
                 WEAPONS.add(weapon);
                 WeaponTypeManager.addMeleeWeapon(weapon);
+                putWeaponForLookup(mat.getB(), weaponType, weapon);
                 evt.getRegistry().register(weapon);
             }
+            RangedModifierEffect rangedMods = new RangedModifierEffect();
+            rangedMods.addAttributeModifier(MKAttributes.RANGED_CRIT,
+                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit",0.05, AttributeModifier.Operation.ADDITION ));
+            rangedMods.addAttributeModifier(MKAttributes.RANGED_CRIT_MULTIPLIER,
+                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit",0.25, AttributeModifier.Operation.ADDITION ));
             MKBow bow = new MKBow(new ResourceLocation(MKWeapons.MODID, String.format("longbow_%s", mat.getA())),
                     new Item.Properties().maxDamage(mat.getB().getMaxUses() * 3).group(ItemGroup.COMBAT), mat.getB(),
                     GameConstants.TICKS_PER_SECOND * 2.5f, 4.0f,
-                    new RapidFireRangedWeaponEffect(7, .10f));
+                    new RapidFireRangedWeaponEffect(7, .10f),
+                    rangedMods
+                   );
             BOWS.add(bow);
             evt.getRegistry().register(bow);
         }
@@ -73,6 +112,24 @@ public class MKWeaponsItems {
         TestNBTWeaponEffectItem testNBTWeaponEffectItem = new TestNBTWeaponEffectItem(new Item.Properties());
         testNBTWeaponEffectItem.setRegistryName(MKWeapons.MODID, "test_nbt_effect");
         evt.getRegistry().register(testNBTWeaponEffectItem);
+        MKAccessory copperRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        copperRing.setRegistryName(MKWeapons.MODID, "copper_ring");
+        evt.getRegistry().register(copperRing);
+        MKAccessory goldRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        goldRing.setRegistryName(MKWeapons.MODID, "gold_ring");
+        evt.getRegistry().register(goldRing);
+        MKAccessory silverRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        silverRing.setRegistryName(MKWeapons.MODID, "silver_ring");
+        evt.getRegistry().register(silverRing);
+        MKAccessory roseGoldRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        roseGoldRing.setRegistryName(MKWeapons.MODID, "rose_gold_ring");
+        evt.getRegistry().register(roseGoldRing);
+        MKAccessory silverEarring = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        silverEarring.setRegistryName(MKWeapons.MODID, "silver_earring");
+        evt.getRegistry().register(silverEarring);
+        MKAccessory goldEarring = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        goldEarring.setRegistryName(MKWeapons.MODID, "gold_earring");
+        evt.getRegistry().register(goldEarring);
     }
 
     public static void registerItemProperties(){

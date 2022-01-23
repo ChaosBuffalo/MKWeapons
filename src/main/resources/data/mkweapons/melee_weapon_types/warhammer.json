@@ -7,11 +7,11 @@
   "isTwoHanded": true,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.undead_damage",
+      "itemEffectType": "mkweapons:weapon_effect.undead_damage",
       "multiplier": 2.0
     },
     {
-      "type": "mkweapons:weapon_effect.stun",
+      "itemEffectType": "mkweapons:weapon_effect.stun",
       "duration": 5,
       "chance": 0.1
     }

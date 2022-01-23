@@ -36,6 +36,9 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 minecraft {
@@ -120,6 +123,9 @@ dependencies {
     implementation fg.deobf("com.chaosbuffalo.targeting_api:targeting_api-${mc_version}:${targeting_api_version}")
     implementation fg.deobf("com.chaosbuffalo.mkwidgets:mkwidgets-${mc_version}:${mk_widgets_version}")
     implementation fg.deobf("com.chaosbuffalo.mkcore:mkcore-${mc_version}:${mk_core_version}")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}:api")
+
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'

@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.effects;
 
+import com.chaosbuffalo.mkweapons.items.effects.accesory.AccessoryModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.armor.ArmorModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.*;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedModifierEffect;
@@ -7,6 +8,7 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffe
 import com.mojang.serialization.Dynamic;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -32,10 +34,12 @@ public class ItemEffects {
         addWeaponEffectDeserializer(MeleeModifierEffect.NAME, MeleeModifierEffect::new);
         addWeaponEffectDeserializer(RangedModifierEffect.NAME, RangedModifierEffect::new);
         addWeaponEffectDeserializer(RapidFireRangedWeaponEffect.NAME, RapidFireRangedWeaponEffect::new);
+        addWeaponEffectDeserializer(AccessoryModifierEffect.NAME, AccessoryModifierEffect::new);
     }
 
+    @Nullable
     public static <D> IItemEffect deserializeEffect(Dynamic<D> dynamic){
-        ResourceLocation type = BaseItemEffect.readType(dynamic);
+        ResourceLocation type = BaseItemEffect.getType(dynamic);
         IItemEffect weaponEffect = ITEM_EFFECT_DESERIALIZERS.get(type).get();
         if (weaponEffect != null){
             weaponEffect.deserialize(dynamic);

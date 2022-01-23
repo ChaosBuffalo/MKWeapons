@@ -7,12 +7,12 @@
   "isTwoHanded": true,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.stun",
+      "itemEffectType": "mkweapons:weapon_effect.stun",
       "duration": 2,
       "chance": 0.2
     },
     {
-      "type": "mkweapons:weapon_effect.combo_strike",
+      "itemEffectType": "mkweapons:weapon_effect.combo_strike",
       "numberOfHits": 5,
       "perHit": 0.15
     }

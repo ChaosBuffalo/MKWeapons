@@ -30,19 +30,17 @@ public abstract class SwingMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-
-        super.deserialize(dynamic);
+    public <D> void readAdditionalData(Dynamic<D> dynamic) {
+        super.readAdditionalData(dynamic);
         setNumberOfHits(dynamic.get("numberOfHits").asInt(5));
         setPerHit(dynamic.get("perHit").asDouble(.1));
     }
 
     @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.mergeToMap(super.serialize(ops), ImmutableMap.of(
-           ops.createString("numberOfHits"), ops.createInt(getNumberOfHits()),
-           ops.createString("perHit"), ops.createDouble(getPerHit())
-        )).result().orElse(ops.createMap(ImmutableMap.of()));
+    public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
+        super.writeAdditionalData(ops, builder);
+        builder.put(ops.createString("numberOfHits"), ops.createInt(getNumberOfHits()));
+        builder.put(ops.createString("perHit"), ops.createDouble(getPerHit()));
     }
 
     public double getPerHit() {

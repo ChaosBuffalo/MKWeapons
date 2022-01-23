@@ -15,8 +15,6 @@ public interface IArmorData extends INBTSerializable<CompoundNBT> {
 
     List<IArmorEffect> getArmorEffects();
 
-    List<IArmorEffect> getCachedArmorEffects();
-
     boolean hasArmorEffects();
 
     void markCacheDirty();

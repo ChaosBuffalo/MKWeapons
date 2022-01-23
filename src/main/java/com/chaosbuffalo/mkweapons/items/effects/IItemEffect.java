@@ -1,5 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.effects;
 
+import com.chaosbuffalo.mkcore.serialization.IDynamicMapTypedSerializer;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.entity.LivingEntity;
@@ -11,15 +12,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface IItemEffect {
-
-    ResourceLocation getType();
+public interface IItemEffect extends IDynamicMapTypedSerializer {
 
     void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip);
-
-    <D> D serialize(DynamicOps<D> ops);
-
-    <D> void deserialize(Dynamic<D> dynamic);
 
     default void onEntityEquip(LivingEntity entity) {}
 

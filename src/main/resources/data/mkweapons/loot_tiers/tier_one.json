@@ -1,5 +1,11 @@
 {
   "slotItems": {
+    "mkweapons:rings": [
+      {
+        "itemStack": "{id: \"mkweapons:copper_ring\", Count: 1b}",
+        "weight": 1.0
+      }
+    ],
     "mkweapons:main_hand": [
       {
         "itemStack": "{id: \"mkweapons:dagger_stone\", Count: 1b, tag: {Damage: 0}}",
@@ -77,9 +83,10 @@
   },
   "options": [
     {
-      "optionType": "mkweapons:attributes",
+      "randomizationType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
+        "mkweapons:rings",
         "mkweapons:main_hand"
       ],
       "weight": 1.0,
@@ -88,17 +95,17 @@
           "Name": "mkweapons:tier_one",
           "Amount": 5.0,
           "Operation": 0,
-          "UUID": "b74793ac-f8ee-44f6-9d1e-37681379641f",
+          "UUID": "1f723a2c-1f57-453c-9fab-e3f2212527fe",
           "AttributeName": "minecraft:generic.max_health"
         }
       ]
     },
     {
-      "optionType": "mkweapons:attributes",
+      "randomizationType": "mkweapons:attributes",
       "slotName": "mkweapons:randomization.attributes",
       "slots": [
-        "mkweapons:head",
         "mkweapons:chest",
+        "mkweapons:head",
         "mkweapons:main_hand"
       ],
       "weight": 1.0,
@@ -107,7 +114,7 @@
           "Name": "mkweapons:tier_one",
           "Amount": 0.5,
           "Operation": 0,
-          "UUID": "8efeec65-46c5-496f-92b3-f0d2428cea81",
+          "UUID": "54a6a4ec-2305-4b72-9fd1-14d3a7d08d7f",
           "AttributeName": "mkcore:mana_regen"
         }
       ]

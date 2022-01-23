@@ -7,7 +7,7 @@
   "isTwoHanded": true,
   "effects": [
     {
-      "type": "mkweapons:weapon_effect.bleed",
+      "itemEffectType": "mkweapons:weapon_effect.bleed",
       "damageMultiplier": 2.0,
       "maxStacks": 2,
       "durationSeconds": 4

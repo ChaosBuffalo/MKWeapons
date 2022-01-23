@@ -1,9 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.effects;
 
-import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
-import com.google.common.collect.ImmutableMap;
+import com.chaosbuffalo.mkcore.serialization.IDynamicMapTypedSerializer;
+import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.DynamicOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -15,43 +14,34 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class BaseItemEffect implements IItemEffect {
-
+    public final static ResourceLocation INVALID_EFFECT_TYPE = new ResourceLocation(MKWeapons.MODID, "weapon_effect.error");
     private final ResourceLocation name;
     private final TextFormatting color;
+    private static final String TYPE_ENTRY_NAME = "itemEffectType";
 
     public BaseItemEffect(ResourceLocation name, TextFormatting color){
         this.name = name;
         this.color = color;
     }
 
-
     @Override
-    public ResourceLocation getType() {
+    public ResourceLocation getTypeName() {
         return name;
     }
 
+    @Override
+    public String getTypeEntryName() {
+        return TYPE_ENTRY_NAME;
+    }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(String.format("%s.%s.name",
-                getType().getNamespace(), getType().getPath())).mergeStyle(color));
-    }
-
-    @Override
-    public <D> void deserialize(Dynamic<D> dynamic) {
-
-    }
-
-    public static <D> ResourceLocation readType(Dynamic<D> dynamic){
-        return new ResourceLocation(dynamic.get("type").asString("mkweapons:weapon_effect.error"));
+                this.getTypeName().getNamespace(), this.getTypeName().getPath())).mergeStyle(color));
     }
 
 
-    @Override
-    public <D> D serialize(DynamicOps<D> ops) {
-        return ops.createMap(ImmutableMap.of(
-                ops.createString("type"), ops.createString(getType().toString())
-        ));
+    public static <D> ResourceLocation getType(Dynamic<D> dynamic) {
+        return IDynamicMapTypedSerializer.getType(dynamic, TYPE_ENTRY_NAME).orElse(INVALID_EFFECT_TYPE);
     }
-
 }

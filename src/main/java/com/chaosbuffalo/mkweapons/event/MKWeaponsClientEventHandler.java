@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkweapons.event;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,5 +29,12 @@ public class MKWeaponsClientEventHandler {
             ((MKArmorItem) item).addToTooltip(event.getItemStack(),
                     event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
+
+        if (item instanceof MKAccessory){
+            ((MKAccessory) item).addToTooltip(event.getItemStack(),
+                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+        }
+
     }
+
 }
