@@ -61,15 +61,17 @@ public class MKWeaponsEventHandler {
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         Item from = event.getFrom().getItem();
         Item to = event.getTo().getItem();
-        if (from instanceof IMKWeapon){
-            ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
-                    eff -> eff.onEntityUnequip(event.getEntityLiving())
-            );
-        }
-        if (to instanceof IMKWeapon){
-            ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
-                    eff -> eff.onEntityEquip(event.getEntityLiving())
-            );
+        if (event.getSlot() == EquipmentSlotType.MAINHAND){
+            if (from instanceof IMKWeapon){
+                ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
+                        eff -> eff.onEntityUnequip(event.getEntityLiving())
+                );
+            }
+            if (to instanceof IMKWeapon){
+                ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
+                        eff -> eff.onEntityEquip(event.getEntityLiving())
+                );
+            }
         }
         if (from instanceof IMKArmor){
             ((IMKArmor) from).getArmorEffects(event.getFrom()).forEach(

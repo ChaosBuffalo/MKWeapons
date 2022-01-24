@@ -7,6 +7,11 @@
   "isTwoHanded": false,
   "effects": [
     {
+      "itemEffectType": "mkweapons:weapon_effect.skill_scaling",
+      "baseDamage": 4.5,
+      "skill": "mkcore:one_hand_slash"
+    },
+    {
       "itemEffectType": "mkweapons:weapon_effect.fury_strike",
       "numberOfHits": 5,
       "perHit": 0.25

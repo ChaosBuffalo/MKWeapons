@@ -7,6 +7,11 @@
   "isTwoHanded": true,
   "effects": [
     {
+      "itemEffectType": "mkweapons:weapon_effect.skill_scaling",
+      "baseDamage": 5.25,
+      "skill": "mkcore:two_hand_blunt"
+    },
+    {
       "itemEffectType": "mkweapons:weapon_effect.stun",
       "duration": 2,
       "chance": 0.2

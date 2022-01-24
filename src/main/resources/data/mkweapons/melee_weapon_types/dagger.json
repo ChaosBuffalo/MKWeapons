@@ -7,10 +7,16 @@
   "isTwoHanded": false,
   "effects": [
     {
+      "itemEffectType": "mkweapons:weapon_effect.skill_scaling",
+      "baseDamage": 3.0,
+      "skill": "mkcore:one_hand_pierce"
+    },
+    {
       "itemEffectType": "mkweapons:weapon_effect.bleed",
       "damageMultiplier": 2.0,
       "maxStacks": 10,
-      "durationSeconds": 4
+      "durationSeconds": 4,
+      "skill": "mkcore:one_hand_pierce"
     },
     {
       "itemEffectType": "mkweapons:weapon_effect.combo_strike",

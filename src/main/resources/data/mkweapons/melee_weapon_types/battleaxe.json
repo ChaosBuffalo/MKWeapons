@@ -7,10 +7,16 @@
   "isTwoHanded": true,
   "effects": [
     {
+      "itemEffectType": "mkweapons:weapon_effect.skill_scaling",
+      "baseDamage": 6.75,
+      "skill": "mkcore:two_hand_slash"
+    },
+    {
       "itemEffectType": "mkweapons:weapon_effect.bleed",
       "damageMultiplier": 2.0,
       "maxStacks": 2,
-      "durationSeconds": 4
+      "durationSeconds": 4,
+      "skill": "mkcore:two_hand_slash"
     }
   ],
   "blockEfficiency": 0.8,

@@ -7,7 +7,9 @@ import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +29,7 @@ public class MeleeWeaponType implements IMeleeWeaponType {
 
     public MeleeWeaponType(ResourceLocation name, float damageMultiplier, float attackSpeed,
                            float critMultiplier, float critChance, float reach, boolean isTwoHanded,
-                           float blockEfficiency, float maxPoise,
-                           IMeleeWeaponEffect... effects){
+                           float blockEfficiency, float maxPoise, IMeleeWeaponEffect... effects){
         this.damageMultiplier = damageMultiplier;
         this.name = name;
         this.attackSpeed = attackSpeed;

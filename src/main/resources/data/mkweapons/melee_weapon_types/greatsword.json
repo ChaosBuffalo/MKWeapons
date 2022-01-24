@@ -7,6 +7,11 @@
   "isTwoHanded": true,
   "effects": [
     {
+      "itemEffectType": "mkweapons:weapon_effect.skill_scaling",
+      "baseDamage": 7.5,
+      "skill": "mkcore:two_hand_slash"
+    },
+    {
       "itemEffectType": "mkweapons:weapon_effect.double_strike",
       "chance": 0.2
     }
