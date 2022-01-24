@@ -29,7 +29,7 @@ public class MeleeWeaponTypes {
             new FuryStrikeMeleeWeaponEffect(5, .25));
     public static final MeleeWeaponType GREATSWORD_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "greatsword"),
-            2.0f, -3.0f, 0.75f, 0.05f, 1.0f, true,
+            2.5f, -3.0f, 0.9f, 0.10f, 1.0f, true,
             0.8f, 25f,
             new DoubleStrikeMeleeWeaponEffect(.2));
     public static final MeleeWeaponType KATANA_TYPE = new MeleeWeaponType(
@@ -63,7 +63,7 @@ public class MeleeWeaponTypes {
             new StunMeleeWeaponEffect(.1, 5));
     public static final MeleeWeaponType BATTLEAXE_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "battleaxe"),
-            2.5f, -3.2f, 0.75f, 0.10f, 0.0f, true,
+            2.25f, -3.2f, 0.75f, 0.05f, 0.0f, true,
             0.8f, 25f,
             new BleedMeleeWeaponEffect(2.0f, 2, 4));
     public static final MeleeWeaponType MACE_TYPE = new MeleeWeaponType(
