@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class BaseItemEffect implements IItemEffect {
     public final static ResourceLocation INVALID_EFFECT_TYPE = new ResourceLocation(MKWeapons.MODID, "weapon_effect.error");
     private final ResourceLocation name;
-    private final TextFormatting color;
+    protected final TextFormatting color;
     private static final String TYPE_ENTRY_NAME = "itemEffectType";
 
     public BaseItemEffect(ResourceLocation name, TextFormatting color){
