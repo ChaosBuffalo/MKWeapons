@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkweapons.items.effects.accesory.AccessoryModifierEffect
 import com.chaosbuffalo.mkweapons.items.effects.armor.ArmorModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.*;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedModifierEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedSkillScalingEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffect;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.util.ResourceLocation;
@@ -36,6 +37,7 @@ public class ItemEffects {
         addWeaponEffectDeserializer(RapidFireRangedWeaponEffect.NAME, RapidFireRangedWeaponEffect::new);
         addWeaponEffectDeserializer(AccessoryModifierEffect.NAME, AccessoryModifierEffect::new);
         addWeaponEffectDeserializer(SkillScalingEffect.NAME, SkillScalingEffect::new);
+        addWeaponEffectDeserializer(RangedSkillScalingEffect.NAME, RangedSkillScalingEffect::new);
     }
 
     @Nullable

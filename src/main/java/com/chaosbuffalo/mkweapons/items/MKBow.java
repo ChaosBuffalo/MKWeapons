@@ -2,14 +2,14 @@ package com.chaosbuffalo.mkweapons.items;
 
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
-import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedSkillScalingEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -35,11 +35,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MKBow extends BowItem implements IMKRangedWeapon {
-    private final List<IRangedWeaponEffect> weaponEffects;
+    private final List<IRangedWeaponEffect> weaponEffects = new ArrayList<>();
     private final MKTier tier;
     private final float baseDrawTime;
     private final float baseLaunchVel;
@@ -50,7 +51,8 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
         setRegistryName(location);
         this.baseDrawTime = baseDrawTime;
         this.baseLaunchVel = baseLaunchVel;
-        this.weaponEffects = Arrays.asList(weaponEffects);
+        this.weaponEffects.addAll(Arrays.asList(weaponEffects));
+        this.weaponEffects.add(new RangedSkillScalingEffect(5.0 + tier.getAttackDamage(), MKAttributes.MARKSMANSHIP));
         this.tier = tier;
     }
 
@@ -137,7 +139,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
                     if (!worldIn.isRemote) {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
-                        arrowEntity = customArrow(arrowEntity);
+                        arrowEntity = customArrow(arrowEntity, stack);
                         arrowEntity.setDirectionAndMovement(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
                                 0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
@@ -181,15 +183,19 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     }
 
 
-    @Override
-    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
+    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow, ItemStack stack) {
         // set item stack on cap here
         Entity shooter = arrow.getShooter();
+        double damage = arrow.getDamage();
+        damage += getMKTier().getAttackDamage();
         if (shooter instanceof LivingEntity){
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
                     cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
+            for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
+                damage = weaponEffect.modifyArrowDamage(damage, (LivingEntity) shooter, arrow);
+            }
         }
-        arrow.setDamage(arrow.getDamage() + getMKTier().getAttackDamage());
+        arrow.setDamage(damage);
         return super.customArrow(arrow);
     }
 

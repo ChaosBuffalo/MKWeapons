@@ -24,4 +24,8 @@ public interface IRangedWeaponEffect extends IItemEffect {
     default float modifyLaunchVelocity(float inVel, ItemStack item, LivingEntity entity){
         return inVel;
     }
+
+    default double modifyArrowDamage(double inDamage, LivingEntity shooter, AbstractArrowEntity arrow){
+        return inDamage;
+    }
 }
