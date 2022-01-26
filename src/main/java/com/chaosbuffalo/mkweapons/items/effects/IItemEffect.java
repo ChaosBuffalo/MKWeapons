@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.serialization.IDynamicMapTypedSerializer;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -19,4 +20,6 @@ public interface IItemEffect extends IDynamicMapTypedSerializer {
     default void onEntityEquip(LivingEntity entity) {}
 
     default void onEntityUnequip(LivingEntity entity) {}
+
+    default void onSkillChange(PlayerEntity player) {};
 }

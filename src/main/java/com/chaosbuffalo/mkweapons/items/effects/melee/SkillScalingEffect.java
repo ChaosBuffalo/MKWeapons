@@ -49,6 +49,12 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     }
 
     @Override
+    public void onSkillChange(PlayerEntity player) {
+        onEntityUnequip(player);
+        onEntityEquip(player);
+    }
+
+    @Override
     public void onEntityEquip(LivingEntity entity) {
         float skillLevel = MKAbility.getSkillLevel(entity, skill);
         ModifiableAttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);

@@ -85,6 +85,12 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     }
 
     @Override
+    public void onSkillChange(PlayerEntity player) {
+        onEntityUnequip(player);
+        onEntityEquip(player);
+    }
+
+    @Override
     public void onEntityUnequip(LivingEntity entity) {
         ModifiableAttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
         if (attr != null) {

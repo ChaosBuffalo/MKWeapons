@@ -6,6 +6,7 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.item.IImplementsBlocking;
 import com.chaosbuffalo.mkcore.item.ILimitItemTooltip;
+import com.chaosbuffalo.mkcore.item.IReceivesSkillChange;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitItemTooltip, IImplementsBlocking {
+public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitItemTooltip, IImplementsBlocking, IReceivesSkillChange {
     private final IMeleeWeaponType weaponType;
     private final MKTier mkTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
@@ -257,5 +258,10 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
             multimap.removeAll(MKAttributes.MELEE_CRIT_MULTIPLIER);
         }
         return multimap;
+    }
+
+    @Override
+    public void onSkillChange(ItemStack stack, PlayerEntity playerEntity) {
+        getWeaponEffects(stack).forEach(x -> x.onSkillChange(playerEntity));
     }
 }
