@@ -5,7 +5,6 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
@@ -14,10 +13,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
@@ -50,8 +47,8 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     }
 
     @Override
-    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, ServerPlayerEntity playerSource, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
-        MKCore.getPlayer(playerSource).ifPresent(x -> x.getSkills().tryIncreaseSkill(skill, 1.0 / 100.0));
+    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, LivingEntity livingSource, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
+        MKCore.getPlayer(livingSource).ifPresent(x -> x.getSkills().tryIncreaseSkill(skill, 1.0 / 100.0));
     }
 
 //    @Override

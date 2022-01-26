@@ -35,7 +35,7 @@ import java.util.List;
 public class MKWeaponsEventHandler {
 
     private static void handleProjectileDamage(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
-                                               ServerPlayerEntity playerSource, IMKEntityData sourceData){
+                                               LivingEntity livingSource, IMKEntityData sourceData){
         if (source.getImmediateSource() instanceof AbstractArrowEntity){
             AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
             MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
@@ -43,7 +43,7 @@ public class MKWeaponsEventHandler {
                     if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon){
                         IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
                         for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())){
-                            effect.onProjectileHit(event, source, livingTarget, playerSource, sourceData,
+                            effect.onProjectileHit(event, source, livingTarget, livingSource, sourceData,
                                     arrowEntity, cap.getShootingWeapon());
                         }
                     }
@@ -54,7 +54,7 @@ public class MKWeaponsEventHandler {
 
 
     public static void registerCombatTriggers(){
-        SpellTriggers.PLAYER_HURT_ENTITY.registerProjectile(MKWeaponsEventHandler::handleProjectileDamage);
+        SpellTriggers.LIVING_HURT_ENTITY.registerProjectile(MKWeaponsEventHandler::handleProjectileDamage);
     }
 
     @SubscribeEvent
