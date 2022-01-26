@@ -48,7 +48,7 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
 
     @Override
     public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, LivingEntity livingSource, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
-        MKCore.getPlayer(livingSource).ifPresent(x -> x.getSkills().tryIncreaseSkill(skill, 1.0 / 100.0));
+        MKCore.getPlayer(livingSource).ifPresent(x -> x.getSkills().tryScaledIncreaseSkill(skill, 0.5));
     }
 
 //    @Override

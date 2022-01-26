@@ -45,7 +45,7 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
 
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        MKCore.getPlayer(attacker).ifPresent(x -> x.getSkills().tryIncreaseSkill(skill, 1.0/100.0));
+        MKCore.getPlayer(attacker).ifPresent(x -> x.getSkills().tryScaledIncreaseSkill(skill, 0.5));
     }
 
     @Override
