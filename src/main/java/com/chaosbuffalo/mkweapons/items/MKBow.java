@@ -3,6 +3,7 @@ package com.chaosbuffalo.mkweapons.items;
 import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkcore.item.IReceivesSkillChange;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MKBow extends BowItem implements IMKRangedWeapon {
+public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillChange {
     private final List<IRangedWeaponEffect> weaponEffects = new ArrayList<>();
     private final MKTier tier;
     private final float baseDrawTime;
@@ -236,5 +237,10 @@ public class MKBow extends BowItem implements IMKRangedWeapon {
     public MKAbility getAbility(ItemStack itemStack) {
         return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                 .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
+    }
+
+    @Override
+    public void onSkillChange(ItemStack itemStack, PlayerEntity playerEntity) {
+        getWeaponEffects(itemStack).forEach(x -> x.onSkillChange(playerEntity));
     }
 }
