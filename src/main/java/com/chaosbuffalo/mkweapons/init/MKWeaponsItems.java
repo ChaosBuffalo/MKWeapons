@@ -76,6 +76,7 @@ public class MKWeaponsItems {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> evt){
+        MeleeWeaponTypes.registerWeaponTypes();
         Set<Tuple<String, MKTier>> materials = new HashSet<>();
         materials.add(new Tuple<>("iron", IRON_TIER));
         materials.add(new Tuple<>("wood", WOOD_TIER));

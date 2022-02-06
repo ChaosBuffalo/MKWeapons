@@ -39,7 +39,6 @@ public class MKWeapons
     public LootTierManager lootTierManager;
 
     public MKWeapons() {
-        MeleeWeaponTypes.registerWeaponTypes();
         MinecraftForge.EVENT_BUS.register(this);
         LootSlotManager.setupLootSlots();
         RandomizationSlotManager.setupRandomizationSlots();
