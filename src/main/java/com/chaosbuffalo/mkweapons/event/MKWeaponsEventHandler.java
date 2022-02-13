@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.effects.SpellTriggers;
 import com.chaosbuffalo.mkcore.events.EntityAbilityEvent;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
+import com.chaosbuffalo.mkcore.utils.DamageUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
@@ -138,7 +139,7 @@ public class MKWeaponsEventHandler {
         float newDamage = event.getAmount();
         if (trueSource instanceof LivingEntity){
             LivingEntity livingSource = (LivingEntity)trueSource;
-            if (SpellTriggers.isMinecraftPhysicalDamage(source)){
+            if (DamageUtils.isMinecraftPhysicalDamage(source)) {
                 ItemStack mainHand = livingSource.getHeldItemMainhand();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
                     Item item = mainHand.getItem();
