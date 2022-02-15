@@ -8,6 +8,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -41,15 +42,18 @@ public class AttributeOptionEntry {
         return new AttributeOptionEntry(getAttribute(), new AttributeModifier(UUID.randomUUID(), modifier.getName(), modifier.getAmount(), modifier.getOperation()));
     }
 
-    public <D> D serialize(DynamicOps<D> ops){
-        return ops.createMap(ImmutableMap.of(
-                ops.createString("Name"), ops.createString(modifier.getName()),
-                ops.createString("Amount"), ops.createDouble(modifier.getAmount()),
-                ops.createString("Operation"), ops.createInt(modifier.getOperation().getId()),
-                ops.createString("UUID"), ops.createString(modifier.getID().toString()),
-                ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString())
-        ));
+    public <D> D serialize(DynamicOps<D> ops) {
+        ImmutableMap.Builder<D, D> builder = ImmutableMap.builder();
+        builder.put(ops.createString("Name"), ops.createString(modifier.getName()));
+        builder.put(ops.createString("Amount"), ops.createDouble(modifier.getAmount()));
+        builder.put(ops.createString("Operation"), ops.createInt(modifier.getOperation().getId()));
+        builder.put(ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString()));
+        if (!modifier.getID().equals(Util.DUMMY_UUID)){
+            builder.put(ops.createString("UUID"), ops.createString(modifier.getID().toString()));
+        }
+        return ops.createMap(builder.build());
     }
+
 
     private String getTranslationKeyForModifier(AttributeModifier.Operation op){
         switch (op){
@@ -74,11 +78,10 @@ public class AttributeOptionEntry {
 
     public <D> void deserialize(Dynamic<D> dynamic){
         Optional<String> name = dynamic.get("Name").asString().result();
-        Optional<String> uuidString = dynamic.get("UUID").asString().result();
+        UUID uuid = dynamic.get("UUID").asString().result().map(UUID::fromString).orElse(Util.DUMMY_UUID);
         double amount = dynamic.get("Amount").asDouble(0.0);
         int op = dynamic.get("Operation").asInt(0);
-        if (name.isPresent() && uuidString.isPresent()){
-            UUID uuid = UUID.fromString(uuidString.get());
+        if (name.isPresent()){
             modifier = new AttributeModifier(uuid, name.get(), amount, AttributeModifier.Operation.byId(op));
         } else {
             MKWeapons.LOGGER.error("Failed to decode attribute modifier {} : {}", name, dynamic);

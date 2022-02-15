@@ -20,6 +20,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +30,10 @@ public class AttributeOption extends BaseRandomizationOption {
 
     private final List<AttributeOptionEntry> modifiers;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "attributes");
-    private boolean uniqueMods;
 
 
     public AttributeOption(){
         this(RandomizationSlotManager.ATTRIBUTE_SLOT);
-        uniqueMods = true;
     }
 
     public AttributeOption(IRandomizationSlot slot){
@@ -42,16 +41,16 @@ public class AttributeOption extends BaseRandomizationOption {
         modifiers = new ArrayList<>();
     }
 
-    public void setUniqueMods(boolean uniqueMods) {
-        this.uniqueMods = uniqueMods;
-    }
-
     public List<AttributeOptionEntry> getModifiers() {
-        return uniqueMods ? modifiers.stream().map(AttributeOptionEntry::copy).collect(Collectors.toList()) : modifiers;
+        return modifiers.stream().map(mod -> mod.getModifier().getID().equals(Util.DUMMY_UUID) ? mod.copy() : mod).collect(Collectors.toList());
     }
 
     public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
         modifiers.add(new AttributeOptionEntry(attribute, attributeModifier));
+    }
+
+    public void addAttributeModifier(Attribute attribute, String name, double amount, AttributeModifier.Operation op){
+        modifiers.add(new AttributeOptionEntry(attribute, new AttributeModifier(Util.DUMMY_UUID, name, amount, op)));
     }
 
     @Override
@@ -78,13 +77,11 @@ public class AttributeOption extends BaseRandomizationOption {
         super.writeAdditionalData(ops, builder);
         builder.put(ops.createString("modifiers"),
                 ops.createList(modifiers.stream().map(mod -> mod.serialize(ops))));
-        builder.put(ops.createString("unique"), ops.createBoolean(uniqueMods));
     }
 
     @Override
     public <D> void readAdditionalData(Dynamic<D> dynamic) {
         super.readAdditionalData(dynamic);
-        uniqueMods = dynamic.get("unique").asBoolean(true);
         List<AttributeOptionEntry> deserialized = dynamic.get("modifiers").asList(dyn -> {
             AttributeOptionEntry entry = new AttributeOptionEntry();
             entry.deserialize(dyn);

@@ -192,10 +192,6 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         }
     }
 
-//    //rot: 0 +50, -29
-//    //translation -5.75, +1.5, 0
-
-
     @Override
     public IMeleeWeaponType getWeaponType() {
         return weaponType;
