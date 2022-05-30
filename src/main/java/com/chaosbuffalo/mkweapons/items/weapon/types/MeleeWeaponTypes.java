@@ -46,7 +46,7 @@ public class MeleeWeaponTypes {
             1.0f, -1.0f, 1.5f, 0.10f, -1.0f, false,
             0.5f, 20f,
             new SkillScalingEffect(3.0, MKAttributes.ONE_HAND_PIERCE),
-            new BleedMeleeWeaponEffect(2.0f, 10, 4, MKAttributes.ONE_HAND_PIERCE),
+            new BleedMeleeWeaponEffect(1.0f, 10, 4, MKAttributes.ONE_HAND_PIERCE),
             new ComboStrikeMeleeWeaponEffect(3, .50));
     public static final MeleeWeaponType STAFF_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "staff"),
@@ -60,7 +60,7 @@ public class MeleeWeaponTypes {
             2.0f, -2.0f, 0.75f, 0.05f, 2.0f, true,
             0.75f, 30f,
             new SkillScalingEffect(6.0, MKAttributes.TWO_HAND_PIERCE),
-            new BleedMeleeWeaponEffect(1.5f, 5, 5, MKAttributes.TWO_HAND_PIERCE),
+            new BleedMeleeWeaponEffect(0.75f, 5, 5, MKAttributes.TWO_HAND_PIERCE),
             new FuryStrikeMeleeWeaponEffect(3, .4));
     public static final MeleeWeaponType WARHAMMER_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "warhammer"),
@@ -74,7 +74,7 @@ public class MeleeWeaponTypes {
             2.25f, -3.2f, 0.75f, 0.05f, 0.0f, true,
             0.8f, 25f,
             new SkillScalingEffect(6.75, MKAttributes.TWO_HAND_SLASH),
-            new BleedMeleeWeaponEffect(2.0f, 2, 4, MKAttributes.TWO_HAND_SLASH));
+            new BleedMeleeWeaponEffect(1.0f, 2, 4, MKAttributes.TWO_HAND_SLASH));
     public static final MeleeWeaponType MACE_TYPE = new MeleeWeaponType(
             new ResourceLocation(MKWeapons.MODID, "mace"),
             1.75f, -2.1f, 0.25f, 0.05f, 0.0f, false,

@@ -13,16 +13,26 @@ public class RandomizationSlotManager {
             "randomization.invalid");
 
     public static final IRandomizationSlot ATTRIBUTE_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.attributes"), TextFormatting.DARK_GREEN);
+            new ResourceLocation(MKWeapons.MODID, "randomization.attributes"), TextFormatting.DARK_GREEN, false);
 
     public static final IRandomizationSlot EFFECT_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.effect"), TextFormatting.AQUA);
+            new ResourceLocation(MKWeapons.MODID, "randomization.effect"), TextFormatting.AQUA, false);
 
     public static final IRandomizationSlot ABILITY_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.ability"), TextFormatting.AQUA);
+            new ResourceLocation(MKWeapons.MODID, "randomization.ability"), TextFormatting.AQUA, false);
 
     public static final IRandomizationSlot NAME_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.name"), TextFormatting.WHITE);
+            new ResourceLocation(MKWeapons.MODID, "randomization.name"), TextFormatting.WHITE, true);
+
+    public static final IRandomizationSlot PERM_ATTRIBUTE_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.attributes_perm"), TextFormatting.DARK_GREEN, true);
+
+    public static final IRandomizationSlot PERM_EFFECT_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.effect_perm"), TextFormatting.AQUA, true);
+
+    public static final IRandomizationSlot PERM_ABILITY_SLOT = new RandomizationSlot(
+            new ResourceLocation(MKWeapons.MODID, "randomization.ability_perm"), TextFormatting.AQUA, true);
+
 
     public static final Map<ResourceLocation, IRandomizationSlot> SLOTS = new HashMap<>();
 
@@ -39,5 +49,8 @@ public class RandomizationSlotManager {
         addRandomizatiotSlot(EFFECT_SLOT);
         addRandomizatiotSlot(ABILITY_SLOT);
         addRandomizatiotSlot(NAME_SLOT);
+        addRandomizatiotSlot(PERM_ABILITY_SLOT);
+        addRandomizatiotSlot(PERM_EFFECT_SLOT);
+        addRandomizatiotSlot(PERM_ATTRIBUTE_SLOT);
     }
 }

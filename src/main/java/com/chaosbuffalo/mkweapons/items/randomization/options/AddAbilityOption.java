@@ -31,7 +31,7 @@ public class AddAbilityOption extends BaseRandomizationOption{
     }
 
     @Override
-    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
+    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(x ->
                 x.setAbilityId(ability.getAbilityId()));
     }

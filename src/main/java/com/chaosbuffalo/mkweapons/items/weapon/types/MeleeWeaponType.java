@@ -7,9 +7,7 @@ import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Arrays;

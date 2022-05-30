@@ -33,7 +33,7 @@ public class ArmorEffectOption extends EffectOption<IArmorEffect> {
     }
 
     @Override
-    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
+    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
                 x -> getItemEffects().forEach(x::addArmorEffect));
     }

@@ -4,6 +4,7 @@ import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkweapons.ClientUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
@@ -62,14 +63,10 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
         if (Screen.hasShiftDown()){
-            Minecraft mc = Minecraft.getInstance();
-            PlayerEntity player = mc.player;
-            if (player != null){
-                float skillLevel = MKAbility.getSkillLevel(player, skill);
-                double bonus = skillLevel * baseDamage;
-                tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.ranged_skill_scaling.description",
-                        new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
-            }
+            float skillLevel = ClientUtils.getClientSkillLevel(skill);
+            double bonus = skillLevel * baseDamage;
+            tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.ranged_skill_scaling.description",
+                    new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
         }
     }
 

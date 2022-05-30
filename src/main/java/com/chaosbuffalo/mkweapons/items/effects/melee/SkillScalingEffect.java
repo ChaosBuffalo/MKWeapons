@@ -2,6 +2,7 @@ package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkweapons.ClientUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.ImmutableMap;
@@ -69,14 +70,10 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
         if (Screen.hasShiftDown()){
-            Minecraft mc = Minecraft.getInstance();
-            PlayerEntity player = mc.player;
-            if (player != null){
-                float skillLevel = MKAbility.getSkillLevel(player, skill);
-                double bonus = skillLevel * baseDamage;
+            float skillLevel = ClientUtils.getClientSkillLevel(skill);
+            double bonus = skillLevel * baseDamage;
                 tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.skill_scaling.description",
                         new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
-            }
         }
     }
 

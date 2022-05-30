@@ -27,7 +27,7 @@ public class NameOption extends BaseRandomizationOption{
 
 
     @Override
-    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
+    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         stack.setDisplayName(name);
     }
 

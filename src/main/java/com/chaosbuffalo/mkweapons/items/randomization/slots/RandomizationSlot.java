@@ -8,10 +8,17 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class RandomizationSlot implements IRandomizationSlot {
     private final ResourceLocation name;
     private final TextFormatting textColor;
+    private final boolean permanent;
 
-    public RandomizationSlot(ResourceLocation name, TextFormatting textColor){
+    public RandomizationSlot(ResourceLocation name, TextFormatting textColor, boolean permanent){
         this.name = name;
         this.textColor = textColor;
+        this.permanent = permanent;
+    }
+
+    @Override
+    public boolean isPermanent() {
+        return permanent;
     }
 
     @Override
