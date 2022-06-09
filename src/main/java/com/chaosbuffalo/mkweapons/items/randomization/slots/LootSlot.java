@@ -25,6 +25,7 @@ public class LootSlot {
         this(name, (entity, itemStack) -> entity.setItemStackToSlot(slotType, itemStack));
     }
 
+
     public ResourceLocation getName() {
         return name;
     }

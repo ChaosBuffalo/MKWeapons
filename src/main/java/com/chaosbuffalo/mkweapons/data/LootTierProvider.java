@@ -4,9 +4,9 @@ import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.randomization.LootItemTemplate;
 import com.chaosbuffalo.mkweapons.items.randomization.LootTier;
 import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOption;
-import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.templates.RandomizationTemplate;
@@ -25,7 +25,9 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LootTierProvider implements IDataProvider {
@@ -46,38 +48,36 @@ public class LootTierProvider implements IDataProvider {
         Set<MKTier> weaponTiers = new HashSet<>();
         weaponTiers.add(MKWeaponsItems.STONE_TIER);
         weaponTiers.add(MKWeaponsItems.WOOD_TIER);
+
+        LootItemTemplate weaponTemplate = new LootItemTemplate(LootSlotManager.MAIN_HAND);
+
+
         for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
             if (weaponTiers.contains(weapon.getMKTier())){
-                tier.addItemToSlot(LootSlotManager.MAIN_HAND, weapon);
+                weaponTemplate.addItem(weapon);
             }
         }
         AttributeOption healthAttribute = new AttributeOption();
-        healthAttribute.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(tier.getName().toString(),
-                5, AttributeModifier.Operation.ADDITION));
-        healthAttribute.addApplicableSlot(LootSlotManager.MAIN_HAND);
-        healthAttribute.addApplicableSlot(LootSlotManager.RINGS);
-        tier.addRandomizationOption(healthAttribute);
+        healthAttribute.addAttributeModifier(Attributes.MAX_HEALTH, tier.getName().toString(),
+                5, 10, AttributeModifier.Operation.ADDITION);
         AttributeOption manaRegen = new AttributeOption();
-        manaRegen.addAttributeModifier(MKAttributes.MANA_REGEN, new AttributeModifier(tier.getName().toString(),
-                0.5, AttributeModifier.Operation.ADDITION));
-        manaRegen.addApplicableSlot(LootSlotManager.MAIN_HAND);
-        manaRegen.addApplicableSlot(LootSlotManager.CHEST);
-        manaRegen.addApplicableSlot(LootSlotManager.HEAD);
-        tier.addRandomizationOption(manaRegen);
-        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
-                LootSlotManager.RINGS,
-                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
-        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
-                LootSlotManager.MAIN_HAND,
-                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
-        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
-                LootSlotManager.CHEST,
-                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
-        tier.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
-                LootSlotManager.HEAD,
-                RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+        manaRegen.addAttributeModifier(MKAttributes.MANA_REGEN, tier.getName().toString(),
+                0.5, 2.0, AttributeModifier.Operation.ADDITION);
 
-        tier.addItemToSlot(LootSlotManager.RINGS, MKWeaponsItems.CopperRing);
+        LootItemTemplate ringTemplate = new LootItemTemplate(LootSlotManager.RINGS);
+        ringTemplate.addItem(MKWeaponsItems.CopperRing);
+
+        List<LootItemTemplate> templates = Arrays.asList(weaponTemplate, ringTemplate);
+
+        for (LootItemTemplate temp : templates) {
+            temp.addRandomizationOption(healthAttribute);
+            temp.addRandomizationOption(manaRegen);
+            temp.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template"),
+                    RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+            temp.addTemplate(new RandomizationTemplate(new ResourceLocation(MKWeapons.MODID, "simple_template_2x"),
+                    RandomizationSlotManager.ATTRIBUTE_SLOT, RandomizationSlotManager.ATTRIBUTE_SLOT), 10);
+            tier.addItemTemplate(temp, 1.0);
+        }
 
         return tier;
     }

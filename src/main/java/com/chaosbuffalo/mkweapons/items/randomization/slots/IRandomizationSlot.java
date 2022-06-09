@@ -5,6 +5,8 @@ import net.minecraft.util.text.ITextComponent;
 
 public interface IRandomizationSlot {
 
+    boolean isPermanent();
+
     ResourceLocation getName();
 
     ITextComponent getDisplayName();

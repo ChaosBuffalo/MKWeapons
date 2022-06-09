@@ -33,7 +33,7 @@ public class AccessoryEffectOption extends EffectOption<IAccessoryEffect> {
     }
 
     @Override
-    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
+    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         MKAccessory.getAccessoryHandler(stack).ifPresent(x -> getItemEffects().forEach(x::addEffect));
     }
 }

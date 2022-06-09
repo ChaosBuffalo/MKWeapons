@@ -19,7 +19,6 @@ import java.util.Set;
 public abstract class BaseRandomizationOption implements IRandomizationOption{
     public static final ResourceLocation INVALID_OPTION = new ResourceLocation(MKWeapons.MODID, "randomization_option.error");
     private final ResourceLocation typeName;
-    private final Set<LootSlot> applicableSlots;
     private IRandomizationSlot slot;
     private double weight;
     private static final String TYPE_ENTRY_NAME = "randomizationType";
@@ -36,7 +35,6 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
 
     public BaseRandomizationOption(ResourceLocation typeName){
         this.typeName = typeName;
-        this.applicableSlots = new HashSet<>();
     }
 
     @Override
@@ -54,10 +52,6 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
         this.slot = slot;
     }
 
-    @Override
-    public void addApplicableSlot(LootSlot slot){
-        applicableSlots.add(slot);
-    }
 
     @Override
     public IRandomizationSlot getSlot() {
@@ -77,8 +71,6 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     @Override
     public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
         builder.put(ops.createString("slotName"), ops.createString(getSlot().getName().toString()));
-        builder.put(ops.createString("slots"), ops.createList(applicableSlots.stream().map(x ->
-                ops.createString(x.getName().toString()))));
         builder.put(ops.createString("weight"), ops.createDouble(getWeight()));
     }
 
@@ -86,16 +78,6 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     public <D> void readAdditionalData(Dynamic<D> dynamic) {
         List<String> slotNames = dynamic.get("slots").asList(d ->
                 d.asString(LootSlotManager.INVALID_LOOT_SLOT.toString()));
-        applicableSlots.clear();
-        for (String slotName : slotNames){
-            if (slotName != null){
-                ResourceLocation slotLoc = new ResourceLocation(slotName);
-                LootSlot slot = LootSlotManager.getSlotFromName(slotLoc);
-                if (slot != null){
-                    applicableSlots.add(slot);
-                }
-            }
-        }
         String slotName = dynamic.get("slotName").asString(RandomizationSlotManager.INVALID_SLOT.toString());
         ResourceLocation slotNameRL = new ResourceLocation(slotName);
         slot = RandomizationSlotManager.getSlotFromName(slotNameRL);
@@ -110,11 +92,6 @@ public abstract class BaseRandomizationOption implements IRandomizationOption{
     @Override
     public String getTypeEntryName() {
         return TYPE_ENTRY_NAME;
-    }
-
-    @Override
-    public Set<LootSlot> getApplicableSlots() {
-        return applicableSlots;
     }
 
     public static <D> ResourceLocation getType(Dynamic<D> dynamic) {

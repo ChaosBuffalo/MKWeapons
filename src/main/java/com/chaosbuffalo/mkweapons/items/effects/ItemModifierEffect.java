@@ -33,7 +33,7 @@ public class ItemModifierEffect extends BaseItemEffect {
     }
 
     public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
-        modifiers.add(new AttributeOptionEntry(attribute, attributeModifier));
+        modifiers.add(new AttributeOptionEntry(attribute, attributeModifier, attributeModifier.getAmount(), attributeModifier.getAmount()));
     }
 
     public List<AttributeOptionEntry> getModifiers() {

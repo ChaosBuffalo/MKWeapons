@@ -41,33 +41,33 @@ public class AttributeOption extends BaseRandomizationOption {
         modifiers = new ArrayList<>();
     }
 
-    public List<AttributeOptionEntry> getModifiers() {
-        return modifiers.stream().map(mod -> mod.getModifier().getID().equals(Util.DUMMY_UUID) ? mod.copy() : mod).collect(Collectors.toList());
+    public List<AttributeOptionEntry> getModifiers(double difficulty) {
+        return modifiers.stream().map(mod -> mod.getModifier().getID().equals(Util.DUMMY_UUID) ? mod.copy(difficulty) : mod).collect(Collectors.toList());
     }
 
-    public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
-        modifiers.add(new AttributeOptionEntry(attribute, attributeModifier));
+    public void addFixedAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
+        modifiers.add(new AttributeOptionEntry(attribute, attributeModifier, attributeModifier.getAmount(), attributeModifier.getAmount()));
     }
 
-    public void addAttributeModifier(Attribute attribute, String name, double amount, AttributeModifier.Operation op){
-        modifiers.add(new AttributeOptionEntry(attribute, new AttributeModifier(Util.DUMMY_UUID, name, amount, op)));
+    public void addAttributeModifier(Attribute attribute, String name, double minAmount, double maxAmount, AttributeModifier.Operation op){
+        modifiers.add(new AttributeOptionEntry(attribute, new AttributeModifier(Util.DUMMY_UUID, name, minAmount, op), minAmount, maxAmount));
     }
 
     @Override
-    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot) {
+    public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         if (stack.getItem() instanceof IMKMeleeWeapon){
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addMeleeWeaponEffect(new MeleeModifierEffect(getModifiers())));
+                    cap -> cap.addMeleeWeaponEffect(new MeleeModifierEffect(getModifiers(difficulty))));
         } else if (stack.getItem() instanceof IMKRangedWeapon){
             stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addRangedWeaponEffect(new RangedModifierEffect(getModifiers())));
+                    cap -> cap.addRangedWeaponEffect(new RangedModifierEffect(getModifiers(difficulty))));
         } else if (stack.getItem() instanceof IMKArmor){
             stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
-                    cap -> cap.addArmorEffect(new ArmorModifierEffect(getModifiers()))
+                    cap -> cap.addArmorEffect(new ArmorModifierEffect(getModifiers(difficulty)))
             );
         } else if (stack.getItem() instanceof MKAccessory){
             MKAccessory.getAccessoryHandler(stack).ifPresent(
-                    cap -> cap.addEffect(new AccessoryModifierEffect(getModifiers()))
+                    cap -> cap.addEffect(new AccessoryModifierEffect(getModifiers(difficulty)))
             );
         }
     }

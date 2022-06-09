@@ -1,5 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.randomization.options;
 
+import com.chaosbuffalo.mkcore.GameConstants;
+import com.chaosbuffalo.mkcore.utils.MathUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
@@ -20,10 +22,18 @@ import java.util.UUID;
 public class AttributeOptionEntry {
     private AttributeModifier modifier;
     private Attribute attribute;
+    private double minValue;
+    private double maxValue;
 
-    public AttributeOptionEntry(Attribute attribute, AttributeModifier modifier){
+    public AttributeOptionEntry(Attribute attribute, AttributeModifier modifier, double minValue, double maxValue){
         this.modifier = modifier;
         this.attribute = attribute;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+    }
+
+    public AttributeOptionEntry(Attribute attribute, AttributeModifier modifier) {
+        this(attribute, modifier, modifier.getAmount(), modifier.getAmount());
     }
 
     public AttributeOptionEntry(){
@@ -38,8 +48,10 @@ public class AttributeOptionEntry {
         return attribute;
     }
 
-    public AttributeOptionEntry copy(){
-        return new AttributeOptionEntry(getAttribute(), new AttributeModifier(UUID.randomUUID(), modifier.getName(), modifier.getAmount(), modifier.getOperation()));
+    public AttributeOptionEntry copy(double difficulty){
+        double finalAmount = MathUtils.lerpDouble(minValue, maxValue, difficulty / GameConstants.MAX_DIFFICULTY);
+        return new AttributeOptionEntry(getAttribute(), new AttributeModifier(UUID.randomUUID(), modifier.getName(),
+                finalAmount, modifier.getOperation()), minValue, maxValue);
     }
 
     public <D> D serialize(DynamicOps<D> ops) {
@@ -48,6 +60,8 @@ public class AttributeOptionEntry {
         builder.put(ops.createString("Amount"), ops.createDouble(modifier.getAmount()));
         builder.put(ops.createString("Operation"), ops.createInt(modifier.getOperation().getId()));
         builder.put(ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString()));
+        builder.put(ops.createString("minValue"), ops.createDouble(minValue));
+        builder.put(ops.createString("maxValue"), ops.createDouble(maxValue));
         if (!modifier.getID().equals(Util.DUMMY_UUID)){
             builder.put(ops.createString("UUID"), ops.createString(modifier.getID().toString()));
         }
@@ -86,6 +100,8 @@ public class AttributeOptionEntry {
         } else {
             MKWeapons.LOGGER.error("Failed to decode attribute modifier {} : {}", name, dynamic);
         }
+        minValue = dynamic.get("minValue").asDouble(1.0);
+        maxValue = dynamic.get("maxValue").asDouble(1.0);
         Optional<String> attributeName = dynamic.get("AttributeName").asString().result();
         if (attributeName.isPresent()){
             this.attribute = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(attributeName.get()));
