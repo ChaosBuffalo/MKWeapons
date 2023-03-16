@@ -29,12 +29,12 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     private double chance;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.double_strike");
 
-    public DoubleStrikeMeleeWeaponEffect(double chance){
+    public DoubleStrikeMeleeWeaponEffect(double chance) {
         this();
         this.chance = chance;
     }
 
-    public DoubleStrikeMeleeWeaponEffect(){
+    public DoubleStrikeMeleeWeaponEffect() {
         super(NAME, TextFormatting.DARK_AQUA);
     }
 
@@ -63,7 +63,7 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.double_strike.description",
                     chance * 100.0f)));
         }
@@ -71,16 +71,16 @@ public class DoubleStrikeMeleeWeaponEffect extends BaseMeleeWeaponEffect {
 
     @Override
     public void postAttack(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity attacker) {
-        if (attacker.getEntityWorld().isRemote()){
+        if (attacker.getEntityWorld().isRemote()) {
             return;
         }
         MKCore.getEntityData(attacker).ifPresent(cap -> {
             double roll = attacker.getRNG().nextDouble();
-            if (roll >= (1.0 - chance)){
+            if (roll >= (1.0 - chance)) {
                 CombatExtensionModule combatModule = cap.getCombatExtension();
                 double cooldownPeriod = EntityUtils.getCooldownPeriod(attacker);
                 combatModule.addEntityTicksSinceLastSwing((int) cooldownPeriod);
-                if (attacker instanceof ServerPlayerEntity){
+                if (attacker instanceof ServerPlayerEntity) {
                     PacketHandler.sendMessage(new ResetAttackSwingPacket(combatModule.getEntityTicksSinceLastSwing()),
                             (ServerPlayerEntity) attacker);
                 }

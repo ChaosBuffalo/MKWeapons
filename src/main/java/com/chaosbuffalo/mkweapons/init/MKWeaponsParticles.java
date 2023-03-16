@@ -21,7 +21,7 @@ public class MKWeaponsParticles {
     public static BasicParticleType DRIPPING_BLOOD;
 
     @SubscribeEvent
-    public static void registerParticles(RegistryEvent.Register<ParticleType<?>> evt){
+    public static void registerParticles(RegistryEvent.Register<ParticleType<?>> evt) {
         BasicParticleType drippingBlood = new BasicParticleType(false);
         drippingBlood.setRegistryName(MKWeapons.MODID, "dripping_blood");
         evt.getRegistry().register(drippingBlood);
@@ -29,7 +29,7 @@ public class MKWeaponsParticles {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void registerParticleFactory(ParticleFactoryRegisterEvent evt){
+    public static void registerParticleFactory(ParticleFactoryRegisterEvent evt) {
         Minecraft.getInstance().particles.registerFactory(MKWeaponsParticles.DRIPPING_BLOOD,
                 BloodDripParticle.BloodDripFactory::new);
     }

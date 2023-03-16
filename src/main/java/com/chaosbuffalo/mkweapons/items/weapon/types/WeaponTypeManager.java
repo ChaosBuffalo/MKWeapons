@@ -46,12 +46,12 @@ public class WeaponTypeManager extends JsonReloadListener {
     }
 
     @SubscribeEvent
-    public void subscribeEvent(AddReloadListenerEvent event){
+    public void subscribeEvent(AddReloadListenerEvent event) {
         event.addListener(this);
     }
 
 
-    public static void addMeleeWeapon(IMKMeleeWeapon weapon){
+    public static void addMeleeWeapon(IMKMeleeWeapon weapon) {
         MELEE_WEAPONS.add(weapon);
     }
 
@@ -79,32 +79,32 @@ public class WeaponTypeManager extends JsonReloadListener {
         }
     }
 
-    public static void handleMKWeaponReloadForPlayerPre(PlayerEntity player){
+    public static void handleMKWeaponReloadForPlayerPre(PlayerEntity player) {
         ItemStack mainHand = player.getHeldItemMainhand();
-        if (mainHand.getItem() instanceof IMKMeleeWeapon){
+        if (mainHand.getItem() instanceof IMKMeleeWeapon) {
             player.getAttributeManager().removeModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
         }
     }
 
-    public static void refreshAllWeapons(){
-        for (IMKMeleeWeapon weapon : MELEE_WEAPONS){
+    public static void refreshAllWeapons() {
+        for (IMKMeleeWeapon weapon : MELEE_WEAPONS) {
             weapon.reload();
         }
     }
 
-    public static void handleMKWeaponReloadForPlayerPost(PlayerEntity player){
+    public static void handleMKWeaponReloadForPlayerPost(PlayerEntity player) {
         ItemStack mainHand = player.getHeldItemMainhand();
-        if (mainHand.getItem() instanceof IMKMeleeWeapon){
+        if (mainHand.getItem() instanceof IMKMeleeWeapon) {
             player.getAttributeManager().reapplyModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
         }
-        for (ItemStack item : player.inventory.mainInventory){
-            if (!item.isEmpty()){
+        for (ItemStack item : player.inventory.mainInventory) {
+            if (!item.isEmpty()) {
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
         }
-        for (ItemStack item : player.inventory.offHandInventory){
-            if (!item.isEmpty()){
+        for (ItemStack item : player.inventory.offHandInventory) {
+            if (!item.isEmpty()) {
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
@@ -132,9 +132,9 @@ public class WeaponTypeManager extends JsonReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         MKWeapons.LOGGER.debug("Loading melee weapon type definitions from Json");
         boolean wasChanged = false;
-        if (serverStarted){
+        if (serverStarted) {
             List<ServerPlayerEntity> players = server.getPlayerList().getPlayers();
-            for (ServerPlayerEntity entity : players){
+            for (ServerPlayerEntity entity : players) {
                 handleMKWeaponReloadForPlayerPre(entity);
             }
         }
@@ -148,9 +148,9 @@ public class WeaponTypeManager extends JsonReloadListener {
             }
         }
         refreshAllWeapons();
-        if (serverStarted){
+        if (serverStarted) {
             List<ServerPlayerEntity> players = server.getPlayerList().getPlayers();
-            for (ServerPlayerEntity entity : players){
+            for (ServerPlayerEntity entity : players) {
                 handleMKWeaponReloadForPlayerPost(entity);
             }
         }

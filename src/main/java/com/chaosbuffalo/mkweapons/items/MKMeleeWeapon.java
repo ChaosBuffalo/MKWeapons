@@ -64,7 +64,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         setRegistryName(weaponName);
     }
 
-    protected void recalculateModifiers(){
+    protected void recalculateModifiers() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER,
                 "Weapon modifier", getAttackDamage(), AttributeModifier.Operation.ADDITION));
@@ -94,7 +94,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     }
 
     @Override
-    public void reload(){
+    public void reload() {
         weaponEffects.clear();
         recalculateModifiers();
         weaponEffects.addAll(getMKTier().getMeleeWeaponEffects());
@@ -114,9 +114,9 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         MKCore.getEntityData(attacker).ifPresent(cap -> {
-            if (!target.isActiveItemStackBlocking()){
-                if (cap.getCombatExtension().getEntityTicksSinceLastSwing() >= EntityUtils.getCooldownPeriod(attacker)){
-                    for (IMeleeWeaponEffect effect : getWeaponEffects(stack)){
+            if (!target.isActiveItemStackBlocking()) {
+                if (cap.getCombatExtension().getEntityTicksSinceLastSwing() >= EntityUtils.getCooldownPeriod(attacker)) {
+                    for (IMeleeWeaponEffect effect : getWeaponEffects(stack)) {
                         effect.onHit(this, stack, target, attacker);
                     }
                 }
@@ -146,10 +146,10 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         ItemStack offhand = playerIn.getHeldItemOffhand();
-        if (offhand.getItem() instanceof ShieldItem){
+        if (offhand.getItem() instanceof ShieldItem) {
             return ActionResult.resultPass(itemstack);
         }
-        if (MKCore.getPlayer(playerIn).map(x -> x.getStats().isPoiseBroke()).orElse(false)){
+        if (MKCore.getPlayer(playerIn).map(x -> x.getStats().isPoiseBroke()).orElse(false)) {
             return ActionResult.resultPass(itemstack);
         } else {
             playerIn.setActiveHand(handIn);
@@ -224,7 +224,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     @Override
     public List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasMeleeWeaponEffects()){
+            if (cap.hasMeleeWeaponEffects()) {
                 return cap.getMeleeEffects();
             } else {
                 return weaponEffects;
@@ -241,16 +241,16 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
 
     @Override
     public Multimap<Attribute, AttributeModifier> limitTooltip(ItemStack itemStack, EquipmentSlotType equipmentSlotType, Multimap<Attribute, AttributeModifier> multimap) {
-        if (multimap.containsKey(MKAttributes.BLOCK_EFFICIENCY)){
+        if (multimap.containsKey(MKAttributes.BLOCK_EFFICIENCY)) {
             multimap.removeAll(MKAttributes.BLOCK_EFFICIENCY);
         }
-        if (multimap.containsKey(MKAttributes.MAX_POISE)){
+        if (multimap.containsKey(MKAttributes.MAX_POISE)) {
             multimap.removeAll(MKAttributes.MAX_POISE);
         }
-        if (multimap.containsKey(MKAttributes.MELEE_CRIT)){
+        if (multimap.containsKey(MKAttributes.MELEE_CRIT)) {
             multimap.removeAll(MKAttributes.MELEE_CRIT);
         }
-        if (multimap.containsKey(MKAttributes.MELEE_CRIT_MULTIPLIER)){
+        if (multimap.containsKey(MKAttributes.MELEE_CRIT_MULTIPLIER)) {
             multimap.removeAll(MKAttributes.MELEE_CRIT_MULTIPLIER);
         }
         return multimap;

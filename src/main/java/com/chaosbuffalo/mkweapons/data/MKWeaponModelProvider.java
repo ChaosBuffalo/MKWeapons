@@ -4,8 +4,6 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
-import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -15,7 +13,10 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MKWeaponModelProvider extends ItemModelProvider {
 
@@ -25,10 +26,10 @@ public class MKWeaponModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
+        for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS) {
             makeWeaponModel(weapon);
         }
-        for (MKBow bow : MKWeaponsItems.BOWS){
+        for (MKBow bow : MKWeaponsItems.BOWS) {
             makeBowModels(bow);
         }
         makeSimpleItem(MKWeaponsItems.CopperRing);
@@ -39,7 +40,7 @@ public class MKWeaponModelProvider extends ItemModelProvider {
         makeSimpleItem(MKWeaponsItems.SilverEarring);
     }
 
-    private void makeSimpleItem(Item item){
+    private void makeSimpleItem(Item item) {
         String path = item.getRegistryName().getPath();
         ItemModelBuilder builder = singleTexture(path, new ResourceLocation(MKWeapons.MODID, "jewelry_base"), "layer0",
                 modLoc(String.format("items/%s", path)));
@@ -47,10 +48,10 @@ public class MKWeaponModelProvider extends ItemModelProvider {
 
     }
 
-    private void makeBowModels(MKBow bow){
+    private void makeBowModels(MKBow bow) {
         String path = bow.getRegistryName().getPath();
         List<String> subModels = Arrays.asList("pulling_0", "pulling_1", "pulling_2");
-        for (String subModel : subModels){
+        for (String subModel : subModels) {
             String subPath = String.format("%s_%s", path, subModel);
             getBuilder(subPath)
                     .parent(getExistingFile(modLoc(String.format("item/longbow_base_%s", subModel))))
@@ -66,12 +67,12 @@ public class MKWeaponModelProvider extends ItemModelProvider {
         subModelKeys.put("pulling_0", new Tuple<>(1, -1.0));
         subModelKeys.put("pulling_1", new Tuple<>(1, 0.65));
         subModelKeys.put("pulling_2", new Tuple<>(1, 0.9));
-        for (String subModel : subModels){
+        for (String subModel : subModels) {
             Tuple<Integer, Double> predicates = subModelKeys.get(subModel);
             ItemModelBuilder.OverrideBuilder override = builder.override().model(getExistingFile(modLoc(String.format("item/longbow_%s_%s",
-                    bow.getMKTier().getName(), subModel))))
+                            bow.getMKTier().getName(), subModel))))
                     .predicate(new ResourceLocation("pulling"), predicates.getA());
-            if (predicates.getB() > 0){
+            if (predicates.getB() > 0) {
                 override.predicate(new ResourceLocation("pull"), predicates.getB().floatValue());
             }
             index++;
@@ -81,9 +82,9 @@ public class MKWeaponModelProvider extends ItemModelProvider {
     private void makeWeaponModel(MKMeleeWeapon weapon) {
         String path = weapon.getRegistryName().getPath();
         List<String> subModels = Arrays.asList("blocking");
-        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())){
+        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())) {
 
-            for (String subModel : subModels){
+            for (String subModel : subModels) {
                 String subPath = String.format("%s_%s", path, subModel);
                 getBuilder(subPath)
                         .parent(getExistingFile(modLoc(String.format("item/%s_base_%s", weapon.getWeaponType().getName().getPath(), subModel))))
@@ -101,11 +102,11 @@ public class MKWeaponModelProvider extends ItemModelProvider {
         Map<String, Tuple<Integer, Double>> subModelKeys = new HashMap<>();
         subModelKeys.put("blocking", new Tuple<>(1, -1.0));
 
-        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())){
-            for (String subModel : subModels){
+        if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())) {
+            for (String subModel : subModels) {
                 Tuple<Integer, Double> predicates = subModelKeys.get(subModel);
                 ItemModelBuilder.OverrideBuilder override = builder.override().model(getExistingFile(modLoc(String.format("item/%s_%s",
-                        path, subModel))))
+                                path, subModel))))
                         .predicate(new ResourceLocation(subModel), predicates.getA());
             }
         }

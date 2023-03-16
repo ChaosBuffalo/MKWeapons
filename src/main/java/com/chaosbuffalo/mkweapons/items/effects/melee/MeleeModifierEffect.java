@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEntry;
 import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
+import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -16,7 +16,7 @@ public class MeleeModifierEffect extends ItemModifierEffect implements IMeleeWea
         this.modifiers.addAll(modifiers);
     }
 
-    public MeleeModifierEffect(){
+    public MeleeModifierEffect() {
         super(NAME, TextFormatting.WHITE);
     }
 }

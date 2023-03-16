@@ -31,13 +31,13 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.stun");
     public static final ResourceLocation PARTICLES = new ResourceLocation(MKWeapons.MODID, "stun_effect");
 
-    public StunMeleeWeaponEffect(double stunChance, int stunSeconds){
+    public StunMeleeWeaponEffect(double stunChance, int stunSeconds) {
         this();
         this.stunChance = stunChance;
         this.stunDuration = stunSeconds;
     }
 
-    public StunMeleeWeaponEffect(){
+    public StunMeleeWeaponEffect() {
         super(NAME, TextFormatting.DARK_PURPLE);
     }
 
@@ -62,14 +62,14 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
                     .timed(stunDuration * GameConstants.TICKS_PER_SECOND);
             MKCore.getEntityData(target).ifPresent(targetData -> targetData.getEffects().addEffect(stun));
             PacketHandler.sendToTrackingAndSelf(new MKParticleEffectSpawnPacket(
-                            new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES, target.getEntityId()), target);
+                    new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES, target.getEntityId()), target);
         }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.stun.description",
                     stunChance * 100.0, stunDuration)));
         }

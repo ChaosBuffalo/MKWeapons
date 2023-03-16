@@ -12,7 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class PrefixNameOption extends BaseRandomizationOption{
+public class PrefixNameOption extends BaseRandomizationOption {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "prefix_name");
 
     private ITextComponent name;
@@ -22,7 +22,7 @@ public class PrefixNameOption extends BaseRandomizationOption{
         this.name = name;
     }
 
-    public PrefixNameOption(){
+    public PrefixNameOption() {
         this(new StringTextComponent(""));
     }
 

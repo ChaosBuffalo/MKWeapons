@@ -19,7 +19,7 @@ public abstract class BaseItemEffect implements IItemEffect {
     protected final TextFormatting color;
     private static final String TYPE_ENTRY_NAME = "itemEffectType";
 
-    public BaseItemEffect(ResourceLocation name, TextFormatting color){
+    public BaseItemEffect(ResourceLocation name, TextFormatting color) {
         this.name = name;
         this.color = color;
     }

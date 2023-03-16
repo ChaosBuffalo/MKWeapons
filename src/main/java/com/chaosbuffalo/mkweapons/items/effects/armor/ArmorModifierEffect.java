@@ -16,7 +16,7 @@ public class ArmorModifierEffect extends ItemModifierEffect implements IArmorEff
         this.modifiers.addAll(modifiers);
     }
 
-    public ArmorModifierEffect(){
+    public ArmorModifierEffect() {
         super(NAME, TextFormatting.WHITE);
     }
 }

@@ -25,7 +25,7 @@ public class AttributeOptionEntry {
     private double minValue;
     private double maxValue;
 
-    public AttributeOptionEntry(Attribute attribute, AttributeModifier modifier, double minValue, double maxValue){
+    public AttributeOptionEntry(Attribute attribute, AttributeModifier modifier, double minValue, double maxValue) {
         this.modifier = modifier;
         this.attribute = attribute;
         this.minValue = minValue;
@@ -36,7 +36,7 @@ public class AttributeOptionEntry {
         this(attribute, modifier, modifier.getAmount(), modifier.getAmount());
     }
 
-    public AttributeOptionEntry(){
+    public AttributeOptionEntry() {
 
     }
 
@@ -48,7 +48,7 @@ public class AttributeOptionEntry {
         return attribute;
     }
 
-    public AttributeOptionEntry copy(double difficulty){
+    public AttributeOptionEntry copy(double difficulty) {
         double finalAmount = MathUtils.lerpDouble(minValue, maxValue, difficulty / GameConstants.MAX_DIFFICULTY);
         return new AttributeOptionEntry(getAttribute(), new AttributeModifier(UUID.randomUUID(), modifier.getName(),
                 finalAmount, modifier.getOperation()), minValue, maxValue);
@@ -62,15 +62,15 @@ public class AttributeOptionEntry {
         builder.put(ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString()));
         builder.put(ops.createString("minValue"), ops.createDouble(minValue));
         builder.put(ops.createString("maxValue"), ops.createDouble(maxValue));
-        if (!modifier.getID().equals(Util.DUMMY_UUID)){
+        if (!modifier.getID().equals(Util.DUMMY_UUID)) {
             builder.put(ops.createString("UUID"), ops.createString(modifier.getID().toString()));
         }
         return ops.createMap(builder.build());
     }
 
 
-    private String getTranslationKeyForModifier(AttributeModifier.Operation op){
-        switch (op){
+    private String getTranslationKeyForModifier(AttributeModifier.Operation op) {
+        switch (op) {
             case MULTIPLY_BASE:
                 return "mkweapons.modifier.description.percentage_base";
             case MULTIPLY_TOTAL:
@@ -81,21 +81,21 @@ public class AttributeOptionEntry {
         }
     }
 
-    public ITextComponent getDescription(){
+    public ITextComponent getDescription() {
         String translationKey = getTranslationKeyForModifier(modifier.getOperation());
         double amount = modifier.getAmount();
-        if (modifier.getOperation() != AttributeModifier.Operation.ADDITION){
+        if (modifier.getOperation() != AttributeModifier.Operation.ADDITION) {
             amount *= 100.0f;
         }
         return new TranslationTextComponent(translationKey, I18n.format(attribute.getAttributeName()), amount).mergeStyle(TextFormatting.GRAY);
     }
 
-    public <D> void deserialize(Dynamic<D> dynamic){
+    public <D> void deserialize(Dynamic<D> dynamic) {
         Optional<String> name = dynamic.get("Name").asString().result();
         UUID uuid = dynamic.get("UUID").asString().result().map(UUID::fromString).orElse(Util.DUMMY_UUID);
         double amount = dynamic.get("Amount").asDouble(0.0);
         int op = dynamic.get("Operation").asInt(0);
-        if (name.isPresent()){
+        if (name.isPresent()) {
             modifier = new AttributeModifier(uuid, name.get(), amount, AttributeModifier.Operation.byId(op));
         } else {
             MKWeapons.LOGGER.error("Failed to decode attribute modifier {} : {}", name, dynamic);
@@ -103,7 +103,7 @@ public class AttributeOptionEntry {
         minValue = dynamic.get("minValue").asDouble(1.0);
         maxValue = dynamic.get("maxValue").asDouble(1.0);
         Optional<String> attributeName = dynamic.get("AttributeName").asString().result();
-        if (attributeName.isPresent()){
+        if (attributeName.isPresent()) {
             this.attribute = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(attributeName.get()));
         } else {
             MKWeapons.LOGGER.error("Failed to decode attribute name {}", dynamic);

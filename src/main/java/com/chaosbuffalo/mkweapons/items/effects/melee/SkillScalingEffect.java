@@ -8,7 +8,6 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -28,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class SkillScalingEffect extends BaseMeleeWeaponEffect{
+public class SkillScalingEffect extends BaseMeleeWeaponEffect {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.skill_scaling");
     public static final UUID skillScaling = UUID.fromString("5db76231-686d-417e-952b-92f33c4c1b37");
     private double baseDamage;
@@ -38,7 +37,7 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
         super(NAME, TextFormatting.GRAY);
     }
 
-    public SkillScalingEffect(double baseDamage, Attribute skill){
+    public SkillScalingEffect(double baseDamage, Attribute skill) {
         this();
         this.baseDamage = baseDamage;
         this.skill = skill;
@@ -59,8 +58,8 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     public void onEntityEquip(LivingEntity entity) {
         float skillLevel = MKAbility.getSkillLevel(entity, skill);
         ModifiableAttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (attr != null){
-            if (attr.getModifier(skillScaling) == null){
+        if (attr != null) {
+            if (attr.getModifier(skillScaling) == null) {
                 attr.applyNonPersistentModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
             }
         }
@@ -69,11 +68,11 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             float skillLevel = ClientUtils.getClientSkillLevel(skill);
             double bonus = skillLevel * baseDamage;
-                tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.skill_scaling.description",
-                        new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
+            tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.skill_scaling.description",
+                    new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
         }
     }
 

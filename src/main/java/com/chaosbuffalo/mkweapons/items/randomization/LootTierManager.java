@@ -45,12 +45,12 @@ public class LootTierManager extends JsonReloadListener {
         }
     }
 
-    public static LootTier getTierFromName(ResourceLocation name){
+    public static LootTier getTierFromName(ResourceLocation name) {
         return LOOT_TIERS.get(name);
     }
 
     @SubscribeEvent
-    public void subscribeEvent(AddReloadListenerEvent event){
+    public void subscribeEvent(AddReloadListenerEvent event) {
         event.addListener(this);
     }
 

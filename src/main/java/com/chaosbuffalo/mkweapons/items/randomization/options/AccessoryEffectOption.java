@@ -20,13 +20,13 @@ public class AccessoryEffectOption extends EffectOption<IAccessoryEffect> {
         super(NAME, slot);
     }
 
-    public AccessoryEffectOption(){
+    public AccessoryEffectOption() {
         this(RandomizationSlotManager.EFFECT_SLOT);
     }
 
     @Override
     protected Optional<IAccessoryEffect> deserializeEffectToType(@Nullable IItemEffect effect) {
-        if (effect instanceof IAccessoryEffect){
+        if (effect instanceof IAccessoryEffect) {
             return Optional.of((IAccessoryEffect) effect);
         }
         return Optional.empty();

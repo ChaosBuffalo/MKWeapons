@@ -43,7 +43,7 @@ public class LootTierProvider implements IDataProvider {
         writeLootTier(generateTierOne(), cache);
     }
 
-    private LootTier generateTierOne(){
+    private LootTier generateTierOne() {
         LootTier tier = new LootTier(new ResourceLocation(MKWeapons.MODID, "tier_one"));
         Set<MKTier> weaponTiers = new HashSet<>();
         weaponTiers.add(MKWeaponsItems.STONE_TIER);
@@ -52,8 +52,8 @@ public class LootTierProvider implements IDataProvider {
         LootItemTemplate weaponTemplate = new LootItemTemplate(LootSlotManager.MAIN_HAND);
 
 
-        for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
-            if (weaponTiers.contains(weapon.getMKTier())){
+        for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS) {
+            if (weaponTiers.contains(weapon.getMKTier())) {
                 weaponTemplate.addItem(weapon);
             }
         }
@@ -82,14 +82,14 @@ public class LootTierProvider implements IDataProvider {
         return tier;
     }
 
-    public void writeLootTier(LootTier lootTier, @Nonnull DirectoryCache cache){
+    public void writeLootTier(LootTier lootTier, @Nonnull DirectoryCache cache) {
         Path outputFolder = this.generator.getOutputFolder();
         ResourceLocation key = lootTier.getName();
         Path path = outputFolder.resolve("data/" + key.getNamespace() + "/loot_tiers/" + key.getPath() + ".json");
         try {
             JsonElement element = lootTier.serialize(JsonOps.INSTANCE);
             IDataProvider.save(GSON, cache, element, path);
-        } catch (IOException e){
+        } catch (IOException e) {
             MKWeapons.LOGGER.error("Couldn't write loot tier {}", path, e);
         }
     }

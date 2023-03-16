@@ -22,12 +22,12 @@ public class UndeadDamageMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     private float damageMultiplier;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.undead_damage");
 
-    public UndeadDamageMeleeWeaponEffect(float multiplier){
+    public UndeadDamageMeleeWeaponEffect(float multiplier) {
         this();
         this.damageMultiplier = multiplier;
     }
 
-    public UndeadDamageMeleeWeaponEffect(){
+    public UndeadDamageMeleeWeaponEffect() {
         super(NAME, TextFormatting.GOLD);
     }
 
@@ -45,7 +45,7 @@ public class UndeadDamageMeleeWeaponEffect extends BaseMeleeWeaponEffect {
 
     @Override
     public float modifyDamageDealt(float damage, IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (target.isEntityUndead()){
+        if (target.isEntityUndead()) {
             return damage * damageMultiplier;
         } else {
             return damage;
@@ -55,7 +55,7 @@ public class UndeadDamageMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.undead_damage.description",
                     damageMultiplier)));
         }

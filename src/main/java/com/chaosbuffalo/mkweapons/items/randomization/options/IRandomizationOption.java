@@ -6,8 +6,6 @@ import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Set;
-
 public interface IRandomizationOption extends IDynamicMapTypedSerializer {
 
     ResourceLocation getName();

@@ -11,12 +11,12 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
-public class ArrowDataHandler implements IArrowData{
+public class ArrowDataHandler implements IArrowData {
 
     private AbstractArrowEntity arrow;
     private ItemStack shootingWeapon;
 
-    public ArrowDataHandler(){
+    public ArrowDataHandler() {
         shootingWeapon = ItemStack.EMPTY;
     }
 
@@ -66,7 +66,7 @@ public class ArrowDataHandler implements IArrowData{
         @Nullable
         @Override
         public INBT writeNBT(Capability<IArrowData> capability, IArrowData instance, Direction side) {
-            if (instance == null){
+            if (instance == null) {
                 return null;
             }
             return instance.serializeNBT();

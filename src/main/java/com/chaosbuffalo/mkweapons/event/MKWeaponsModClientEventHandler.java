@@ -12,8 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 public class MKWeaponsModClientEventHandler {
 
     @SubscribeEvent
-    public static void onStitchTexture(TextureStitchEvent.Pre event){
-        if (event.getMap().getTextureLocation() == PlayerContainer.LOCATION_BLOCKS_TEXTURE){
+    public static void onStitchTexture(TextureStitchEvent.Pre event) {
+        if (event.getMap().getTextureLocation() == PlayerContainer.LOCATION_BLOCKS_TEXTURE) {
             event.addSprite(new ResourceLocation(MKWeapons.MODID, "item/empty_earring_slot"));
         }
     }

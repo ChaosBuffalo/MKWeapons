@@ -34,7 +34,7 @@ public interface IMeleeWeaponType {
 
     ResourceLocation getName();
 
-    default float getDamageForTier(IItemTier tier){
+    default float getDamageForTier(IItemTier tier) {
         return (tier.getAttackDamage() + 3) * getDamageMultiplier();
     }
 

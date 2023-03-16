@@ -14,7 +14,7 @@ public class ArmorDataProvider implements ICapabilitySerializable<CompoundNBT> {
 
     private final ArmorDataHandler armorDataHandler;
 
-    public ArmorDataProvider(ItemStack item){
+    public ArmorDataProvider(ItemStack item) {
         armorDataHandler = new ArmorDataHandler();
         armorDataHandler.attach(item);
     }

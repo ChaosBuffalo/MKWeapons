@@ -13,20 +13,20 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class AddAbilityOption extends BaseRandomizationOption{
+public class AddAbilityOption extends BaseRandomizationOption {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "option.ability");
     private MKAbility ability;
 
-    public AddAbilityOption(IRandomizationSlot slot){
+    public AddAbilityOption(IRandomizationSlot slot) {
         super(NAME, slot);
     }
 
-    public AddAbilityOption(MKAbility ability, IRandomizationSlot slot){
+    public AddAbilityOption(MKAbility ability, IRandomizationSlot slot) {
         this(slot);
         this.ability = ability;
     }
 
-    public AddAbilityOption(){
+    public AddAbilityOption() {
         this(RandomizationSlotManager.ABILITY_SLOT);
     }
 

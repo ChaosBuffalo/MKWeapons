@@ -12,19 +12,19 @@ public interface IRangedWeaponEffect extends IItemEffect {
 
     default void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
                                  LivingEntity livingSource, IMKEntityData sourceData,
-                                 AbstractArrowEntity arrow, ItemStack bow){
+                                 AbstractArrowEntity arrow, ItemStack bow) {
 
     }
 
-    default float modifyDrawTime(float inTime, ItemStack item, LivingEntity entity){
+    default float modifyDrawTime(float inTime, ItemStack item, LivingEntity entity) {
         return inTime;
     }
 
-    default float modifyLaunchVelocity(float inVel, ItemStack item, LivingEntity entity){
+    default float modifyLaunchVelocity(float inVel, ItemStack item, LivingEntity entity) {
         return inVel;
     }
 
-    default double modifyArrowDamage(double inDamage, LivingEntity shooter, AbstractArrowEntity arrow){
+    default double modifyArrowDamage(double inDamage, LivingEntity shooter, AbstractArrowEntity arrow) {
         return inDamage;
     }
 }

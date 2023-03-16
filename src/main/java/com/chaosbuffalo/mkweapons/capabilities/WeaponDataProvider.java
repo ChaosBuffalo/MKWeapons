@@ -14,7 +14,7 @@ public class WeaponDataProvider implements ICapabilitySerializable<CompoundNBT> 
 
     private final WeaponDataHandler weaponDataHandler;
 
-    public WeaponDataProvider(ItemStack item){
+    public WeaponDataProvider(ItemStack item) {
         weaponDataHandler = new WeaponDataHandler();
         weaponDataHandler.attach(item);
     }

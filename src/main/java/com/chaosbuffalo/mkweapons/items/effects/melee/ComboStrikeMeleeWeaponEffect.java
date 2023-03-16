@@ -25,14 +25,14 @@ public class ComboStrikeMeleeWeaponEffect extends SwingMeleeWeaponEffect {
         super(NAME, TextFormatting.GREEN, numberOfHits, perHit);
     }
 
-    public ComboStrikeMeleeWeaponEffect(){
+    public ComboStrikeMeleeWeaponEffect() {
         super(NAME, TextFormatting.GREEN);
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.combo_strike.description",
                     getPerHit() * 100.0f, getNumberOfHits())));
         }

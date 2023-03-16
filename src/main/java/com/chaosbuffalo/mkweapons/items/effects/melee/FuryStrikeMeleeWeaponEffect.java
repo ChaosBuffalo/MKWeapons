@@ -24,7 +24,7 @@ public class FuryStrikeMeleeWeaponEffect extends SwingMeleeWeaponEffect {
         super(NAME, TextFormatting.GREEN, numberOfHits, perHit);
     }
 
-    public FuryStrikeMeleeWeaponEffect(){
+    public FuryStrikeMeleeWeaponEffect() {
         super(NAME, TextFormatting.GREEN);
     }
 

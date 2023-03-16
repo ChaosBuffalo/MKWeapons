@@ -15,7 +15,10 @@ import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.item.ItemTier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -65,17 +68,17 @@ public class MKWeaponsItems {
     @ObjectHolder("gold_earring")
     public static Item GoldEarring;
 
-    public static void putWeaponForLookup(MKTier tier, IMeleeWeaponType weaponType, Item item){
+    public static void putWeaponForLookup(MKTier tier, IMeleeWeaponType weaponType, Item item) {
         WEAPON_LOOKUP.putIfAbsent(tier, new HashMap<>());
         WEAPON_LOOKUP.get(tier).put(weaponType, item);
     }
 
-    public static Item lookupWeapon(MKTier tier, IMeleeWeaponType weaponType){
+    public static Item lookupWeapon(MKTier tier, IMeleeWeaponType weaponType) {
         return WEAPON_LOOKUP.get(tier).get(weaponType);
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> evt){
+    public static void registerItems(RegistryEvent.Register<Item> evt) {
         MeleeWeaponTypes.registerWeaponTypes();
         Set<Tuple<String, MKTier>> materials = new HashSet<>();
         materials.add(new Tuple<>("iron", IRON_TIER));
@@ -83,8 +86,8 @@ public class MKWeaponsItems {
         materials.add(new Tuple<>("diamond", DIAMOND_TIER));
         materials.add(new Tuple<>("gold", GOLD_TIER));
         materials.add(new Tuple<>("stone", STONE_TIER));
-        for (Tuple<String, MKTier> mat : materials){
-            for (IMeleeWeaponType weaponType : MeleeWeaponTypes.WEAPON_TYPES.values()){
+        for (Tuple<String, MKTier> mat : materials) {
+            for (IMeleeWeaponType weaponType : MeleeWeaponTypes.WEAPON_TYPES.values()) {
                 MKMeleeWeapon weapon = new MKMeleeWeapon(new ResourceLocation(MKWeapons.MODID,
                         String.format("%s_%s", weaponType.getName().getPath(), mat.getA())), mat.getB(), weaponType,
                         (new Item.Properties()).group(ItemGroup.COMBAT));
@@ -95,15 +98,15 @@ public class MKWeaponsItems {
             }
             RangedModifierEffect rangedMods = new RangedModifierEffect();
             rangedMods.addAttributeModifier(MKAttributes.RANGED_CRIT,
-                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit",0.05, AttributeModifier.Operation.ADDITION ));
+                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit", 0.05, AttributeModifier.Operation.ADDITION));
             rangedMods.addAttributeModifier(MKAttributes.RANGED_CRIT_MULTIPLIER,
-                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit",0.25, AttributeModifier.Operation.ADDITION ));
+                    new AttributeModifier(RANGED_WEP_UUID, "Bow Crit", 0.25, AttributeModifier.Operation.ADDITION));
             MKBow bow = new MKBow(new ResourceLocation(MKWeapons.MODID, String.format("longbow_%s", mat.getA())),
                     new Item.Properties().maxDamage(mat.getB().getMaxUses() * 3).group(ItemGroup.COMBAT), mat.getB(),
                     GameConstants.TICKS_PER_SECOND * 2.5f, 4.0f,
                     new RapidFireRangedWeaponEffect(7, .10f),
                     rangedMods
-                   );
+            );
             BOWS.add(bow);
             evt.getRegistry().register(bow);
         }
@@ -133,14 +136,14 @@ public class MKWeaponsItems {
         evt.getRegistry().register(goldEarring);
     }
 
-    public static void registerItemProperties(){
-        for (MKBow bow : BOWS){
+    public static void registerItemProperties() {
+        for (MKBow bow : BOWS) {
             ItemModelsProperties.registerProperty(bow, new ResourceLocation("pull"), (itemStack, world, entity) -> {
                 if (entity == null) {
                     return 0.0F;
                 } else {
                     return !(entity.getActiveItemStack().getItem() instanceof MKBow) ? 0.0F :
-                            (float)(itemStack.getUseDuration() - entity.getItemInUseCount()) / bow.getDrawTime(itemStack, entity);
+                            (float) (itemStack.getUseDuration() - entity.getItemInUseCount()) / bow.getDrawTime(itemStack, entity);
                 }
             });
             ItemModelsProperties.registerProperty(bow, new ResourceLocation("pulling"), (itemStack, world, entity) -> {
@@ -148,11 +151,11 @@ public class MKWeaponsItems {
             });
         }
 
-        for (MKMeleeWeapon weapon : WEAPONS){
+        for (MKMeleeWeapon weapon : WEAPONS) {
             if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType()))
-            ItemModelsProperties.registerProperty(weapon, new ResourceLocation("blocking"),
-                    (itemStack, world, entity) -> entity != null && entity.isHandActive()
-                            && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
+                ItemModelsProperties.registerProperty(weapon, new ResourceLocation("blocking"),
+                        (itemStack, world, entity) -> entity != null && entity.isHandActive()
+                                && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
         }
 
 

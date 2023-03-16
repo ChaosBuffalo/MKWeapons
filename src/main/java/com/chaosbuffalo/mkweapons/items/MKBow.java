@@ -57,9 +57,9 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         this.tier = tier;
     }
 
-    public float getDrawTime(ItemStack item, LivingEntity entity){
+    public float getDrawTime(ItemStack item, LivingEntity entity) {
         float time = baseDrawTime;
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(item)){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(item)) {
             time = weaponEffect.modifyDrawTime(time, item, entity);
         }
         return time;
@@ -93,8 +93,8 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         }
     }
 
-    public float getPowerFactor(int useTicks, ItemStack stack, LivingEntity entity){
-        float powerFactor = (float)(useTicks) / getDrawTime(stack, entity);
+    public float getPowerFactor(int useTicks, ItemStack stack, LivingEntity entity) {
+        float powerFactor = (float) (useTicks) / getDrawTime(stack, entity);
         powerFactor = (powerFactor * powerFactor + powerFactor * 2.0F) / 3.0F;
         if (powerFactor > 1.0F) {
             powerFactor = 1.0F;
@@ -102,9 +102,9 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         return powerFactor;
     }
 
-    public float getLaunchVelocity(ItemStack stack, LivingEntity entity){
+    public float getLaunchVelocity(ItemStack stack, LivingEntity entity) {
         float vel = baseLaunchVel;
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)) {
             vel = weaponEffect.modifyLaunchVelocity(vel, stack, entity);
         }
         return vel;
@@ -120,7 +120,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity)entityLiving;
+            PlayerEntity player = (PlayerEntity) entityLiving;
             boolean doesntNeedAmmo = player.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(
                     Enchantments.INFINITY, stack) > 0;
             ItemStack ammoStack = player.findAmmo(stack);
@@ -135,10 +135,10 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
                 }
 
                 float powerFactor = getPowerFactor(useTicks, stack, entityLiving);
-                if (!((double)powerFactor < 0.1D)) {
-                    boolean hasAmmo = player.abilities.isCreativeMode || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem)ammoStack.getItem()).isInfinite(ammoStack, stack, player));
+                if (!((double) powerFactor < 0.1D)) {
+                    boolean hasAmmo = player.abilities.isCreativeMode || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem) ammoStack.getItem()).isInfinite(ammoStack, stack, player));
                     if (!worldIn.isRemote) {
-                        ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
+                        ArrowItem arrowItem = (ArrowItem) (ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
                         arrowEntity = customArrow(arrowEntity, stack);
                         arrowEntity.setDirectionAndMovement(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
@@ -149,7 +149,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
                         int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                         if (powerLevel > 0) {
-                            arrowEntity.setDamage(arrowEntity.getDamage() + (double)powerLevel * 0.5D + 0.5D);
+                            arrowEntity.setDamage(arrowEntity.getDamage() + (double) powerLevel * 0.5D + 0.5D);
                         }
 
                         int punchLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
@@ -189,10 +189,10 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         Entity shooter = arrow.getShooter();
         double damage = arrow.getDamage();
         damage += getMKTier().getAttackDamage();
-        if (shooter instanceof LivingEntity){
+        if (shooter instanceof LivingEntity) {
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
                     cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
-            for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
+            for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)) {
                 damage = weaponEffect.modifyArrowDamage(damage, (LivingEntity) shooter, arrow);
             }
         }
@@ -200,12 +200,12 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         return super.customArrow(arrow);
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
-        if (getMKTier().getAttackDamage() > 0){
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        if (getMKTier().getAttackDamage() > 0) {
             tooltip.add(new TranslationTextComponent("mkweapons.bow_extra_damage.description",
                     getMKTier().getAttackDamage()).mergeStyle(TextFormatting.GRAY));
         }
-        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
+        for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)) {
             weaponEffect.addInformation(stack, worldIn, tooltip);
         }
     }
@@ -224,7 +224,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     @Override
     public List<IRangedWeaponEffect> getWeaponEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasRangedWeaponEffects()){
+            if (cap.hasRangedWeaponEffects()) {
                 return cap.getRangedEffects();
             } else {
                 return weaponEffects;

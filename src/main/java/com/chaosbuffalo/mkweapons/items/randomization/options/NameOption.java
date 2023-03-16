@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class NameOption extends BaseRandomizationOption{
+public class NameOption extends BaseRandomizationOption {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "name");
 
     private ITextComponent name;
@@ -21,7 +21,7 @@ public class NameOption extends BaseRandomizationOption{
         this.name = name;
     }
 
-    public NameOption(){
+    public NameOption() {
         this(new StringTextComponent("default"));
     }
 

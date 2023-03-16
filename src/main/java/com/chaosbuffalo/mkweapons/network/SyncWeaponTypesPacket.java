@@ -2,10 +2,6 @@ package com.chaosbuffalo.mkweapons.network;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
-import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
-import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
-import com.mojang.serialization.Dynamic;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTDynamicOps;

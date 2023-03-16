@@ -32,7 +32,7 @@ public class ItemModifierEffect extends BaseItemEffect {
                 ops.createList(modifiers.stream().map(mod -> mod.serialize(ops))));
     }
 
-    public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
+    public void addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier) {
         modifiers.add(new AttributeOptionEntry(attribute, attributeModifier, attributeModifier.getAmount(), attributeModifier.getAmount()));
     }
 
@@ -54,8 +54,8 @@ public class ItemModifierEffect extends BaseItemEffect {
             return entry;
         });
         modifiers.clear();
-        for (AttributeOptionEntry mod : deserialized){
-            if (mod != null){
+        for (AttributeOptionEntry mod : deserialized) {
+            if (mod != null) {
                 modifiers.add(mod);
             }
         }

@@ -2,13 +2,8 @@ package com.chaosbuffalo.mkweapons.items.accessories;
 
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemProvider;
-import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
-import com.google.common.collect.Multimap;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -35,7 +30,7 @@ public class MKAccessory extends Item {
         effects.addAll(Arrays.asList(effectsIn));
     }
 
-    public List<? extends IAccessoryEffect> getAccessoryEffects(ItemStack item){
+    public List<? extends IAccessoryEffect> getAccessoryEffects(ItemStack item) {
         return item.getCapability(CuriosCapability.ITEM).map(cap -> {
             if (cap instanceof MKCurioItemHandler) {
                 return ((MKCurioItemHandler) cap).getEffects();
@@ -45,12 +40,12 @@ public class MKAccessory extends Item {
         }).orElse(effects);
     }
 
-    public List<? extends IAccessoryEffect> getAccessoryEffects(){
+    public List<? extends IAccessoryEffect> getAccessoryEffects() {
         return effects;
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
-        for (IAccessoryEffect accessoryEffect : getAccessoryEffects(stack)){
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        for (IAccessoryEffect accessoryEffect : getAccessoryEffects(stack)) {
             accessoryEffect.addInformation(stack, worldIn, tooltip);
         }
     }
@@ -59,17 +54,17 @@ public class MKAccessory extends Item {
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         MKCurioItemProvider provider = new MKCurioItemProvider(stack);
-        if (nbt != null){
+        if (nbt != null) {
             provider.deserializeNBT(nbt);
         }
         return provider;
     }
 
-    public static Optional<MKCurioItemHandler> getAccessoryHandler(ItemStack item){
+    public static Optional<MKCurioItemHandler> getAccessoryHandler(ItemStack item) {
         Optional<ICurio> curioCap = item.getCapability(CuriosCapability.ITEM).resolve();
-        if (curioCap.isPresent()){
+        if (curioCap.isPresent()) {
             ICurio cap = curioCap.get();
-            if (cap instanceof MKCurioItemHandler){
+            if (cap instanceof MKCurioItemHandler) {
                 return Optional.of((MKCurioItemHandler) cap);
             }
         }
@@ -105,16 +100,16 @@ public class MKAccessory extends Item {
         }
     }
 
-   public static List<MKCurioItemHandler> getMKCurios(LivingEntity entity){
+    public static List<MKCurioItemHandler> getMKCurios(LivingEntity entity) {
         List<MKCurioItemHandler> curios = new ArrayList<>();
         CuriosApi.getCuriosHelper().getEquippedCurios(entity).ifPresent(x -> {
-           for (int i = 0; i < x.getSlots(); i++){
-               ItemStack curioIS = x.getStackInSlot(i);
-               if (!curioIS.isEmpty() && curioIS.getItem() instanceof MKAccessory){
-                   MKAccessory.getAccessoryHandler(curioIS).ifPresent(curios::add);
-               }
-           }
+            for (int i = 0; i < x.getSlots(); i++) {
+                ItemStack curioIS = x.getStackInSlot(i);
+                if (!curioIS.isEmpty() && curioIS.getItem() instanceof MKAccessory) {
+                    MKAccessory.getAccessoryHandler(curioIS).ifPresent(curios::add);
+                }
+            }
         });
-       return curios;
-   }
+        return curios;
+    }
 }

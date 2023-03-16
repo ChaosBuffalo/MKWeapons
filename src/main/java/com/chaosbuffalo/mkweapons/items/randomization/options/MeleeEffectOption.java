@@ -26,7 +26,7 @@ public class MeleeEffectOption extends EffectOption<IMeleeWeaponEffect> {
 
     @Override
     protected Optional<IMeleeWeaponEffect> deserializeEffectToType(@Nullable IItemEffect effect) {
-        if (effect instanceof IMeleeWeaponEffect){
+        if (effect instanceof IMeleeWeaponEffect) {
             return Optional.of((IMeleeWeaponEffect) effect);
         }
         return Optional.empty();

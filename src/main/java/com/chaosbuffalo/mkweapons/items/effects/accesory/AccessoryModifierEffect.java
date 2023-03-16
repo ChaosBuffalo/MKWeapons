@@ -16,7 +16,7 @@ public class AccessoryModifierEffect extends ItemModifierEffect implements IAcce
         this.modifiers.addAll(modifiers);
     }
 
-    public AccessoryModifierEffect(){
+    public AccessoryModifierEffect() {
         super(NAME, TextFormatting.WHITE);
     }
 }

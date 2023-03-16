@@ -2,8 +2,8 @@ package com.chaosbuffalo.mkweapons.items;
 
 import com.chaosbuffalo.mkcore.test.abilities.EmberAbility;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.melee.StunMeleeWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,9 +24,9 @@ public class TestNBTWeaponEffectItem extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (!worldIn.isRemote() && handIn.equals(Hand.MAIN_HAND)){
-            if (playerIn.getHeldItemOffhand().getItem() instanceof IMKMeleeWeapon){
-                playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap ->{
+        if (!worldIn.isRemote() && handIn.equals(Hand.MAIN_HAND)) {
+            if (playerIn.getHeldItemOffhand().getItem() instanceof IMKMeleeWeapon) {
+                playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap -> {
                     cap.addMeleeWeaponEffect(new StunMeleeWeaponEffect(0.5, 2));
                     cap.setAbilityId(EmberAbility.INSTANCE.getAbilityId());
                 });

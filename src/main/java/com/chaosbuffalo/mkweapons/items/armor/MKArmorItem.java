@@ -50,7 +50,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     protected void buildAttributes(ImmutableMultimap.Builder<Attribute, AttributeModifier> builder,
-                                   EquipmentSlotType slot, IArmorMaterial material, UUID slotUUID){
+                                   EquipmentSlotType slot, IArmorMaterial material, UUID slotUUID) {
 
     }
 
@@ -82,8 +82,8 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
         }
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
-        for (IArmorEffect armorEffect : getArmorEffects(stack)){
+    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+        for (IArmorEffect armorEffect : getArmorEffects(stack)) {
             armorEffect.addInformation(stack, worldIn, tooltip);
         }
     }
@@ -103,7 +103,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     @Override
     public List<IArmorEffect> getArmorEffects(ItemStack item) {
         return item.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasArmorEffects()){
+            if (cap.hasArmorEffects()) {
                 return cap.getArmorEffects();
             } else {
                 return armorEffects;

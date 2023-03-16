@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkweapons.client.particle;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -26,8 +25,8 @@ public class BloodDripParticle extends SpriteTexturedParticle {
         }
     }
 
-    protected void onUpdate(){
-        if (this.onGround){
+    protected void onUpdate() {
+        if (this.onGround) {
             this.setExpired();
         }
     }

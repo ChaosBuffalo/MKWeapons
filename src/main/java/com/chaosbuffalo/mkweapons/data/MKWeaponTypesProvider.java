@@ -33,7 +33,7 @@ public class MKWeaponTypesProvider implements IDataProvider {
             try {
                 JsonElement element = type.serialize(JsonOps.INSTANCE);
                 IDataProvider.save(GSON, cache, element, path);
-            } catch (IOException e){
+            } catch (IOException e) {
                 MKWeapons.LOGGER.error("Couldn't write weapon type {}", path, e);
             }
         });

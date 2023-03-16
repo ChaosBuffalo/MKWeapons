@@ -18,18 +18,18 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class RapidFireRangedWeaponEffect extends BaseRangedWeaponEffect{
+public class RapidFireRangedWeaponEffect extends BaseRangedWeaponEffect {
     private int maxHits;
     private float perHitReduction;
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.rapid_fire");
 
-    public RapidFireRangedWeaponEffect(int maxHits, float perHitReduction){
+    public RapidFireRangedWeaponEffect(int maxHits, float perHitReduction) {
         this();
         this.maxHits = maxHits;
         this.perHitReduction = perHitReduction;
     }
 
-    public RapidFireRangedWeaponEffect(){
+    public RapidFireRangedWeaponEffect() {
         super(NAME, TextFormatting.DARK_RED);
     }
 
@@ -51,7 +51,7 @@ public class RapidFireRangedWeaponEffect extends BaseRangedWeaponEffect{
     public void addInformation(ItemStack stack, @Nullable World worldIn,
                                List<ITextComponent> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.rapid_fire.description",
                     perHitReduction * 100.0f, maxHits * perHitReduction * 100.0f)));
         }

@@ -4,12 +4,12 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
-import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Dynamic;
@@ -17,7 +17,10 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -40,7 +43,7 @@ public class WeaponDataHandler implements IWeaponData {
     private ResourceLocation ability;
     private boolean isCacheDirty;
 
-    public WeaponDataHandler(){
+    public WeaponDataHandler() {
         meleeWeaponEffects = new ArrayList<>();
         cachedMeleeWeaponEffects = new ArrayList<>();
         rangedWeaponEffects = new ArrayList<>();
@@ -65,9 +68,9 @@ public class WeaponDataHandler implements IWeaponData {
 
     @Override
     public List<IMeleeWeaponEffect> getMeleeEffects() {
-        if (isCacheDirty){
+        if (isCacheDirty) {
             cachedMeleeWeaponEffects.clear();
-            if (getItemStack().getItem() instanceof IMKMeleeWeapon){
+            if (getItemStack().getItem() instanceof IMKMeleeWeapon) {
                 cachedMeleeWeaponEffects.addAll(((IMKMeleeWeapon) getItemStack().getItem()).getWeaponEffects());
             }
             cachedMeleeWeaponEffects.addAll(getStackMeleeEffects());
@@ -132,9 +135,9 @@ public class WeaponDataHandler implements IWeaponData {
 
     @Override
     public List<IRangedWeaponEffect> getRangedEffects() {
-        if (isCacheDirty){
+        if (isCacheDirty) {
             cachedRangedWeaponEffects.clear();
-            if (getItemStack().getItem() instanceof IMKRangedWeapon){
+            if (getItemStack().getItem() instanceof IMKRangedWeapon) {
                 cachedRangedWeaponEffects.addAll(((IMKRangedWeapon) getItemStack().getItem()).getWeaponEffects());
             }
             cachedRangedWeaponEffects.addAll(getStackRangedEffects());
@@ -143,12 +146,12 @@ public class WeaponDataHandler implements IWeaponData {
         return cachedRangedWeaponEffects;
     }
 
-    private void loadSlotModifiers(EquipmentSlotType slot){
+    private void loadSlotModifiers(EquipmentSlotType slot) {
         Multimap<Attribute, AttributeModifier> modifiers = getItemStack().getItem().getAttributeModifiers(slot);
         Multimap<Attribute, AttributeModifier> newMods = HashMultimap.create();
         newMods.putAll(modifiers);
-        if (slot == EquipmentSlotType.MAINHAND){
-            if (itemStack.getItem() instanceof MKMeleeWeapon){
+        if (slot == EquipmentSlotType.MAINHAND) {
+            if (itemStack.getItem() instanceof MKMeleeWeapon) {
                 for (IMeleeWeaponEffect weaponEffect : getMeleeEffects()) {
                     if (weaponEffect instanceof ItemModifierEffect) {
                         ItemModifierEffect modEffect = (ItemModifierEffect) weaponEffect;
@@ -169,7 +172,7 @@ public class WeaponDataHandler implements IWeaponData {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot) {
-        if (!modifiers.containsKey(slot)){
+        if (!modifiers.containsKey(slot)) {
             loadSlotModifiers(slot);
         }
         return modifiers.get(slot);
@@ -179,12 +182,12 @@ public class WeaponDataHandler implements IWeaponData {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         ListNBT effectList = new ListNBT();
-        for (IMeleeWeaponEffect effect : getStackMeleeEffects()){
+        for (IMeleeWeaponEffect effect : getStackMeleeEffects()) {
             effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("melee_effects", effectList);
         ListNBT rangedEffectList = new ListNBT();
-        for (IRangedWeaponEffect effect : getStackRangedEffects()){
+        for (IRangedWeaponEffect effect : getStackRangedEffects()) {
             rangedEffectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
         }
         nbt.put("ranged_effects", rangedEffectList);
@@ -195,11 +198,11 @@ public class WeaponDataHandler implements IWeaponData {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        if (nbt.contains("melee_effects")){
+        if (nbt.contains("melee_effects")) {
             ListNBT effectList = nbt.getList("melee_effects", Constants.NBT.TAG_COMPOUND);
-            for (INBT effectNBT : effectList){
+            for (INBT effectNBT : effectList) {
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
-                if (effect instanceof IMeleeWeaponEffect){
+                if (effect instanceof IMeleeWeaponEffect) {
                     addMeleeWeaponEffect((IMeleeWeaponEffect) effect);
                 } else {
                     MKWeapons.LOGGER.error("Failed to deserialize melee effect of type {} for item {}", effect.getTypeName(),
@@ -207,11 +210,11 @@ public class WeaponDataHandler implements IWeaponData {
                 }
             }
         }
-        if (nbt.contains("ranged_effects")){
+        if (nbt.contains("ranged_effects")) {
             ListNBT rangedEffectList = nbt.getList("ranged_effects", Constants.NBT.TAG_COMPOUND);
-            for (INBT effectNBT : rangedEffectList){
+            for (INBT effectNBT : rangedEffectList) {
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
-                if (effect instanceof IRangedWeaponEffect){
+                if (effect instanceof IRangedWeaponEffect) {
                     addRangedWeaponEffect((IRangedWeaponEffect) effect);
                 } else {
                     MKWeapons.LOGGER.error("Failed to deserialize ranged effect of type {} for item {}", effect.getTypeName(),
@@ -220,7 +223,7 @@ public class WeaponDataHandler implements IWeaponData {
             }
         }
         ResourceLocation abilityId = new ResourceLocation(nbt.getString("ability_granted"));
-        if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY)){
+        if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY)) {
             setAbilityId(abilityId);
         }
     }
@@ -230,7 +233,7 @@ public class WeaponDataHandler implements IWeaponData {
         @Nullable
         @Override
         public INBT writeNBT(Capability<IWeaponData> capability, IWeaponData instance, Direction side) {
-            if (instance == null){
+            if (instance == null) {
                 return null;
             }
             return instance.serializeNBT();

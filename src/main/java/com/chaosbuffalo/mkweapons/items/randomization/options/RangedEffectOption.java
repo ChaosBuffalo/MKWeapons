@@ -26,7 +26,7 @@ public class RangedEffectOption extends EffectOption<IRangedWeaponEffect> {
 
     @Override
     protected Optional<IRangedWeaponEffect> deserializeEffectToType(@Nullable IItemEffect effect) {
-        if (effect instanceof IRangedWeaponEffect){
+        if (effect instanceof IRangedWeaponEffect) {
             return Optional.of((IRangedWeaponEffect) effect);
         }
         return Optional.empty();

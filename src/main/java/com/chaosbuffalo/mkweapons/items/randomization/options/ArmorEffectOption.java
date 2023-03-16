@@ -26,7 +26,7 @@ public class ArmorEffectOption extends EffectOption<IArmorEffect> {
 
     @Override
     protected Optional<IArmorEffect> deserializeEffectToType(@Nullable IItemEffect effect) {
-        if (effect instanceof IArmorEffect){
+        if (effect instanceof IArmorEffect) {
             return Optional.of((IArmorEffect) effect);
         }
         return Optional.empty();

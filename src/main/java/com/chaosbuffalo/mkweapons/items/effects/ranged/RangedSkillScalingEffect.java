@@ -9,7 +9,6 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -31,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
+public class RangedSkillScalingEffect extends BaseRangedWeaponEffect {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "weapon_effect.ranged_skill_scaling");
     public static final UUID skillScaling = UUID.fromString("e4e8a04a-6c8e-43f6-9599-99a84f207c60");
     private double baseDamage;
@@ -41,7 +40,7 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
         super(NAME, TextFormatting.GRAY);
     }
 
-    public RangedSkillScalingEffect(double baseDamage, Attribute skill){
+    public RangedSkillScalingEffect(double baseDamage, Attribute skill) {
         this();
         this.baseDamage = baseDamage;
         this.skill = skill;
@@ -62,7 +61,7 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
-        if (Screen.hasShiftDown()){
+        if (Screen.hasShiftDown()) {
             float skillLevel = ClientUtils.getClientSkillLevel(skill);
             double bonus = skillLevel * baseDamage;
             tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.ranged_skill_scaling.description",
@@ -74,8 +73,8 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     public void onEntityEquip(LivingEntity entity) {
         float skillLevel = MKAbility.getSkillLevel(entity, skill);
         ModifiableAttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
-        if (attr != null){
-            if (attr.getModifier(skillScaling) == null){
+        if (attr != null) {
+            if (attr.getModifier(skillScaling) == null) {
                 attr.applyNonPersistentModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
             }
         }

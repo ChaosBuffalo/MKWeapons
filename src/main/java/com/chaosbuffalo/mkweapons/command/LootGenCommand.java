@@ -8,7 +8,6 @@ import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -31,13 +30,13 @@ public class LootGenCommand {
                 .then(Commands.argument("loot_tier", LootTierArgument.definition())
                         .suggests(LootGenCommand::suggestLootTiers)
                         .then(Commands.argument("loot_slot", LootSlotArgument.definition())
-                        .suggests(LootGenCommand::suggestLootSlots)
-                        .then(Commands.argument("difficulty", DoubleArgumentType.doubleArg(GameConstants.MIN_DIFFICULTY, GameConstants.MAX_DIFFICULTY))
-                        .executes(LootGenCommand::summon))));
+                                .suggests(LootGenCommand::suggestLootSlots)
+                                .then(Commands.argument("difficulty", DoubleArgumentType.doubleArg(GameConstants.MIN_DIFFICULTY, GameConstants.MAX_DIFFICULTY))
+                                        .executes(LootGenCommand::summon))));
     }
 
     static CompletableFuture<Suggestions> suggestLootTiers(final CommandContext<CommandSource> context,
-                                                                final SuggestionsBuilder builder) throws CommandSyntaxException {
+                                                           final SuggestionsBuilder builder) throws CommandSyntaxException {
         return ISuggestionProvider.suggest(LootTierManager.LOOT_TIERS.keySet().stream()
                 .map(ResourceLocation::toString), builder);
     }
@@ -55,14 +54,14 @@ public class LootGenCommand {
         double difficulty = ctx.getArgument("difficulty", Double.class);
         LootTier tier = LootTierManager.getTierFromName(tierName);
         LootSlot slot = LootSlotManager.getSlotFromName(slotName);
-        if (tier != null){
-            if (slot != null){
+        if (tier != null) {
+            if (slot != null) {
                 LootConstructor constructor = tier.generateConstructorForSlot(player.getRNG(), slot);
                 if (constructor != null) {
                     ItemStack stack = constructor.constructItem(player.getRNG(), difficulty);
-                    if (!stack.isEmpty()){
+                    if (!stack.isEmpty()) {
                         boolean wasAdded = player.addItemStackToInventory(stack);
-                        if (!wasAdded){
+                        if (!wasAdded) {
                             player.dropItem(stack, false);
                         }
                     }

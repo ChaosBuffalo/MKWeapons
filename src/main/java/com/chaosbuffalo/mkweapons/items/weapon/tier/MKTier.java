@@ -9,14 +9,14 @@ import net.minecraft.tags.ITag;
 import java.util.Arrays;
 import java.util.List;
 
-public class MKTier implements IItemTier{
+public class MKTier implements IItemTier {
     private final IItemTier itemTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
     private final String name;
     private final ITag.INamedTag<Item> tag;
 
     public MKTier(IItemTier tier, String name, ITag.INamedTag<Item> tag,
-                  IMeleeWeaponEffect... effects){
+                  IMeleeWeaponEffect... effects) {
         itemTier = tier;
         this.name = name;
         weaponEffects = Arrays.asList(effects);

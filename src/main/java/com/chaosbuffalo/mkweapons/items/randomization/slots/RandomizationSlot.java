@@ -10,7 +10,7 @@ public class RandomizationSlot implements IRandomizationSlot {
     private final TextFormatting textColor;
     private final boolean permanent;
 
-    public RandomizationSlot(ResourceLocation name, TextFormatting textColor, boolean permanent){
+    public RandomizationSlot(ResourceLocation name, TextFormatting textColor, boolean permanent) {
         this.name = name;
         this.textColor = textColor;
         this.permanent = permanent;

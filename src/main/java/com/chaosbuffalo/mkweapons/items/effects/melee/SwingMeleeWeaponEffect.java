@@ -11,13 +11,13 @@ public abstract class SwingMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     private int numberOfHits;
     private double perHit;
 
-    public SwingMeleeWeaponEffect(ResourceLocation name, TextFormatting color, int numberOfHits, double perHit){
+    public SwingMeleeWeaponEffect(ResourceLocation name, TextFormatting color, int numberOfHits, double perHit) {
         this(name, color);
         this.numberOfHits = numberOfHits;
         this.perHit = perHit;
     }
 
-    public SwingMeleeWeaponEffect(ResourceLocation name, TextFormatting color){
+    public SwingMeleeWeaponEffect(ResourceLocation name, TextFormatting color) {
         super(name, color);
     }
 
