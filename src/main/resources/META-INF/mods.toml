@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion="[${forge_loader_version},)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="http://my.issue.tracker/" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
@@ -34,38 +34,32 @@ Adds RPG weapons to MC.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies."${mod_id}"]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[${forge_version},)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    modId="forge"
+    mandatory=true
+    versionRange="[${forge_version},)"
     ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-    # Here's another dependency
 [[dependencies."${mod_id}"]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${mc_version}]"
+    versionRange="[${minecraft_version}]"
     ordering="NONE"
     side="BOTH"
 [[dependencies."${mod_id}"]]
     modId="targeting_api"
     mandatory=true
-    versionRange="[${targeting_api_version},)"
+    versionRange="[${minecraft_version}-${targeting_api_version},)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies."${mod_id}"]]
     modId="mkwidgets"
     mandatory=true
-    versionRange="[${mk_widgets_version},)"
+    versionRange="[${minecraft_version}-${mkwidgets_version},)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies."${mod_id}"]]
     modId="mkcore"
     mandatory=true
-    versionRange="[${mk_core_version},)"
+    versionRange="[${minecraft_version}-${mkcore_version},)"
     ordering="AFTER"
     side="BOTH"
