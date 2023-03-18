@@ -106,7 +106,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, IImpleme
         if (!target.isActiveItemStackBlocking()) {
             MKCore.getEntityData(attacker).ifPresent(cap -> {
                 if (cap.getCombatExtension().getEntityTicksSinceLastSwing() >= EntityUtils.getCooldownPeriod(attacker)) {
-                    forEachMeleeEffect(stack, effect -> effect.onHit(this, stack, target, attacker));
+                    forEachMeleeEffect(stack, effect -> effect.onHit(this, stack, target, cap));
                 }
             });
         }

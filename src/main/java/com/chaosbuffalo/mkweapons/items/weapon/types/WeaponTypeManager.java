@@ -56,7 +56,7 @@ public class WeaponTypeManager extends JsonReloadListener {
 
     public void syncToPlayers() {
         SyncWeaponTypesPacket updatePacket = new SyncWeaponTypesPacket(MeleeWeaponTypes.WEAPON_TYPES.values());
-        PacketHandler.sendToAll(updatePacket);
+        updatePacket.sendToAll();
     }
 
     @SubscribeEvent
@@ -73,7 +73,7 @@ public class WeaponTypeManager extends JsonReloadListener {
         if (event.getPlayer() instanceof ServerPlayerEntity) {
             SyncWeaponTypesPacket updatePacket = new SyncWeaponTypesPacket(MeleeWeaponTypes.WEAPON_TYPES.values());
             MKWeapons.LOGGER.debug("Sending {} update packet", event.getPlayer());
-            PacketHandler.sendMessage(updatePacket, (ServerPlayerEntity) event.getPlayer());
+            updatePacket.sendTo((ServerPlayerEntity) event.getPlayer());
         }
     }
 

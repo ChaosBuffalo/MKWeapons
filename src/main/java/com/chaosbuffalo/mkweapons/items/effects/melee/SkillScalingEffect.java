@@ -2,6 +2,8 @@ package com.chaosbuffalo.mkweapons.items.effects.melee;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
+import com.chaosbuffalo.mkcore.core.IMKEntityData;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkweapons.ClientUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
@@ -44,8 +46,10 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        MKCore.getPlayer(attacker).ifPresent(x -> x.getSkills().tryScaledIncreaseSkill(skill, 0.5));
+    public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, IMKEntityData attacker) {
+        if (attacker instanceof MKPlayerData) {
+            ((MKPlayerData) attacker).getSkills().tryScaledIncreaseSkill(skill, 0.5);
+        }
     }
 
     @Override

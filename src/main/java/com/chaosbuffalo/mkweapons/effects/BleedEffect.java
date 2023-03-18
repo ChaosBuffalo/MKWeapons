@@ -69,7 +69,7 @@ public class BleedEffect extends MKEffect {
 
             PacketHandler.sendToTrackingAndSelf(
                     new ParticleEffectSpawnPacket(
-                            MKWeaponsParticles.DRIPPING_BLOOD,
+                            MKWeaponsParticles.DRIPPING_BLOOD.get(),
                             ParticleEffects.DIRECTED_SPOUT, 8, 1,
                             target.getPosX(), target.getPosY() + target.getHeight() * .75,
                             target.getPosZ(), target.getWidth() / 2.0, 0.5, target.getWidth() / 2.0, 3,
