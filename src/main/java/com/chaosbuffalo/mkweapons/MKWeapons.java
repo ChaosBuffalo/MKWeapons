@@ -1,6 +1,5 @@
 package com.chaosbuffalo.mkweapons;
 
-import com.chaosbuffalo.mkweapons.capabilities.IArrowData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.command.WeaponsCommands;
 import com.chaosbuffalo.mkweapons.event.MKWeaponsEventHandler;
@@ -12,9 +11,7 @@ import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlotManager;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotManager;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import com.chaosbuffalo.mkweapons.network.PacketHandler;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -85,7 +82,4 @@ public class MKWeapons {
         WeaponsCommands.register(event.getDispatcher());
     }
 
-    public static LazyOptional<IArrowData> getArrowCapability(AbstractArrowEntity entity) {
-        return entity.getCapability(WeaponsCapabilities.ARROW_DATA_CAPABILITY);
-    }
 }

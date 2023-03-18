@@ -34,7 +34,7 @@ public class MeleeEffectOption extends EffectOption<IMeleeWeaponEffect> {
 
     @Override
     public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
+        stack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(
                 x -> getItemEffects().forEach(x::addMeleeWeaponEffect));
     }
 }

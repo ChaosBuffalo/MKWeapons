@@ -13,10 +13,11 @@ import javax.annotation.Nullable;
 
 public class ArrowDataHandler implements IArrowData {
 
-    private AbstractArrowEntity arrow;
+    private final AbstractArrowEntity arrow;
     private ItemStack shootingWeapon;
 
-    public ArrowDataHandler() {
+    public ArrowDataHandler(AbstractArrowEntity arrow) {
+        this.arrow = arrow;
         shootingWeapon = ItemStack.EMPTY;
     }
 
@@ -36,17 +37,6 @@ public class ArrowDataHandler implements IArrowData {
     }
 
     @Override
-    public void attach(AbstractArrowEntity arrow) {
-        this.arrow = arrow;
-//        if (arrow.getShooter() instanceof LivingEntity){
-//            ItemStack main = ((LivingEntity) arrow.getShooter()).getHeldItemMainhand();
-//            shootingWeapon = main;
-//        } else {
-//            shootingWeapon = ItemStack.EMPTY;
-//        }
-    }
-
-    @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         ItemStackHelper.saveAllItems(tag, NonNullList.from(shootingWeapon));
@@ -60,24 +50,4 @@ public class ArrowDataHandler implements IArrowData {
         shootingWeapon = itemStacks.get(0);
     }
 
-    public static class Storage implements Capability.IStorage<IArrowData> {
-
-
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<IArrowData> capability, IArrowData instance, Direction side) {
-            if (instance == null) {
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IArrowData> capability, IArrowData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT && instance != null) {
-                CompoundNBT tag = (CompoundNBT) nbt;
-                instance.deserializeNBT(tag);
-            }
-        }
-    }
 }

@@ -34,7 +34,7 @@ public class RangedEffectOption extends EffectOption<IRangedWeaponEffect> {
 
     @Override
     public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
+        stack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY).ifPresent(
                 x -> getItemEffects().forEach(x::addRangedWeaponEffect));
     }
 }

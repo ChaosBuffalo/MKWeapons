@@ -23,5 +23,4 @@ public interface IItemEffect extends IDynamicMapTypedSerializer {
     default void onSkillChange(PlayerEntity player) {
     }
 
-    ;
 }

@@ -42,10 +42,8 @@ public class MKWeaponModelProvider extends ItemModelProvider {
 
     private void makeSimpleItem(Item item) {
         String path = item.getRegistryName().getPath();
-        ItemModelBuilder builder = singleTexture(path, new ResourceLocation(MKWeapons.MODID, "jewelry_base"), "layer0",
+        singleTexture(path, new ResourceLocation(MKWeapons.MODID, "jewelry_base"), "layer0",
                 modLoc(String.format("items/%s", path)));
-
-
     }
 
     private void makeBowModels(MKBow bow) {

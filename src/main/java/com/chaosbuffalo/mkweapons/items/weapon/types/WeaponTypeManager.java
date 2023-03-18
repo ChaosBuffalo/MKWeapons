@@ -1,8 +1,6 @@
 package com.chaosbuffalo.mkweapons.items.weapon.types;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
-import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.network.PacketHandler;
 import com.chaosbuffalo.mkweapons.network.SyncWeaponTypesPacket;
@@ -96,18 +94,6 @@ public class WeaponTypeManager extends JsonReloadListener {
         ItemStack mainHand = player.getHeldItemMainhand();
         if (mainHand.getItem() instanceof IMKMeleeWeapon) {
             player.getAttributeManager().reapplyModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
-        }
-        for (ItemStack item : player.inventory.mainInventory) {
-            if (!item.isEmpty()) {
-                item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
-                        .ifPresent(IWeaponData::markCacheDirty);
-            }
-        }
-        for (ItemStack item : player.inventory.offHandInventory) {
-            if (!item.isEmpty()) {
-                item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
-                        .ifPresent(IWeaponData::markCacheDirty);
-            }
         }
     }
 

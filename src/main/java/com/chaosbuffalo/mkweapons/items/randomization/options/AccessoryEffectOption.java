@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.randomization.options;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessories;
 import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.IRandomizationSlot;
@@ -34,6 +34,6 @@ public class AccessoryEffectOption extends EffectOption<IAccessoryEffect> {
 
     @Override
     public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
-        MKAccessory.getAccessoryHandler(stack).ifPresent(x -> getItemEffects().forEach(x::addEffect));
+        MKAccessories.getAccessoryHandler(stack).ifPresent(x -> getItemEffects().forEach(x::addEffect));
     }
 }

@@ -1,9 +1,13 @@
 package com.chaosbuffalo.mkweapons.items.armor;
 
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.IMKEquipment;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.armor.IArmorEffect;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -19,8 +23,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class MKArmorItem extends ArmorItem implements IMKArmor {
+public class MKArmorItem extends ArmorItem implements IMKEquipment {
     public static final UUID CHEST_UUID = UUID.fromString("77ab4b54-5885-4f7f-ab41-71af536309d1");
     public static final UUID LEGGINGS_UUID = UUID.fromString("8d827c58-8f61-4c77-8dcd-f62f0e69121b");
     public static final UUID HELMET_UUID = UUID.fromString("fb16408c-0421-4138-a283-8da7038e5970");
@@ -82,33 +87,49 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
         }
     }
 
+    @Override
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        for (IArmorEffect armorEffect : getArmorEffects(stack)) {
-            armorEffect.addInformation(stack, worldIn, tooltip);
-        }
+        forEachEffect(stack, armorEffect -> armorEffect.addInformation(stack, worldIn, tooltip));
     }
 
     @Override
-    public List<IArmorEffect> getArmorEffects() {
-        return armorEffects;
+    public void onEquipped(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlotType slotType) {
+        forEachEffect(itemStack, armorEffect -> armorEffect.onEntityEquip(livingEntity));
+    }
+
+    @Override
+    public void onUnequipped(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlotType slotType) {
+        forEachEffect(itemStack, armorEffect -> armorEffect.onEntityUnequip(livingEntity));
+    }
+
+    // Common + stack-specific effects
+    public void forEachEffect(ItemStack stack, Consumer<IArmorEffect> consumer) {
+        forEachEffect(consumer);
+        stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(cap -> cap.forEachEffect(consumer));
+    }
+
+    // Only common effects
+    public void forEachEffect(Consumer<IArmorEffect> consumer) {
+        armorEffects.forEach(consumer);
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        return stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
-                .orElse(getAttributeModifiers(slot));
-    }
+        if (slot == getEquipmentSlot()) {
+            Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+            modifiers.putAll(getAttributeModifiers(slot));
 
-
-    @Override
-    public List<IArmorEffect> getArmorEffects(ItemStack item) {
-        return item.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasArmorEffects()) {
-                return cap.getArmorEffects();
-            } else {
-                return armorEffects;
-            }
-        }).orElse(armorEffects);
+            // Iterate common+stack effects
+            forEachEffect(stack, armorEffect -> {
+                if (armorEffect instanceof ItemModifierEffect) {
+                    ItemModifierEffect modEffect = (ItemModifierEffect) armorEffect;
+                    modEffect.getModifiers().forEach(e -> modifiers.put(e.getAttribute(), e.getModifier()));
+                }
+            });
+            return modifiers;
+        } else {
+            return getAttributeModifiers(slot);
+        }
     }
 
     @Override

@@ -6,15 +6,12 @@ import com.chaosbuffalo.mkcore.events.EntityAbilityEvent;
 import com.chaosbuffalo.mkcore.events.PostAttackEvent;
 import com.chaosbuffalo.mkcore.utils.DamageUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
-import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
-import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
+import com.chaosbuffalo.mkweapons.capabilities.IArrowData;
+import com.chaosbuffalo.mkweapons.items.IMKEquipment;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessories;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
-import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -29,8 +26,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MKWeaponsEventHandler {
 
@@ -38,17 +33,17 @@ public class MKWeaponsEventHandler {
                                                LivingEntity livingSource, IMKEntityData sourceData) {
         if (source.getImmediateSource() instanceof AbstractArrowEntity) {
             AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
-            MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
-                if (!livingTarget.isActiveItemStackBlocking()) {
+            if (!livingTarget.isActiveItemStackBlocking()) {
+                IArrowData.get(arrowEntity).ifPresent(cap -> {
                     if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon) {
                         IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
-                        for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())) {
+                        bow.forEachRangedEffect(cap.getShootingWeapon(), effect -> {
                             effect.onProjectileHit(event, source, livingTarget, livingSource, sourceData,
                                     arrowEntity, cap.getShootingWeapon());
-                        }
+                        });
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -59,40 +54,29 @@ public class MKWeaponsEventHandler {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        Item from = event.getFrom().getItem();
-        Item to = event.getTo().getItem();
-        if (event.getSlot() == EquipmentSlotType.MAINHAND) {
-            if (from instanceof IMKWeapon) {
-                ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
-                        eff -> eff.onEntityUnequip(event.getEntityLiving())
-                );
-            }
-            if (to instanceof IMKWeapon) {
-                ((IMKWeapon) to).getWeaponEffects(event.getTo()).forEach(
-                        eff -> eff.onEntityEquip(event.getEntityLiving())
-                );
+        if (!event.getFrom().isEmpty()) {
+            Item from = event.getFrom().getItem();
+            if (from instanceof IMKEquipment) {
+                ((IMKEquipment) from).onUnequipped(event.getEntityLiving(), event.getFrom(), event.getSlot());
             }
         }
-        if (from instanceof IMKArmor) {
-            ((IMKArmor) from).getArmorEffects(event.getFrom()).forEach(
-                    eff -> eff.onEntityUnequip(event.getEntityLiving())
-            );
+        if (!event.getTo().isEmpty()) {
+            Item to = event.getTo().getItem();
+            if (to instanceof IMKEquipment) {
+                ((IMKEquipment) to).onEquipped(event.getEntityLiving(), event.getTo(), event.getSlot());
+            }
         }
-        if (to instanceof IMKArmor) {
-            ((IMKArmor) to).getArmorEffects(event.getTo()).forEach(
-                    eff -> eff.onEntityEquip(event.getEntityLiving())
-            );
+
+        if (event.getEntityLiving() instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
+            checkShieldRestriction(player);
         }
-        if (!(event.getEntityLiving() instanceof ServerPlayerEntity))
-            return;
-        ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-        checkShieldRestriction(player);
     }
 
     private static void checkShieldRestriction(ServerPlayerEntity player) {
         ItemStack main = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
         ItemStack offhand = player.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
-        if (main.getItem() instanceof IMKMeleeWeapon) {
+        if (!main.isEmpty() && !offhand.isEmpty() && main.getItem() instanceof IMKMeleeWeapon) {
             IMKMeleeWeapon weapon = (IMKMeleeWeapon) main.getItem();
             if (weapon.getWeaponType().isTwoHanded() && offhand.getItem() instanceof ShieldItem) {
                 ItemStack off = player.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
@@ -109,24 +93,20 @@ public class MKWeaponsEventHandler {
         LivingEntity entity = event.getEntityLiving();
         ItemStack mainHand = entity.getHeldItemMainhand();
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon) {
-            Item item = mainHand.getItem();
-            for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)) {
-                effect.postAttack((IMKMeleeWeapon) item, mainHand, entity);
-            }
+            IMKMeleeWeapon item = (IMKMeleeWeapon) mainHand.getItem();
+            item.forEachMeleeEffect(mainHand, effect -> effect.postAttack(item, mainHand, entity));
         }
     }
 
     @SubscribeEvent
     public static void onLivingCast(EntityAbilityEvent.EntityCompleteAbilityEvent event) {
-        List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(event.getEntityLiving());
-        for (MKCurioItemHandler handler : curios) {
+        MKAccessories.findAccessoryHandlers(event.getEntityLiving(), handler -> {
             for (IAccessoryEffect effect : handler.getEffects()) {
                 effect.livingCompleteAbility(event.getEntityLiving(), event.getEntityData(), handler.getAccessory(),
                         handler.getItemStack(), event.getAbility());
             }
-        }
+        });
     }
-
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
@@ -141,21 +121,22 @@ public class MKWeaponsEventHandler {
             if (DamageUtils.isMinecraftPhysicalDamage(source)) {
                 ItemStack mainHand = livingSource.getHeldItemMainhand();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon) {
-                    Item item = mainHand.getItem();
-                    for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)) {
-                        newDamage = effect.modifyDamageDealt(newDamage, (IMKMeleeWeapon) item,
-                                mainHand, livingTarget, livingSource);
-                    }
+                    IMKMeleeWeapon item = (IMKMeleeWeapon) mainHand.getItem();
+                    item.forEachMeleeEffect(mainHand, effect -> {
+                        float damage = effect.modifyDamageDealt(event.getAmount(), item, mainHand, livingTarget, livingSource);
+                        event.setAmount(damage);
+                    });
                 }
             }
-            List<MKCurioItemHandler> curios = MKAccessory.getMKCurios(livingSource);
-            for (MKCurioItemHandler handler : curios) {
+            event.setAmount(newDamage);
+            MKAccessories.findAccessoryHandlers(livingSource, handler -> {
+                float local = event.getAmount();
                 for (IAccessoryEffect effect : handler.getEffects()) {
-                    newDamage = effect.modifyDamageDealt(newDamage, handler.getAccessory(),
+                    local = effect.modifyDamageDealt(local, handler.getAccessory(),
                             handler.getItemStack(), livingTarget, livingSource);
                 }
-            }
+                event.setAmount(local);
+            });
         }
-        event.setAmount(newDamage);
     }
 }

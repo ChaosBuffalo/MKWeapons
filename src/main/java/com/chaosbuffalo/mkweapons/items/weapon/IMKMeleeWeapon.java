@@ -5,6 +5,7 @@ import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface IMKMeleeWeapon extends IMKWeapon {
 
@@ -14,11 +15,12 @@ public interface IMKMeleeWeapon extends IMKWeapon {
         return getWeaponType().getDamageForTier(getMKTier());
     }
 
-    List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item);
-
     default boolean allowSweep() {
         return false;
     }
 
-    List<IMeleeWeaponEffect> getWeaponEffects();
+    @Override
+    List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item);
+
+    void forEachMeleeEffect(ItemStack itemStack, Consumer<IMeleeWeaponEffect> consumer);
 }

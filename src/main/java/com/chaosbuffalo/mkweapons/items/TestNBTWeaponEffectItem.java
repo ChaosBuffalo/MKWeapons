@@ -26,7 +26,7 @@ public class TestNBTWeaponEffectItem extends Item {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         if (!worldIn.isRemote() && handIn.equals(Hand.MAIN_HAND)) {
             if (playerIn.getHeldItemOffhand().getItem() instanceof IMKMeleeWeapon) {
-                playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap -> {
+                playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(cap -> {
                     cap.addMeleeWeaponEffect(new StunMeleeWeaponEffect(0.5, 2));
                     cap.setAbilityId(EmberAbility.INSTANCE.getAbilityId());
                 });

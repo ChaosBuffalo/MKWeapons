@@ -1,11 +1,10 @@
 package com.chaosbuffalo.mkweapons.event;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.MKBow;
-import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
+import com.chaosbuffalo.mkweapons.items.IMKEquipment;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
-import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,25 +15,19 @@ public class MKWeaponsClientEventHandler {
 
     @SubscribeEvent
     public static void onTooltipEvent(ItemTooltipEvent event) {
-        Item item = event.getItemStack().getItem();
-        if (item instanceof MKMeleeWeapon) {
-            ((MKMeleeWeapon) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
-        }
-        if (item instanceof MKBow) {
-            ((MKBow) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
-        }
-        if (item instanceof MKArmorItem) {
-            ((MKArmorItem) item).addToTooltip(event.getItemStack(),
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty())
+            return;
+        Item item = stack.getItem();
+
+        if (item instanceof IMKEquipment) {
+            ((IMKEquipment) item).addToTooltip(stack,
                     event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
 
         if (item instanceof MKAccessory) {
-            ((MKAccessory) item).addToTooltip(event.getItemStack(),
+            ((MKAccessory) item).addToTooltip(stack,
                     event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
         }
-
     }
-
 }

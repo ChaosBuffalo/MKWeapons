@@ -33,12 +33,11 @@ public abstract class EffectOption<T extends IItemEffect> extends BaseRandomizat
     @Override
     public <D> void readAdditionalData(Dynamic<D> dynamic) {
         super.readAdditionalData(dynamic);
-        List<Optional<T>> effects = dynamic.get("effects").asList(x -> {
+        itemEffects.clear();
+        dynamic.get("effects").asStream().map(x -> {
             IItemEffect effect = ItemEffects.deserializeEffect(x);
             return deserializeEffectToType(effect);
-        });
-        itemEffects.clear();
-        effects.forEach(x -> x.ifPresent(itemEffects::add));
+        }).forEach(x -> x.ifPresent(itemEffects::add));
     }
 
     @Override

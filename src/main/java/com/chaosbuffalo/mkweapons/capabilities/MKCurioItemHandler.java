@@ -82,7 +82,7 @@ public class MKCurioItemHandler implements ICurio, INBTSerializable<CompoundNBT>
     public List<IAccessoryEffect> getEffects() {
         if (isCacheDirty) {
             cachedEffects.clear();
-            if (getItemStack().getItem() instanceof MKAccessory) {
+            if (!stack.isEmpty() && getItemStack().getItem() instanceof MKAccessory) {
                 cachedEffects.addAll(((MKAccessory) getItemStack().getItem()).getAccessoryEffects());
             }
             cachedEffects.addAll(getStackEffects());

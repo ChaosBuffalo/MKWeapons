@@ -10,20 +10,14 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public interface IArmorData extends INBTSerializable<CompoundNBT> {
 
-    void attach(ItemStack itemStack);
-
     ItemStack getItemStack();
 
-    List<IArmorEffect> getArmorEffects();
-
-    boolean hasArmorEffects();
-
-    void markCacheDirty();
-
-    Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot);
+    void forEachEffect(Consumer<IArmorEffect> consumer);
 
     void addArmorEffect(IArmorEffect armorEffect);
 

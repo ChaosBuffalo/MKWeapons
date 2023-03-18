@@ -5,15 +5,16 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.item.IImplementsBlocking;
-import com.chaosbuffalo.mkcore.item.ILimitItemTooltip;
 import com.chaosbuffalo.mkcore.item.IReceivesSkillChange;
 import com.chaosbuffalo.mkcore.utils.EntityUtils;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screen.Screen;
@@ -41,11 +42,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitItemTooltip, IImplementsBlocking, IReceivesSkillChange {
+public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, IImplementsBlocking, IReceivesSkillChange {
     private final IMeleeWeaponType weaponType;
     private final MKTier mkTier;
-    private final List<IMeleeWeaponEffect> weaponEffects;
     protected Multimap<Attribute, AttributeModifier> modifiers;
     protected static final UUID ATTACK_REACH_MODIFIER = UUID.fromString("f74aa80c-43b8-4d00-a6ce-8d52694ff20c");
     protected static final UUID CRIT_CHANCE_MODIFIER = UUID.fromString("9b9c4389-0036-4beb-9dcc-5e11928ff499");
@@ -57,10 +58,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         super(tier, Math.round(weaponType.getDamageForTier(tier) - tier.getAttackDamage()), weaponType.getAttackSpeed(), builder);
         this.weaponType = weaponType;
         this.mkTier = tier;
-        this.weaponEffects = new ArrayList<>();
-        recalculateModifiers();
-        weaponEffects.addAll(tier.getMeleeWeaponEffects());
-        weaponEffects.addAll(weaponType.getWeaponEffects());
+        reload();
         setRegistryName(weaponName);
     }
 
@@ -95,10 +93,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
 
     @Override
     public void reload() {
-        weaponEffects.clear();
         recalculateModifiers();
-        weaponEffects.addAll(getMKTier().getMeleeWeaponEffects());
-        weaponEffects.addAll(getWeaponType().getWeaponEffects());
     }
 
     @Override
@@ -107,29 +102,35 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
     }
 
     @Override
-    public List<IMeleeWeaponEffect> getWeaponEffects() {
-        return weaponEffects;
-    }
-
-    @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        MKCore.getEntityData(attacker).ifPresent(cap -> {
-            if (!target.isActiveItemStackBlocking()) {
+        if (!target.isActiveItemStackBlocking()) {
+            MKCore.getEntityData(attacker).ifPresent(cap -> {
                 if (cap.getCombatExtension().getEntityTicksSinceLastSwing() >= EntityUtils.getCooldownPeriod(attacker)) {
-                    for (IMeleeWeaponEffect effect : getWeaponEffects(stack)) {
-                        effect.onHit(this, stack, target, attacker);
-                    }
+                    forEachMeleeEffect(stack, effect -> effect.onHit(this, stack, target, attacker));
                 }
-            }
-        });
+            });
+        }
 
         return super.hitEntity(stack, target, attacker);
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        return stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
-                .orElse(getAttributeModifiers(slot));
+        if (slot == EquipmentSlotType.MAINHAND) {
+            Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+            modifiers.putAll(getAttributeModifiers(slot));
+
+            // Iterate common+stack effects
+            forEachMeleeEffect(stack, armorEffect -> {
+                if (armorEffect instanceof ItemModifierEffect) {
+                    ItemModifierEffect modEffect = (ItemModifierEffect) armorEffect;
+                    modEffect.getModifiers().forEach(e -> modifiers.put(e.getAttribute(), e.getModifier()));
+                }
+            });
+            return modifiers;
+        } else {
+            return getAttributeModifiers(slot);
+        }
     }
 
     @Override
@@ -173,7 +174,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         if (original != null) {
             newTag.put("share", original);
         }
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+        stack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
                 newTag.put("weaponCap", weaponData.serializeNBT()));
         return newTag;
     }
@@ -187,7 +188,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
             super.readShareTag(stack, shareTag.getCompound("share"));
         }
         if (shareTag.contains("weaponCap")) {
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+            stack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
                     weaponData.deserializeNBT(shareTag.getCompound("weaponCap")));
         }
     }
@@ -202,6 +203,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
         return mkTier;
     }
 
+    @Override
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         if (getWeaponType().isTwoHanded()) {
             tooltip.add(new TranslationTextComponent("mkweapons.two_handed.name")
@@ -210,9 +212,7 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
                 tooltip.add(new TranslationTextComponent("mkweapons.two_handed.description"));
             }
         }
-        for (IMeleeWeaponEffect effect : getWeaponEffects(stack)) {
-            effect.addInformation(stack, worldIn, tooltip);
-        }
+        forEachMeleeEffect(stack, effect -> effect.addInformation(stack, worldIn, tooltip));
         MKAbility ability = getAbility(stack);
         if (ability != null) {
             tooltip.add(new TranslationTextComponent("mkweapons.grants_ability",
@@ -223,41 +223,33 @@ public class MKMeleeWeapon extends SwordItem implements IMKMeleeWeapon, ILimitIt
 
     @Override
     public List<IMeleeWeaponEffect> getWeaponEffects(ItemStack item) {
-        return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasMeleeWeaponEffects()) {
-                return cap.getMeleeEffects();
-            } else {
-                return weaponEffects;
-            }
-        }).orElse(weaponEffects);
+        List<IMeleeWeaponEffect> effects = new ArrayList<>();
+        forEachMeleeEffect(item, effects::add);
+        return effects;
+    }
+
+    @Override
+    public void forEachMeleeEffect(ItemStack itemStack, Consumer<IMeleeWeaponEffect> consumer) {
+        forEachEffect(consumer);
+        itemStack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(cap -> {
+            cap.forEachMeleeEffect(consumer);
+        });
+    }
+
+    public void forEachEffect(Consumer<IMeleeWeaponEffect> consumer) {
+        getMKTier().getMeleeWeaponEffects().forEach(consumer);
+        getWeaponType().getWeaponEffects().forEach(consumer);
     }
 
     @Nullable
     @Override
     public MKAbility getAbility(ItemStack itemStack) {
-        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
+        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY)
                 .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> limitTooltip(ItemStack itemStack, EquipmentSlotType equipmentSlotType, Multimap<Attribute, AttributeModifier> multimap) {
-        if (multimap.containsKey(MKAttributes.BLOCK_EFFICIENCY)) {
-            multimap.removeAll(MKAttributes.BLOCK_EFFICIENCY);
-        }
-        if (multimap.containsKey(MKAttributes.MAX_POISE)) {
-            multimap.removeAll(MKAttributes.MAX_POISE);
-        }
-        if (multimap.containsKey(MKAttributes.MELEE_CRIT)) {
-            multimap.removeAll(MKAttributes.MELEE_CRIT);
-        }
-        if (multimap.containsKey(MKAttributes.MELEE_CRIT_MULTIPLIER)) {
-            multimap.removeAll(MKAttributes.MELEE_CRIT_MULTIPLIER);
-        }
-        return multimap;
-    }
-
-    @Override
     public void onSkillChange(ItemStack stack, PlayerEntity playerEntity) {
-        getWeaponEffects(stack).forEach(x -> x.onSkillChange(playerEntity));
+        forEachMeleeEffect(stack, x -> x.onSkillChange(playerEntity));
     }
 }

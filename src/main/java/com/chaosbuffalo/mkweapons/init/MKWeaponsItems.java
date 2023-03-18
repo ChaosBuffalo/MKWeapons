@@ -69,8 +69,7 @@ public class MKWeaponsItems {
     public static Item GoldEarring;
 
     public static void putWeaponForLookup(MKTier tier, IMeleeWeaponType weaponType, Item item) {
-        WEAPON_LOOKUP.putIfAbsent(tier, new HashMap<>());
-        WEAPON_LOOKUP.get(tier).put(weaponType, item);
+        WEAPON_LOOKUP.computeIfAbsent(tier, t -> new HashMap<>()).put(weaponType, item);
     }
 
     public static Item lookupWeapon(MKTier tier, IMeleeWeaponType weaponType) {
@@ -152,10 +151,11 @@ public class MKWeaponsItems {
         }
 
         for (MKMeleeWeapon weapon : WEAPONS) {
-            if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType()))
+            if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())) {
                 ItemModelsProperties.registerProperty(weapon, new ResourceLocation("blocking"),
                         (itemStack, world, entity) -> entity != null && entity.isHandActive()
                                 && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
+            }
         }
 
 

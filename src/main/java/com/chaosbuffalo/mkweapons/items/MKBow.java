@@ -4,17 +4,18 @@ import com.chaosbuffalo.mkcore.MKCoreRegistry;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkcore.item.IReceivesSkillChange;
-import com.chaosbuffalo.mkweapons.MKWeapons;
+import com.chaosbuffalo.mkweapons.capabilities.IArrowData;
 import com.chaosbuffalo.mkweapons.capabilities.IWeaponData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedSkillScalingEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillChange {
     private final List<IRangedWeaponEffect> weaponEffects = new ArrayList<>();
@@ -74,7 +76,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         if (original != null) {
             newTag.put("share", original);
         }
-        stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+        stack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
                 newTag.put("weaponCap", weaponData.serializeNBT()));
         return newTag;
     }
@@ -88,7 +90,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
             super.readShareTag(stack, shareTag.getCompound("share"));
         }
         if (shareTag.contains("weaponCap")) {
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
+            stack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY).ifPresent(weaponData ->
                     weaponData.deserializeNBT(shareTag.getCompound("weaponCap")));
         }
     }
@@ -110,10 +112,36 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         return vel;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        return stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
-                .orElse(getAttributeModifiers(slot));
+        if (slot == EquipmentSlotType.MAINHAND) {
+            Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+            modifiers.putAll(getAttributeModifiers(slot));
+
+            // Iterate common+stack effects
+            forEachRangedEffect(stack, armorEffect -> {
+                if (armorEffect instanceof ItemModifierEffect) {
+                    ItemModifierEffect modEffect = (ItemModifierEffect) armorEffect;
+                    modEffect.getModifiers().forEach(e -> modifiers.put(e.getAttribute(), e.getModifier()));
+                }
+            });
+            return modifiers;
+        } else {
+            return getAttributeModifiers(slot);
+        }
+    }
+
+    @Override
+    public void forEachRangedEffect(ItemStack itemStack, Consumer<IRangedWeaponEffect> consumer) {
+        forEachEffect(consumer);
+        itemStack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY).ifPresent(cap -> {
+            cap.forEachRangedEffect(consumer);
+        });
+    }
+
+    public void forEachEffect(Consumer<IRangedWeaponEffect> consumer) {
+        weaponEffects.forEach(consumer);
     }
 
 
@@ -186,20 +214,20 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
     public AbstractArrowEntity customArrow(AbstractArrowEntity arrow, ItemStack stack) {
         // set item stack on cap here
-        Entity shooter = arrow.getShooter();
         double damage = arrow.getDamage();
         damage += getMKTier().getAttackDamage();
-        if (shooter instanceof LivingEntity) {
-            MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
-                    cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
+        if (arrow.getShooter() instanceof LivingEntity) {
+            LivingEntity shooter = (LivingEntity) arrow.getShooter();
+            IArrowData.get(arrow).ifPresent(cap -> cap.setShootingWeapon(shooter.getHeldItemMainhand()));
             for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)) {
-                damage = weaponEffect.modifyArrowDamage(damage, (LivingEntity) shooter, arrow);
+                damage = weaponEffect.modifyArrowDamage(damage, shooter, arrow);
             }
         }
         arrow.setDamage(damage);
         return super.customArrow(arrow);
     }
 
+    @Override
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
         if (getMKTier().getAttackDamage() > 0) {
             tooltip.add(new TranslationTextComponent("mkweapons.bow_extra_damage.description",
@@ -217,30 +245,21 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     }
 
     @Override
-    public List<IRangedWeaponEffect> getWeaponEffects() {
-        return weaponEffects;
-    }
-
-    @Override
     public List<IRangedWeaponEffect> getWeaponEffects(ItemStack item) {
-        return item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(cap -> {
-            if (cap.hasRangedWeaponEffects()) {
-                return cap.getRangedEffects();
-            } else {
-                return weaponEffects;
-            }
-        }).orElse(weaponEffects);
+        List<IRangedWeaponEffect> effects = new ArrayList<>();
+        forEachRangedEffect(item, effects::add);
+        return effects;
     }
 
     @Nullable
     @Override
     public MKAbility getAbility(ItemStack itemStack) {
-        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
+        return MKCoreRegistry.getAbility(itemStack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY)
                 .map(IWeaponData::getAbilityName).orElse(MKCoreRegistry.INVALID_ABILITY));
     }
 
     @Override
     public void onSkillChange(ItemStack itemStack, PlayerEntity playerEntity) {
-        getWeaponEffects(itemStack).forEach(x -> x.onSkillChange(playerEntity));
+        forEachRangedEffect(itemStack, x -> x.onSkillChange(playerEntity));
     }
 }

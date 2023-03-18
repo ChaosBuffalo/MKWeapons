@@ -2,8 +2,9 @@ package com.chaosbuffalo.mkweapons.items.randomization.options;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
+import com.chaosbuffalo.mkweapons.items.accessories.MKAccessories;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
-import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
+import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.AccessoryModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.armor.ArmorModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.melee.MeleeModifierEffect;
@@ -56,17 +57,17 @@ public class AttributeOption extends BaseRandomizationOption {
     @Override
     public void applyToItemStackForSlot(ItemStack stack, LootSlot slot, double difficulty) {
         if (stack.getItem() instanceof IMKMeleeWeapon) {
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
+            stack.getCapability(WeaponsCapabilities.MELEE_WEAPON_DATA_CAPABILITY).ifPresent(
                     cap -> cap.addMeleeWeaponEffect(new MeleeModifierEffect(getModifiers(difficulty))));
         } else if (stack.getItem() instanceof IMKRangedWeapon) {
-            stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(
+            stack.getCapability(WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY).ifPresent(
                     cap -> cap.addRangedWeaponEffect(new RangedModifierEffect(getModifiers(difficulty))));
-        } else if (stack.getItem() instanceof IMKArmor) {
+        } else if (stack.getItem() instanceof MKArmorItem) {
             stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).ifPresent(
                     cap -> cap.addArmorEffect(new ArmorModifierEffect(getModifiers(difficulty)))
             );
         } else if (stack.getItem() instanceof MKAccessory) {
-            MKAccessory.getAccessoryHandler(stack).ifPresent(
+            MKAccessories.getAccessoryHandler(stack).ifPresent(
                     cap -> cap.addEffect(new AccessoryModifierEffect(getModifiers(difficulty)))
             );
         }
