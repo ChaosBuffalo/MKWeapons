@@ -1,43 +1,29 @@
 package com.chaosbuffalo.mkweapons.items.accessories;
 
-import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
+import com.chaosbuffalo.mkweapons.capabilities.IAccessoryData;
+import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.CuriosCapability;
-import top.theillusivec4.curios.api.type.capability.ICurio;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class MKAccessories {
-    public static Optional<MKCurioItemHandler> getAccessoryHandler(ItemStack item) {
-        Optional<ICurio> curioCap = item.getCapability(CuriosCapability.ITEM).resolve();
-        if (curioCap.isPresent()) {
-            ICurio cap = curioCap.get();
-            if (cap instanceof MKCurioItemHandler) {
-                return Optional.of((MKCurioItemHandler) cap);
-            }
-        }
-        return Optional.empty();
+
+    private static final List<BiConsumer<LivingEntity, NonNullConsumer<IAccessoryData>>> specialInventoryAccessors = new ArrayList<>();
+
+    public static void registerInventoryAccessor(BiConsumer<LivingEntity, NonNullConsumer<IAccessoryData>> lookup) {
+        specialInventoryAccessors.add(lookup);
     }
 
-    public static List<MKCurioItemHandler> getMKCurios(LivingEntity entity) {
-        List<MKCurioItemHandler> curios = new ArrayList<>();
-        findAccessoryHandlers(entity, curios::add);
-        return curios;
+    public static LazyOptional<IAccessoryData> getAccessoryHandler(ItemStack item) {
+        return item.getCapability(WeaponsCapabilities.ACCESSORY_DATA_CAPABILITY);
     }
 
-    public static void findAccessoryHandlers(LivingEntity entity, Consumer<MKCurioItemHandler> consumer) {
-        CuriosApi.getCuriosHelper().getEquippedCurios(entity).ifPresent(curioInventory -> {
-            for (int i = 0; i < curioInventory.getSlots(); i++) {
-                ItemStack curioIS = curioInventory.getStackInSlot(i);
-                if (!curioIS.isEmpty() && curioIS.getItem() instanceof MKAccessory) {
-                    getAccessoryHandler(curioIS).ifPresent(consumer);
-                }
-            }
-        });
+    public static void findAccessoryHandlers(LivingEntity entity, NonNullConsumer<IAccessoryData> consumer) {
+        specialInventoryAccessors.forEach(c -> c.accept(entity, consumer));
     }
 }

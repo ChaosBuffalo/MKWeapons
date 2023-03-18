@@ -57,20 +57,17 @@ public class MKWeapons {
 
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        MKWCuriosExtension.sendExtension();
+        MKWCuriosExtension.install();
     }
 
     private void processIMC(final InterModProcessEvent event) {
         LOGGER.info("MKWeapons.processIMC");
-        event.getIMCStream().forEach(m -> {
-            if (m.getMethod().equals(REGISTER_MK_WEAPONS_EXTENSION)) {
-                LOGGER.info("IMC register weapon extensions from mod {} {}", m.getSenderModId(),
-                        m.getMethod());
-                IWeaponEffectsExtension ext = (IWeaponEffectsExtension) m.getMessageSupplier().get();
-                ext.registerWeaponEffectsExtension();
-            }
+        event.getIMCStream(REGISTER_MK_WEAPONS_EXTENSION::equals).forEach(m -> {
+            LOGGER.info("IMC register weapon extensions from mod {} {}", m.getSenderModId(),
+                    m.getMethod());
+            IWeaponEffectsExtension ext = (IWeaponEffectsExtension) m.getMessageSupplier().get();
+            ext.registerWeaponEffectsExtension();
         });
-
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

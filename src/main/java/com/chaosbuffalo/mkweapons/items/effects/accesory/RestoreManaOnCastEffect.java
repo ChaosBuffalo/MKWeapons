@@ -4,12 +4,10 @@ import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
@@ -68,13 +66,12 @@ public class RestoreManaOnCastEffect extends BaseAccessoryEffect {
     }
 
     @Override
-    public void livingCompleteAbility(LivingEntity caster, IMKEntityData entityData, MKAccessory accessory,
-                                      ItemStack stack, MKAbility ability) {
-        if (!caster.getEntityWorld().isRemote() && entityData instanceof MKPlayerData) {
-            MKPlayerData playerData = (MKPlayerData) entityData;
-            double roll = caster.getRNG().nextDouble();
+    public void livingCompleteAbility(IMKEntityData casterData, ItemStack stack, MKAbility ability) {
+        if (casterData.isServerSide() && casterData instanceof MKPlayerData) {
+            MKPlayerData playerData = (MKPlayerData) casterData;
+            double roll = casterData.getEntity().getRNG().nextDouble();
             if (roll >= (1.0 - getChance())) {
-                float mana = ability.getManaCost(entityData) * getPercentage();
+                float mana = ability.getManaCost(casterData) * getPercentage();
                 playerData.getStats().addMana(mana);
                 playerData.getEntity().sendMessage(new TranslationTextComponent(
                         "mkweapons.accessory_effect.restore_mana.message",

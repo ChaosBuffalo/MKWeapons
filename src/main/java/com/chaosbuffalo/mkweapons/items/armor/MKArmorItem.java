@@ -1,5 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.armor;
 
+import com.chaosbuffalo.mkweapons.capabilities.ArmorDataHandler;
+import com.chaosbuffalo.mkweapons.capabilities.CapabilityProvider;
+import com.chaosbuffalo.mkweapons.capabilities.IArmorData;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.IMKEquipment;
 import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
@@ -18,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -52,6 +56,13 @@ public class MKArmorItem extends ArmorItem implements IMKEquipment {
         buildAttributes(builder, slot, materialIn, uuid);
         this.attributeMap = builder.build();
         this.armorEffects = Arrays.asList(armorEffects);
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        IArmorData data = new ArmorDataHandler(stack);
+        return CapabilityProvider.of(data, WeaponsCapabilities.ARMOR_DATA_CAPABILITY);
     }
 
     protected void buildAttributes(ImmutableMultimap.Builder<Attribute, AttributeModifier> builder,

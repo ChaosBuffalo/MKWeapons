@@ -18,6 +18,7 @@ public class WeaponsCapabilities {
     public static ResourceLocation MK_ARROW_CAP_ID = new ResourceLocation(MKWeapons.MODID, "arrow_data");
     public static ResourceLocation MK_WEAPON_CAP_ID = new ResourceLocation(MKWeapons.MODID, "melee_weapon_data");
     public static ResourceLocation MK_ARMOR_CAP_ID = new ResourceLocation(MKWeapons.MODID, "armor_data");
+    public static ResourceLocation MK_ACCESSORY_CAP_ID = new ResourceLocation(MKWeapons.MODID, "accessory_data");
 
     @CapabilityInject(IArrowData.class)
     public static final Capability<IArrowData> ARROW_DATA_CAPABILITY;
@@ -33,6 +34,8 @@ public class WeaponsCapabilities {
 
     @CapabilityInject(IArmorData.class)
     public static final Capability<IArmorData> ARMOR_DATA_CAPABILITY;
+    @CapabilityInject(IAccessoryData.class)
+    public static final Capability<IAccessoryData> ACCESSORY_DATA_CAPABILITY;
 
     static {
         ARROW_DATA_CAPABILITY = shutUpAboutThisBeingNull();
@@ -40,6 +43,7 @@ public class WeaponsCapabilities {
         MELEE_WEAPON_DATA_CAPABILITY = shutUpAboutThisBeingNull();
         RANGED_WEAPON_DATA_CAPABILITY = shutUpAboutThisBeingNull();
         ARMOR_DATA_CAPABILITY = shutUpAboutThisBeingNull();
+        ACCESSORY_DATA_CAPABILITY = shutUpAboutThisBeingNull();
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -54,6 +58,7 @@ public class WeaponsCapabilities {
         CapabilityManager.INSTANCE.register(IMeleeWeaponData.class, new SimpleStorage<>(), () -> null);
         CapabilityManager.INSTANCE.register(IRangedWeaponData.class, new SimpleStorage<>(), () -> null);
         CapabilityManager.INSTANCE.register(IArmorData.class, new SimpleStorage<>(), () -> null);
+        CapabilityManager.INSTANCE.register(IAccessoryData.class, new SimpleStorage<>(), () -> null);
     }
 
     private static class SimpleStorage<T extends INBTSerializable<CompoundNBT>> implements Capability.IStorage<T> {

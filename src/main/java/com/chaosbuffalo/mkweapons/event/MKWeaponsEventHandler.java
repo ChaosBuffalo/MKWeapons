@@ -9,7 +9,6 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.IArrowData;
 import com.chaosbuffalo.mkweapons.items.IMKEquipment;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessories;
-import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import net.minecraft.entity.Entity;
@@ -35,10 +34,10 @@ public class MKWeaponsEventHandler {
             AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
             if (!livingTarget.isActiveItemStackBlocking()) {
                 IArrowData.get(arrowEntity).ifPresent(cap -> {
-                    if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon) {
+                    if (cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon) {
                         IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
                         bow.forEachRangedEffect(cap.getShootingWeapon(), effect -> {
-                            effect.onProjectileHit(event, source, livingTarget, livingSource, sourceData,
+                            effect.onProjectileHit(event, source, livingTarget, sourceData,
                                     arrowEntity, cap.getShootingWeapon());
                         });
                     }
@@ -101,10 +100,9 @@ public class MKWeaponsEventHandler {
     @SubscribeEvent
     public static void onLivingCast(EntityAbilityEvent.EntityCompleteAbilityEvent event) {
         MKAccessories.findAccessoryHandlers(event.getEntityLiving(), handler -> {
-            for (IAccessoryEffect effect : handler.getEffects()) {
-                effect.livingCompleteAbility(event.getEntityLiving(), event.getEntityData(), handler.getAccessory(),
-                        handler.getItemStack(), event.getAbility());
-            }
+            handler.forAllStackEffects(effect -> {
+                effect.livingCompleteAbility(event.getEntityData(), handler.getItemStack(), event.getAbility());
+            });
         });
     }
 
@@ -115,7 +113,6 @@ public class MKWeaponsEventHandler {
             return;
         DamageSource source = event.getSource();
         Entity trueSource = source.getTrueSource();
-        float newDamage = event.getAmount();
         if (trueSource instanceof LivingEntity) {
             LivingEntity livingSource = (LivingEntity) trueSource;
             if (DamageUtils.isMinecraftPhysicalDamage(source)) {
@@ -123,19 +120,19 @@ public class MKWeaponsEventHandler {
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon) {
                     IMKMeleeWeapon item = (IMKMeleeWeapon) mainHand.getItem();
                     item.forEachMeleeEffect(mainHand, effect -> {
-                        float damage = effect.modifyDamageDealt(event.getAmount(), item, mainHand, livingTarget, livingSource);
+                        float orig = event.getAmount();
+                        float damage = effect.modifyDamageDealt(orig, item, mainHand, livingTarget, livingSource);
                         event.setAmount(damage);
                     });
                 }
             }
-            event.setAmount(newDamage);
+
             MKAccessories.findAccessoryHandlers(livingSource, handler -> {
-                float local = event.getAmount();
-                for (IAccessoryEffect effect : handler.getEffects()) {
-                    local = effect.modifyDamageDealt(local, handler.getAccessory(),
-                            handler.getItemStack(), livingTarget, livingSource);
-                }
-                event.setAmount(local);
+                handler.forAllStackEffects(effect -> {
+                    float orig = event.getAmount();
+                    float dmg = effect.modifyDamageDealt(livingSource, livingTarget, handler.getItemStack(), orig);
+                    event.setAmount(dmg);
+                });
             });
         }
     }

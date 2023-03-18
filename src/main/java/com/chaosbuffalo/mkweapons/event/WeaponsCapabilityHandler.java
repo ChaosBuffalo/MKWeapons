@@ -2,7 +2,6 @@ package com.chaosbuffalo.mkweapons.event;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.capabilities.*;
-import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
@@ -40,11 +39,6 @@ public class WeaponsCapabilityHandler {
                         WeaponsCapabilities.RANGED_WEAPON_DATA_CAPABILITY, WeaponsCapabilities.WEAPON_DATA_CAPABILITY);
                 event.addCapability(WeaponsCapabilities.MK_WEAPON_CAP_ID, prov);
             }
-        }
-        if (event.getObject().getItem() instanceof MKArmorItem) {
-            IArmorData data = new ArmorDataHandler(event.getObject());
-            ICapabilityProvider prov = CapabilityProvider.of(data, WeaponsCapabilities.ARMOR_DATA_CAPABILITY);
-            event.addCapability(WeaponsCapabilities.MK_ARMOR_CAP_ID, prov);
         }
     }
 }

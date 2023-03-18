@@ -1,7 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.accessories;
 
+import com.chaosbuffalo.mkweapons.capabilities.AccessoryDataHandler;
 import com.chaosbuffalo.mkweapons.capabilities.CapabilityProvider;
-import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
+import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,52 +10,47 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import top.theillusivec4.curios.api.CuriosCapability;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MKAccessory extends Item {
 
-    private final List<IAccessoryEffect> effects;
+    private final List<IAccessoryEffect> staticEffects;
 
-    public MKAccessory(Properties properties, IAccessoryEffect... effectsIn) {
+    public MKAccessory(Item.Properties properties, IAccessoryEffect... effectsIn) {
         super(properties);
-        effects = new ArrayList<>();
-        effects.addAll(Arrays.asList(effectsIn));
+        staticEffects = new ArrayList<>();
+        staticEffects.addAll(Arrays.asList(effectsIn));
     }
 
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        MKCurioItemHandler handler = new MKCurioItemHandler(stack);
-        ICapabilityProvider provider = CapabilityProvider.of(handler, CuriosCapability.ITEM);
+    protected <T extends AccessoryDataHandler> ICapabilityProvider initAccessoryCapability(Function<ItemStack, T> capFactory,
+                                                                                           Function<T, ICapabilityProvider> provFactory,
+                                                                                           ItemStack stack,
+                                                                                           @Nullable CompoundNBT nbt) {
+        T handler = capFactory.apply(stack);
+        ICapabilityProvider provider = provFactory.apply(handler);
         if (nbt != null) {
             handler.deserializeNBT(nbt);
         }
         return provider;
     }
 
-    public List<? extends IAccessoryEffect> getAccessoryEffects(ItemStack item) {
-        return item.getCapability(CuriosCapability.ITEM).map(cap -> {
-            if (cap instanceof MKCurioItemHandler) {
-                return ((MKCurioItemHandler) cap).getEffects();
-            } else {
-                return effects;
-            }
-        }).orElse(effects);
-    }
-
-    public List<IAccessoryEffect> getAccessoryEffects() {
-        return effects;
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        return initAccessoryCapability(AccessoryDataHandler::new,
+                cap -> CapabilityProvider.of(cap, WeaponsCapabilities.ACCESSORY_DATA_CAPABILITY), stack, nbt);
     }
 
     public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        for (IAccessoryEffect accessoryEffect : getAccessoryEffects(stack)) {
-            accessoryEffect.addInformation(stack, worldIn, tooltip);
-        }
+        MKAccessories.getAccessoryHandler(stack).ifPresent(c -> {
+            c.forAllStackEffects(effect -> effect.addInformation(stack, worldIn, tooltip));
+        });
     }
 
     @Nullable
@@ -83,5 +79,9 @@ public class MKAccessory extends Item {
                 cap.deserializeNBT(shareTag.getCompound("accessoryCap"));
             });
         }
+    }
+
+    public void forEachStaticAccessoryEffect(Consumer<IAccessoryEffect> consumer) {
+        staticEffects.forEach(consumer);
     }
 }

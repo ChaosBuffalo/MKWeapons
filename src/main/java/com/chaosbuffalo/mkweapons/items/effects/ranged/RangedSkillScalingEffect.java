@@ -1,9 +1,9 @@
 package com.chaosbuffalo.mkweapons.items.effects.ranged;
 
-import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkcore.abilities.MKAbility;
 import com.chaosbuffalo.mkcore.core.IMKEntityData;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
+import com.chaosbuffalo.mkcore.core.MKPlayerData;
 import com.chaosbuffalo.mkweapons.ClientUtils;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
@@ -47,8 +47,10 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect {
     }
 
     @Override
-    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, LivingEntity livingSource, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
-        MKCore.getPlayer(livingSource).ifPresent(x -> x.getSkills().tryScaledIncreaseSkill(skill, 0.5));
+    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
+        if (sourceData instanceof MKPlayerData) {
+            ((MKPlayerData) sourceData).getSkills().tryScaledIncreaseSkill(skill, 0.5);
+        }
     }
 
 //    @Override
