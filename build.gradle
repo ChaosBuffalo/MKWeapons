@@ -20,7 +20,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "0.14.1"
+version = "0.14.2"
 if (System.getenv().RELEASE_MODE == null) {
     version += '-SNAPSHOT'
 }
