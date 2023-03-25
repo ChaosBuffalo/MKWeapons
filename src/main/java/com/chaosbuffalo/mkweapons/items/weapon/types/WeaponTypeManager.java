@@ -25,8 +25,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,13 +97,13 @@ public class WeaponTypeManager extends SimpleJsonResourceReloadListener {
         if (mainHand.getItem() instanceof IMKMeleeWeapon){
             player.getAttributes().addTransientAttributeModifiers(mainHand.getAttributeModifiers(EquipmentSlot.MAINHAND));
         }
-        for (ItemStack item : player.inventory.items){
+        for (ItemStack item : player.getInventory().items){
             if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
         }
-        for (ItemStack item : player.inventory.offhand){
+        for (ItemStack item : player.getInventory().offhand){
             if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);

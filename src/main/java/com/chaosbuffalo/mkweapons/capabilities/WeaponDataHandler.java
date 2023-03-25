@@ -18,12 +18,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -196,7 +192,7 @@ public class WeaponDataHandler implements IWeaponData {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("melee_effects")){
-            ListTag effectList = nbt.getList("melee_effects", Constants.NBT.TAG_COMPOUND);
+            ListTag effectList = nbt.getList("melee_effects", Tag.TAG_COMPOUND);
             for (Tag effectNBT : effectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IMeleeWeaponEffect){
@@ -208,7 +204,7 @@ public class WeaponDataHandler implements IWeaponData {
             }
         }
         if (nbt.contains("ranged_effects")){
-            ListTag rangedEffectList = nbt.getList("ranged_effects", Constants.NBT.TAG_COMPOUND);
+            ListTag rangedEffectList = nbt.getList("ranged_effects", Tag.TAG_COMPOUND);
             for (Tag effectNBT : rangedEffectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IRangedWeaponEffect){
@@ -222,26 +218,6 @@ public class WeaponDataHandler implements IWeaponData {
         ResourceLocation abilityId = new ResourceLocation(nbt.getString("ability_granted"));
         if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY)){
             setAbilityId(abilityId);
-        }
-    }
-
-    public static class Storage implements Capability.IStorage<IWeaponData> {
-
-        @Nullable
-        @Override
-        public Tag writeNBT(Capability<IWeaponData> capability, IWeaponData instance, Direction side) {
-            if (instance == null){
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IWeaponData> capability, IWeaponData instance, Direction side, Tag nbt) {
-            if (nbt instanceof CompoundTag && instance != null) {
-                CompoundTag tag = (CompoundTag) nbt;
-                instance.deserializeNBT(tag);
-            }
         }
     }
 }

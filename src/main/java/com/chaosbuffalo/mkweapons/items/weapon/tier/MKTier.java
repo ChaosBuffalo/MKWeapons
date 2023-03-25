@@ -23,7 +23,7 @@ public class MKTier implements Tier{
         this.tag = tag;
     }
 
-    public Tag.Named<Item> getTag() {
+    public Tag.Named<Item> getItemTag() {
         return tag;
     }
 

@@ -59,25 +59,4 @@ public class ArrowDataHandler implements IArrowData{
         ContainerHelper.loadAllItems(nbt, itemStacks);
         shootingWeapon = itemStacks.get(0);
     }
-
-    public static class Storage implements Capability.IStorage<IArrowData> {
-
-
-        @Nullable
-        @Override
-        public Tag writeNBT(Capability<IArrowData> capability, IArrowData instance, Direction side) {
-            if (instance == null){
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IArrowData> capability, IArrowData instance, Direction side, Tag nbt) {
-            if (nbt instanceof CompoundTag && instance != null) {
-                CompoundTag tag = (CompoundTag) nbt;
-                instance.deserializeNBT(tag);
-            }
-        }
-    }
 }

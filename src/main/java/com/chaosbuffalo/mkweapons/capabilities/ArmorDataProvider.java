@@ -12,28 +12,26 @@ import javax.annotation.Nullable;
 
 public class ArmorDataProvider implements ICapabilitySerializable<CompoundTag> {
 
-    private final ArmorDataHandler armorDataHandler;
+    private final ArmorDataHandler data;
 
     public ArmorDataProvider(ItemStack item){
-        armorDataHandler = new ArmorDataHandler();
-        armorDataHandler.attach(item);
+        data = new ArmorDataHandler();
+        data.attach(item);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return WeaponsCapabilities.ARMOR_DATA_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> armorDataHandler));
+        return WeaponsCapabilities.ARMOR_DATA_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> data));
     }
 
     @Override
     public CompoundTag serializeNBT() {
-        return (CompoundTag) WeaponsCapabilities.ARMOR_DATA_CAPABILITY.getStorage().writeNBT(
-                WeaponsCapabilities.ARMOR_DATA_CAPABILITY, armorDataHandler, null);
+        return data.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        WeaponsCapabilities.ARMOR_DATA_CAPABILITY.getStorage().readNBT(
-                WeaponsCapabilities.ARMOR_DATA_CAPABILITY, armorDataHandler, null, nbt);
+        data.deserializeNBT(nbt);
     }
 }

@@ -97,7 +97,7 @@ public class MKWeaponsEventHandler {
             IMKMeleeWeapon weapon = (IMKMeleeWeapon) main.getItem();
             if (weapon.getWeaponType().isTwoHanded() && offhand.getItem() instanceof ShieldItem){
                 ItemStack off = player.getItemBySlot(EquipmentSlot.OFFHAND);
-                if (!player.inventory.add(off)) {
+                if (!player.getInventory().add(off)) {
                     player.drop(off, true);
                 }
                 player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
@@ -123,7 +123,7 @@ public class MKWeaponsEventHandler {
         for (MKCurioItemHandler handler : curios){
             for (IAccessoryEffect effect : handler.getEffects()){
                 effect.livingCompleteAbility(event.getEntityLiving(), event.getEntityData(), handler.getAccessory(),
-                        handler.getItemStack(), event.getAbility());
+                        handler.getStack(), event.getAbility());
             }
         }
     }
@@ -153,7 +153,7 @@ public class MKWeaponsEventHandler {
             for (MKCurioItemHandler handler : curios){
                 for (IAccessoryEffect effect : handler.getEffects()){
                     newDamage = effect.modifyDamageDealt(newDamage, handler.getAccessory(),
-                            handler.getItemStack(), livingTarget, livingSource);
+                            handler.getStack(), livingTarget, livingSource);
                 }
             }
         }

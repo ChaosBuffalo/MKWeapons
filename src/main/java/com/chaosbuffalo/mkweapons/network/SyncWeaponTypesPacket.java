@@ -2,16 +2,12 @@ package com.chaosbuffalo.mkweapons.network;
 
 import com.chaosbuffalo.mkcore.MKCore;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
-import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
-import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
-import com.mojang.serialization.Dynamic;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.Collection;
 import java.util.HashMap;

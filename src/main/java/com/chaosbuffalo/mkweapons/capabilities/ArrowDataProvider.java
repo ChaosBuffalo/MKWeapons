@@ -27,13 +27,11 @@ public class ArrowDataProvider implements ICapabilitySerializable<CompoundTag> {
 
     @Override
     public CompoundTag serializeNBT() {
-        return (CompoundTag) WeaponsCapabilities.ARROW_DATA_CAPABILITY.getStorage().writeNBT(
-                WeaponsCapabilities.ARROW_DATA_CAPABILITY, data, null);
+        return data.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        WeaponsCapabilities.ARROW_DATA_CAPABILITY.getStorage().readNBT(
-                WeaponsCapabilities.ARROW_DATA_CAPABILITY, data, null, nbt);
+        data.deserializeNBT(nbt);
     }
 }

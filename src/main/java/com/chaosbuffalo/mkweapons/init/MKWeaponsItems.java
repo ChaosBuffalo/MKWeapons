@@ -15,7 +15,6 @@ import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -140,7 +139,7 @@ public class MKWeaponsItems {
 
     public static void registerItemProperties(){
         for (MKBow bow : BOWS){
-            ItemProperties.register(bow, new ResourceLocation("pull"), (itemStack, world, entity) -> {
+            ItemProperties.register(bow, new ResourceLocation("pull"), (itemStack, world, entity, seed) -> {
                 if (entity == null) {
                     return 0.0F;
                 } else {
@@ -148,16 +147,17 @@ public class MKWeaponsItems {
                             (float)(itemStack.getUseDuration() - entity.getUseItemRemainingTicks()) / bow.getDrawTime(itemStack, entity);
                 }
             });
-            ItemProperties.register(bow, new ResourceLocation("pulling"), (itemStack, world, entity) -> {
+            ItemProperties.register(bow, new ResourceLocation("pulling"), (itemStack, world, entity, seed) -> {
                 return entity != null && entity.isUsingItem() && entity.getUseItem() == itemStack ? 1.0F : 0.0F;
             });
         }
-
         for (MKMeleeWeapon weapon : WEAPONS){
-            if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType()))
-            ItemProperties.register(weapon, new ResourceLocation("blocking"),
-                    (itemStack, world, entity) -> entity != null && entity.isUsingItem()
-                            && entity.getUseItem() == itemStack ? 1.0F : 0.0F);
+            if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType())){
+                ItemProperties.register(weapon, new ResourceLocation("blocking"),
+                        (itemStack, world, entity, seed) -> entity != null && entity.isUsingItem()
+                                && entity.getUseItem() == itemStack ? 1.0F : 0.0F);
+            }
+
         }
 
 

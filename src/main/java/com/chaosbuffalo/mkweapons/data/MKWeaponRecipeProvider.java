@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkweapons.data;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
 import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
-import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
@@ -88,12 +87,15 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
 
     }
 
+
+
     public MKWeaponRecipeProvider(DataGenerator generatorIn) {
         super(generatorIn);
     }
 
+
     @Override
-    protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         getHaftRecipe().save(consumer);
         for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
             getRecipe(weapon).save(consumer);
@@ -124,7 +126,7 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
                 .pattern(" IS")
                 .unlockedBy("has_haft", this.has(MKWeaponsItems.Haft))
                 .unlockedBy("has_string", this.has(Tags.Items.STRING))
-                .unlockedBy("has_ingot", this.has(bow.getMKTier().getTag()))
+                .unlockedBy("has_ingot", this.has(bow.getMKTier().getItemTag()))
                 ;
     }
 
@@ -144,7 +146,7 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
         if (weaponRecipe.hasStick()){
             recipeBuilder.unlockedBy("has_stick", this.has(Items.STICK));
         }
-        recipeBuilder.unlockedBy("has_ingot", this.has(weapon.getMKTier().getTag()));
+        recipeBuilder.unlockedBy("has_ingot", this.has(weapon.getMKTier().getItemTag()));
         return recipeBuilder;
     }
 }

@@ -2,13 +2,8 @@ package com.chaosbuffalo.mkweapons.items.accessories;
 
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemHandler;
 import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemProvider;
-import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
-import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.world.item.Item.Properties;
 
 public class MKAccessory extends Item {
 

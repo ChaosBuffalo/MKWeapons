@@ -7,8 +7,6 @@ import com.chaosbuffalo.mkweapons.items.effects.IItemEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ItemEffects;
 import com.chaosbuffalo.mkweapons.items.effects.ItemModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.armor.IArmorEffect;
-import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
-import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Dynamic;
@@ -20,11 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,7 +132,7 @@ public class ArmorDataHandler implements IArmorData {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("armor_effects")){
-            ListTag effectList = nbt.getList("armor_effects", Constants.NBT.TAG_COMPOUND);
+            ListTag effectList = nbt.getList("armor_effects", Tag.TAG_COMPOUND);
             for (Tag effectNBT : effectList){
                 IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IArmorEffect){
@@ -147,26 +141,6 @@ public class ArmorDataHandler implements IArmorData {
                     MKWeapons.LOGGER.error("Failed to deserialize armor effect of type {} for item {}", effect.getTypeName(),
                             getItemStack());
                 }
-            }
-        }
-    }
-
-    public static class Storage implements Capability.IStorage<IArmorData> {
-
-        @Nullable
-        @Override
-        public Tag writeNBT(Capability<IArmorData> capability, IArmorData instance, Direction side) {
-            if (instance == null){
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IArmorData> capability, IArmorData instance, Direction side, Tag nbt) {
-            if (nbt instanceof CompoundTag && instance != null) {
-                CompoundTag tag = (CompoundTag) nbt;
-                instance.deserializeNBT(tag);
             }
         }
     }

@@ -54,7 +54,6 @@ public class MKWeapons
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         PacketHandler.setupHandler();
-        WeaponsCapabilities.registerCapabilities();
         MKWeaponsEventHandler.registerCombatTriggers();
         WeaponsCommands.registerArguments();
 

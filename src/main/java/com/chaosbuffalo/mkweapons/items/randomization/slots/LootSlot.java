@@ -1,16 +1,11 @@
 package com.chaosbuffalo.mkweapons.items.randomization.slots;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public class LootSlot {
     private final ResourceLocation name;

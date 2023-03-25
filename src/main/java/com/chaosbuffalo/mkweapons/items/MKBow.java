@@ -123,7 +123,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player) {
             Player player = (Player)entityLiving;
-            boolean doesntNeedAmmo = player.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(
+            boolean doesntNeedAmmo = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(
                     Enchantments.INFINITY_ARROWS, stack) > 0;
             ItemStack ammoStack = player.getProjectile(stack);
 
@@ -138,12 +138,12 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
                 float powerFactor = getPowerFactor(useTicks, stack, entityLiving);
                 if (!((double)powerFactor < 0.1D)) {
-                    boolean hasAmmo = player.abilities.instabuild || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem)ammoStack.getItem()).isInfinite(ammoStack, stack, player));
+                    boolean hasAmmo = player.getAbilities().instabuild || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem)ammoStack.getItem()).isInfinite(ammoStack, stack, player));
                     if (!worldIn.isClientSide) {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
                         AbstractArrow arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
                         arrowEntity = customArrow(arrowEntity, stack);
-                        arrowEntity.shootFromRotation(entityLiving, entityLiving.xRot, entityLiving.yRot,
+                        arrowEntity.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(),
                                 0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
                             arrowEntity.setCritArrow(true);
@@ -164,7 +164,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
                         }
 
                         stack.hurtAndBreak(1, player, (ent) -> ent.broadcastBreakEvent(ent.getUsedItemHand()));
-                        if (hasAmmo || player.abilities.instabuild && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW)) {
+                        if (hasAmmo || player.getAbilities().instabuild && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW)) {
                             arrowEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                         }
                         worldIn.addFreshEntity(arrowEntity);
@@ -172,11 +172,11 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
                     worldIn.playSound(null, player.getX(), player.getY(), player.getZ(),
                             SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
-                            1.0F / (random.nextFloat() * 0.4F + 1.2F) + powerFactor * 0.5F);
-                    if (!hasAmmo && !player.abilities.instabuild) {
+                            1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + powerFactor * 0.5F);
+                    if (!hasAmmo && !player.getAbilities().instabuild) {
                         ammoStack.shrink(1);
                         if (ammoStack.isEmpty()) {
-                            player.inventory.removeItem(ammoStack);
+                            player.getInventory().removeItem(ammoStack);
                         }
                     }
                     player.awardStat(Stats.ITEM_USED.get(this));

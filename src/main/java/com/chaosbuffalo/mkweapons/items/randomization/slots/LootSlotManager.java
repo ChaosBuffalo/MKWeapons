@@ -2,9 +2,7 @@ package com.chaosbuffalo.mkweapons.items.randomization.slots;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.HashMap;
 import java.util.Map;

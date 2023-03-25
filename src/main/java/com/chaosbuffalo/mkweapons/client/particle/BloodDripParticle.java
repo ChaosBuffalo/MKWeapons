@@ -3,7 +3,6 @@ package com.chaosbuffalo.mkweapons.client.particle;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 

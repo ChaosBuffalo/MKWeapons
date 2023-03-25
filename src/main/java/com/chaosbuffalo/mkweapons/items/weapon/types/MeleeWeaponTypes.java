@@ -83,7 +83,7 @@ public class MeleeWeaponTypes {
             new UndeadDamageMeleeWeaponEffect(1.5f),
             new DoubleStrikeMeleeWeaponEffect(.1));
 
-    public static final Set<MeleeWeaponType> WITH_BLOCKING = new HashSet<>();
+    public static final Set<IMeleeWeaponType> WITH_BLOCKING = new HashSet<>();
 
     static {
         WITH_BLOCKING.add(MeleeWeaponTypes.KATANA_TYPE);
