@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.randomization.slots;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ChatFormatting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,25 +13,25 @@ public class RandomizationSlotManager {
             "randomization.invalid");
 
     public static final IRandomizationSlot ATTRIBUTE_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.attributes"), TextFormatting.DARK_GREEN, false);
+            new ResourceLocation(MKWeapons.MODID, "randomization.attributes"), ChatFormatting.DARK_GREEN, false);
 
     public static final IRandomizationSlot EFFECT_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.effect"), TextFormatting.AQUA, false);
+            new ResourceLocation(MKWeapons.MODID, "randomization.effect"), ChatFormatting.AQUA, false);
 
     public static final IRandomizationSlot ABILITY_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.ability"), TextFormatting.AQUA, false);
+            new ResourceLocation(MKWeapons.MODID, "randomization.ability"), ChatFormatting.AQUA, false);
 
     public static final IRandomizationSlot NAME_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.name"), TextFormatting.WHITE, true);
+            new ResourceLocation(MKWeapons.MODID, "randomization.name"), ChatFormatting.WHITE, true);
 
     public static final IRandomizationSlot PERM_ATTRIBUTE_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.attributes_perm"), TextFormatting.DARK_GREEN, true);
+            new ResourceLocation(MKWeapons.MODID, "randomization.attributes_perm"), ChatFormatting.DARK_GREEN, true);
 
     public static final IRandomizationSlot PERM_EFFECT_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.effect_perm"), TextFormatting.AQUA, true);
+            new ResourceLocation(MKWeapons.MODID, "randomization.effect_perm"), ChatFormatting.AQUA, true);
 
     public static final IRandomizationSlot PERM_ABILITY_SLOT = new RandomizationSlot(
-            new ResourceLocation(MKWeapons.MODID, "randomization.ability_perm"), TextFormatting.AQUA, true);
+            new ResourceLocation(MKWeapons.MODID, "randomization.ability_perm"), ChatFormatting.AQUA, true);
 
 
     public static final Map<ResourceLocation, IRandomizationSlot> SLOTS = new HashMap<>();

@@ -4,7 +4,7 @@ import com.chaosbuffalo.mkcore.utils.SerializationUtils;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class RandomizationItemEntry  {
     public ItemStack item;

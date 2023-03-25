@@ -7,15 +7,17 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.melee.StunMeleeWeaponEffect;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SEntityEquipmentPacket;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class TestNBTWeaponEffectItem extends Item {
 
@@ -24,19 +26,19 @@ public class TestNBTWeaponEffectItem extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (!worldIn.isRemote() && handIn.equals(Hand.MAIN_HAND)){
-            if (playerIn.getHeldItemOffhand().getItem() instanceof IMKMeleeWeapon){
-                playerIn.getHeldItemOffhand().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap ->{
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        if (!worldIn.isClientSide() && handIn.equals(InteractionHand.MAIN_HAND)){
+            if (playerIn.getOffhandItem().getItem() instanceof IMKMeleeWeapon){
+                playerIn.getOffhandItem().getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).ifPresent(cap ->{
                     cap.addMeleeWeaponEffect(new StunMeleeWeaponEffect(0.5, 2));
                     cap.setAbilityId(MKTestAbilities.TEST_EMBER.get().getAbilityId());
                 });
-                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) playerIn;
-                serverPlayer.connection.sendPacket(new SEntityEquipmentPacket(playerIn.getEntityId(),
-                        Lists.newArrayList(Pair.of(EquipmentSlotType.OFFHAND, playerIn.getHeldItemOffhand()))));
-                return ActionResult.resultSuccess(playerIn.getHeldItemMainhand());
+                ServerPlayer serverPlayer = (ServerPlayer) playerIn;
+                serverPlayer.connection.send(new ClientboundSetEquipmentPacket(playerIn.getId(),
+                        Lists.newArrayList(Pair.of(EquipmentSlot.OFFHAND, playerIn.getOffhandItem()))));
+                return InteractionResultHolder.success(playerIn.getMainHandItem());
             }
         }
-        return ActionResult.resultSuccess(playerIn.getHeldItemMainhand());
+        return InteractionResultHolder.success(playerIn.getMainHandItem());
     }
 }

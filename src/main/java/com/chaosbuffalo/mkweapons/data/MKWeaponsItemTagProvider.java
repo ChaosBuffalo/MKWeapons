@@ -1,13 +1,13 @@
 package com.chaosbuffalo.mkweapons.data;
 
 import com.chaosbuffalo.mkweapons.init.MKWeaponsItems;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.ItemTagsProvider;
-import net.minecraft.item.Item;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.world.item.Item;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.SetTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
@@ -20,13 +20,13 @@ public class MKWeaponsItemTagProvider extends ItemTagsProvider {
     }
 
     @Override
-    protected void registerTags() {
-        getOrCreateBuilder(accessory("ring")).add(MKWeaponsItems.CopperRing,
+    protected void addTags() {
+        tag(accessory("ring")).add(MKWeaponsItems.CopperRing,
                 MKWeaponsItems.GoldRing, MKWeaponsItems.RoseGoldRing, MKWeaponsItems.SilverRing);
-        getOrCreateBuilder(accessory("earring")).add(MKWeaponsItems.GoldEarring, MKWeaponsItems.SilverEarring);
+        tag(accessory("earring")).add(MKWeaponsItems.GoldEarring, MKWeaponsItems.SilverEarring);
     }
 
-    private static Tag.INamedTag<Item> accessory(String name) {
+    private static SetTag.Named<Item> accessory(String name) {
         return ItemTags.createOptional(new ResourceLocation("curios", name));
     }
 

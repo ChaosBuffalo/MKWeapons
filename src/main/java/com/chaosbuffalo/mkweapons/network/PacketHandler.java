@@ -1,13 +1,13 @@
 package com.chaosbuffalo.mkweapons.network;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 public class PacketHandler {
     private static SimpleChannel networkChannel;
@@ -35,7 +35,7 @@ public class PacketHandler {
         networkChannel.sendToServer(msg);
     }
 
-    public static <T> void sendMessage(T msg, ServerPlayerEntity target) {
+    public static <T> void sendMessage(T msg, ServerPlayer target) {
         PacketDistributor.PLAYER.with(() -> target)
                 .send(getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
@@ -45,17 +45,17 @@ public class PacketHandler {
                 .send(getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
 
-    public static <T> void sendToTrackingAndSelf(T msg, ServerPlayerEntity player) {
+    public static <T> void sendToTrackingAndSelf(T msg, ServerPlayer player) {
         PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player)
                 .send(getNetworkChannel().toVanillaPacket(msg, NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <T> void sendToTrackingMaybeSelf(T msg, Entity entity) {
-        if (entity.world.isRemote)
+        if (entity.level.isClientSide)
             return;
 
-        if (entity instanceof ServerPlayerEntity) {
-            sendToTrackingAndSelf(msg, (ServerPlayerEntity) entity);
+        if (entity instanceof ServerPlayer) {
+            sendToTrackingAndSelf(msg, (ServerPlayer) entity);
         } else {
             sendToTracking(msg, entity);
         }

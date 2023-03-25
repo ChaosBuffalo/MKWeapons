@@ -4,21 +4,23 @@ import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.armor.IArmorEffect;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class MKArmorItem extends ArmorItem implements IMKArmor {
     public static final UUID CHEST_UUID = UUID.fromString("77ab4b54-5885-4f7f-ab41-71af536309d1");
@@ -31,12 +33,12 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     private final Multimap<Attribute, AttributeModifier> attributeMap;
 
 
-    public MKArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builderIn,
+    public MKArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builderIn,
                        IArmorEffect... armorEffects) {
         super(materialIn, slot, builderIn);
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        builder.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", getDamageReduceAmount(),
+        builder.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", getDefense(),
                 AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", getToughness(),
                 AttributeModifier.Operation.ADDITION));
@@ -50,16 +52,16 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     protected void buildAttributes(ImmutableMultimap.Builder<Attribute, AttributeModifier> builder,
-                                   EquipmentSlotType slot, IArmorMaterial material, UUID slotUUID){
+                                   EquipmentSlot slot, ArmorMaterial material, UUID slotUUID){
 
     }
 
     @Nullable
     @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
+    public CompoundTag getShareTag(ItemStack stack) {
         // See comment in MKMeleeWeapon#getShareTag
-        CompoundNBT newTag = new CompoundNBT();
-        CompoundNBT original = super.getShareTag(stack);
+        CompoundTag newTag = new CompoundTag();
+        CompoundTag original = super.getShareTag(stack);
         if (original != null) {
             newTag.put("share", original);
         }
@@ -69,7 +71,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag shareTag) {
         if (shareTag == null)
             return;
 
@@ -82,7 +84,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
         }
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
+    public void addToTooltip(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip){
         for (IArmorEffect armorEffect : getArmorEffects(stack)){
             armorEffect.addInformation(stack, worldIn, tooltip);
         }
@@ -94,9 +96,9 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
         return stack.getCapability(WeaponsCapabilities.ARMOR_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
-                .orElse(getAttributeModifiers(slot));
+                .orElse(getDefaultAttributeModifiers(slot));
     }
 
 
@@ -112,7 +114,7 @@ public class MKArmorItem extends ArmorItem implements IMKArmor {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType equipmentSlot) {
-        return equipmentSlot == this.slot ? this.attributeMap : super.getAttributeModifiers(equipmentSlot);
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot) {
+        return equipmentSlot == this.slot ? this.attributeMap : super.getDefaultAttributeModifiers(equipmentSlot);
     }
 }

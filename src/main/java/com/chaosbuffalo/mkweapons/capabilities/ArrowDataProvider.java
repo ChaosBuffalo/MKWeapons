@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -10,11 +10,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ArrowDataProvider implements ICapabilitySerializable<CompoundNBT> {
+public class ArrowDataProvider implements ICapabilitySerializable<CompoundTag> {
 
     private final ArrowDataHandler data;
 
-    public ArrowDataProvider(AbstractArrowEntity arrow) {
+    public ArrowDataProvider(AbstractArrow arrow) {
         data = new ArrowDataHandler();
         data.attach(arrow);
     }
@@ -26,14 +26,12 @@ public class ArrowDataProvider implements ICapabilitySerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        return (CompoundNBT) WeaponsCapabilities.ARROW_DATA_CAPABILITY.getStorage().writeNBT(
-                WeaponsCapabilities.ARROW_DATA_CAPABILITY, data, null);
+    public CompoundTag serializeNBT() {
+        return data.serializeNBT();
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        WeaponsCapabilities.ARROW_DATA_CAPABILITY.getStorage().readNBT(
-                WeaponsCapabilities.ARROW_DATA_CAPABILITY, data, null, nbt);
+    public void deserializeNBT(CompoundTag nbt) {
+        data.deserializeNBT(nbt);
     }
 }

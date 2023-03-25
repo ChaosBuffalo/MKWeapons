@@ -3,8 +3,8 @@ package com.chaosbuffalo.mkweapons.init;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.client.particle.BloodDripParticle;
 import net.minecraft.client.Minecraft;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -18,11 +18,11 @@ import net.minecraftforge.registries.ObjectHolder;
 public class MKWeaponsParticles {
 
     @ObjectHolder("dripping_blood")
-    public static BasicParticleType DRIPPING_BLOOD;
+    public static SimpleParticleType DRIPPING_BLOOD;
 
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> evt){
-        BasicParticleType drippingBlood = new BasicParticleType(false);
+        SimpleParticleType drippingBlood = new SimpleParticleType(false);
         drippingBlood.setRegistryName(MKWeapons.MODID, "dripping_blood");
         evt.getRegistry().register(drippingBlood);
     }
@@ -30,7 +30,7 @@ public class MKWeaponsParticles {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void registerParticleFactory(ParticleFactoryRegisterEvent evt){
-        Minecraft.getInstance().particles.registerFactory(MKWeaponsParticles.DRIPPING_BLOOD,
+        Minecraft.getInstance().particleEngine.register(MKWeaponsParticles.DRIPPING_BLOOD,
                 BloodDripParticle.BloodDripFactory::new);
     }
 }

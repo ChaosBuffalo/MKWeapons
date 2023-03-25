@@ -12,8 +12,8 @@ import com.chaosbuffalo.mkcore.network.PacketHandler;
 import com.chaosbuffalo.mkcore.network.ParticleEffectSpawnPacket;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.init.MKWeaponsParticles;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.EffectType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +31,7 @@ public class BleedEffect extends MKEffect {
     }
 
     private BleedEffect() {
-        super(EffectType.HARMFUL);
+        super(MobEffectCategory.HARMFUL);
         setRegistryName("effect.bleed_damage");
     }
 
@@ -64,15 +64,15 @@ public class BleedEffect extends MKEffect {
             float damage = getScaledValue(activeEffect.getStackCount(), activeEffect.getSkillLevel());
             //MKWeapons.LOGGER.info("bleed damage {} {} from {}", damage, activeEffect, source);
             LivingEntity target = targetData.getEntity();
-            target.attackEntityFrom(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
+            target.hurt(MKDamageSource.causeEffectDamage(CoreDamageTypes.BleedDamage, "mkweapons.effect.bleed",
                     activeEffect.getDirectEntity(), activeEffect.getSourceEntity(), getModifierScale()), damage);
 
             PacketHandler.sendToTrackingAndSelf(
                     new ParticleEffectSpawnPacket(
                             MKWeaponsParticles.DRIPPING_BLOOD,
                             ParticleEffects.DIRECTED_SPOUT, 8, 1,
-                            target.getPosX(), target.getPosY() + target.getHeight() * .75,
-                            target.getPosZ(), target.getWidth() / 2.0, 0.5, target.getWidth() / 2.0, 3,
+                            target.getX(), target.getY() + target.getBbHeight() * .75,
+                            target.getZ(), target.getBbWidth() / 2.0, 0.5, target.getBbWidth() / 2.0, 3,
                             target.getUpVector(0)), target);
             return true;
         }

@@ -1,19 +1,19 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
 public class ArrowDataHandler implements IArrowData{
 
-    private AbstractArrowEntity arrow;
+    private AbstractArrow arrow;
     private ItemStack shootingWeapon;
 
     public ArrowDataHandler(){
@@ -31,12 +31,12 @@ public class ArrowDataHandler implements IArrowData{
     }
 
     @Override
-    public AbstractArrowEntity getArrow() {
+    public AbstractArrow getArrow() {
         return arrow;
     }
 
     @Override
-    public void attach(AbstractArrowEntity arrow) {
+    public void attach(AbstractArrow arrow) {
         this.arrow = arrow;
 //        if (arrow.getShooter() instanceof LivingEntity){
 //            ItemStack main = ((LivingEntity) arrow.getShooter()).getHeldItemMainhand();
@@ -47,37 +47,16 @@ public class ArrowDataHandler implements IArrowData{
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
-        ItemStackHelper.saveAllItems(tag, NonNullList.from(shootingWeapon));
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        ContainerHelper.saveAllItems(tag, NonNullList.of(shootingWeapon));
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(nbt, itemStacks);
+        ContainerHelper.loadAllItems(nbt, itemStacks);
         shootingWeapon = itemStacks.get(0);
-    }
-
-    public static class Storage implements Capability.IStorage<IArrowData> {
-
-
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<IArrowData> capability, IArrowData instance, Direction side) {
-            if (instance == null){
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IArrowData> capability, IArrowData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT && instance != null) {
-                CompoundNBT tag = (CompoundNBT) nbt;
-                instance.deserializeNBT(tag);
-            }
-        }
     }
 }

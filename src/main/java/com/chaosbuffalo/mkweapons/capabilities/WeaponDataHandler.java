@@ -13,17 +13,13 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +32,7 @@ public class WeaponDataHandler implements IWeaponData {
     private final List<IMeleeWeaponEffect> cachedMeleeWeaponEffects;
     private final List<IRangedWeaponEffect> rangedWeaponEffects;
     private final List<IRangedWeaponEffect> cachedRangedWeaponEffects;
-    private final Map<EquipmentSlotType, Multimap<Attribute, AttributeModifier>> modifiers = new HashMap<>();
+    private final Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> modifiers = new HashMap<>();
     private ResourceLocation ability;
     private boolean isCacheDirty;
 
@@ -143,11 +139,11 @@ public class WeaponDataHandler implements IWeaponData {
         return cachedRangedWeaponEffects;
     }
 
-    private void loadSlotModifiers(EquipmentSlotType slot){
-        Multimap<Attribute, AttributeModifier> modifiers = getItemStack().getItem().getAttributeModifiers(slot);
+    private void loadSlotModifiers(EquipmentSlot slot){
+        Multimap<Attribute, AttributeModifier> modifiers = getItemStack().getItem().getDefaultAttributeModifiers(slot);
         Multimap<Attribute, AttributeModifier> newMods = HashMultimap.create();
         newMods.putAll(modifiers);
-        if (slot == EquipmentSlotType.MAINHAND){
+        if (slot == EquipmentSlot.MAINHAND){
             if (itemStack.getItem() instanceof MKMeleeWeapon){
                 for (IMeleeWeaponEffect weaponEffect : getMeleeEffects()) {
                     if (weaponEffect instanceof ItemModifierEffect) {
@@ -168,7 +164,7 @@ public class WeaponDataHandler implements IWeaponData {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         if (!modifiers.containsKey(slot)){
             loadSlotModifiers(slot);
         }
@@ -176,16 +172,16 @@ public class WeaponDataHandler implements IWeaponData {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT effectList = new ListNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        ListTag effectList = new ListTag();
         for (IMeleeWeaponEffect effect : getStackMeleeEffects()){
-            effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
+            effectList.add(effect.serialize(NbtOps.INSTANCE));
         }
         nbt.put("melee_effects", effectList);
-        ListNBT rangedEffectList = new ListNBT();
+        ListTag rangedEffectList = new ListTag();
         for (IRangedWeaponEffect effect : getStackRangedEffects()){
-            rangedEffectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
+            rangedEffectList.add(effect.serialize(NbtOps.INSTANCE));
         }
         nbt.put("ranged_effects", rangedEffectList);
         ResourceLocation abilityId = getAbilityName() != null ? getAbilityName() : MKCoreRegistry.INVALID_ABILITY;
@@ -194,11 +190,11 @@ public class WeaponDataHandler implements IWeaponData {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("melee_effects")){
-            ListNBT effectList = nbt.getList("melee_effects", Constants.NBT.TAG_COMPOUND);
-            for (INBT effectNBT : effectList){
-                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
+            ListTag effectList = nbt.getList("melee_effects", Tag.TAG_COMPOUND);
+            for (Tag effectNBT : effectList){
+                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IMeleeWeaponEffect){
                     addMeleeWeaponEffect((IMeleeWeaponEffect) effect);
                 } else {
@@ -208,9 +204,9 @@ public class WeaponDataHandler implements IWeaponData {
             }
         }
         if (nbt.contains("ranged_effects")){
-            ListNBT rangedEffectList = nbt.getList("ranged_effects", Constants.NBT.TAG_COMPOUND);
-            for (INBT effectNBT : rangedEffectList){
-                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
+            ListTag rangedEffectList = nbt.getList("ranged_effects", Tag.TAG_COMPOUND);
+            for (Tag effectNBT : rangedEffectList){
+                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IRangedWeaponEffect){
                     addRangedWeaponEffect((IRangedWeaponEffect) effect);
                 } else {
@@ -222,26 +218,6 @@ public class WeaponDataHandler implements IWeaponData {
         ResourceLocation abilityId = new ResourceLocation(nbt.getString("ability_granted"));
         if (!abilityId.equals(MKCoreRegistry.INVALID_ABILITY)){
             setAbilityId(abilityId);
-        }
-    }
-
-    public static class Storage implements Capability.IStorage<IWeaponData> {
-
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<IWeaponData> capability, IWeaponData instance, Direction side) {
-            if (instance == null){
-                return null;
-            }
-            return instance.serializeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<IWeaponData> capability, IWeaponData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT && instance != null) {
-                CompoundNBT tag = (CompoundNBT) nbt;
-                instance.deserializeNBT(tag);
-            }
         }
     }
 }

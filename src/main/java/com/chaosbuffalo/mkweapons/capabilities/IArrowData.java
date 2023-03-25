@@ -1,16 +1,16 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public interface IArrowData extends INBTSerializable<CompoundNBT> {
+public interface IArrowData extends INBTSerializable<CompoundTag> {
     ItemStack getShootingWeapon();
 
-    AbstractArrowEntity getArrow();
+    AbstractArrow getArrow();
 
-    void attach(AbstractArrowEntity arrow);
+    void attach(AbstractArrow arrow);
 
     void setShootingWeapon(ItemStack shootingWeapon);
 }

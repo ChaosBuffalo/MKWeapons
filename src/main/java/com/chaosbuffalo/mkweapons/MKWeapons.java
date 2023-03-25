@@ -13,7 +13,7 @@ import com.chaosbuffalo.mkweapons.items.effects.IWeaponEffectsExtension;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import com.chaosbuffalo.mkweapons.network.PacketHandler;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -54,7 +54,6 @@ public class MKWeapons
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         PacketHandler.setupHandler();
-        WeaponsCapabilities.registerCapabilities();
         MKWeaponsEventHandler.registerCombatTriggers();
         WeaponsCommands.registerArguments();
 
@@ -88,7 +87,7 @@ public class MKWeapons
         WeaponsCommands.register(event.getDispatcher());
     }
 
-    public static LazyOptional<IArrowData> getArrowCapability(AbstractArrowEntity entity){
+    public static LazyOptional<IArrowData> getArrowCapability(AbstractArrow entity){
         return entity.getCapability(WeaponsCapabilities.ARROW_DATA_CAPABILITY);
     }
 }

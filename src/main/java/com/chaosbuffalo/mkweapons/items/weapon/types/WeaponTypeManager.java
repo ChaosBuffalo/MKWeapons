@@ -12,27 +12,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WeaponTypeManager extends JsonReloadListener {
+public class WeaponTypeManager extends SimpleJsonResourceReloadListener {
     private MinecraftServer server;
     public static final List<IMKMeleeWeapon> MELEE_WEAPONS = new ArrayList<>();
     private boolean serverStarted = false;
@@ -72,17 +72,17 @@ public class WeaponTypeManager extends JsonReloadListener {
     @SubscribeEvent
     public void playerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
         MKWeapons.LOGGER.debug("Player logged in weapon type manager");
-        if (event.getPlayer() instanceof ServerPlayerEntity) {
+        if (event.getPlayer() instanceof ServerPlayer) {
             SyncWeaponTypesPacket updatePacket = new SyncWeaponTypesPacket(MeleeWeaponTypes.WEAPON_TYPES.values());
             MKWeapons.LOGGER.debug("Sending {} update packet", event.getPlayer());
-            PacketHandler.sendMessage(updatePacket, (ServerPlayerEntity) event.getPlayer());
+            PacketHandler.sendMessage(updatePacket, (ServerPlayer) event.getPlayer());
         }
     }
 
-    public static void handleMKWeaponReloadForPlayerPre(PlayerEntity player){
-        ItemStack mainHand = player.getHeldItemMainhand();
+    public static void handleMKWeaponReloadForPlayerPre(Player player){
+        ItemStack mainHand = player.getMainHandItem();
         if (mainHand.getItem() instanceof IMKMeleeWeapon){
-            player.getAttributeManager().removeModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
+            player.getAttributes().removeAttributeModifiers(mainHand.getAttributeModifiers(EquipmentSlot.MAINHAND));
         }
     }
 
@@ -92,18 +92,18 @@ public class WeaponTypeManager extends JsonReloadListener {
         }
     }
 
-    public static void handleMKWeaponReloadForPlayerPost(PlayerEntity player){
-        ItemStack mainHand = player.getHeldItemMainhand();
+    public static void handleMKWeaponReloadForPlayerPost(Player player){
+        ItemStack mainHand = player.getMainHandItem();
         if (mainHand.getItem() instanceof IMKMeleeWeapon){
-            player.getAttributeManager().reapplyModifiers(mainHand.getAttributeModifiers(EquipmentSlotType.MAINHAND));
+            player.getAttributes().addTransientAttributeModifiers(mainHand.getAttributeModifiers(EquipmentSlot.MAINHAND));
         }
-        for (ItemStack item : player.inventory.mainInventory){
+        for (ItemStack item : player.getInventory().items){
             if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
             }
         }
-        for (ItemStack item : player.inventory.offHandInventory){
+        for (ItemStack item : player.getInventory().offhand){
             if (!item.isEmpty()){
                 item.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY)
                         .ifPresent(IWeaponData::markCacheDirty);
@@ -129,12 +129,12 @@ public class WeaponTypeManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         MKWeapons.LOGGER.debug("Loading melee weapon type definitions from Json");
         boolean wasChanged = false;
         if (serverStarted){
-            List<ServerPlayerEntity> players = server.getPlayerList().getPlayers();
-            for (ServerPlayerEntity entity : players){
+            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            for (ServerPlayer entity : players){
                 handleMKWeaponReloadForPlayerPre(entity);
             }
         }
@@ -149,8 +149,8 @@ public class WeaponTypeManager extends JsonReloadListener {
         }
         refreshAllWeapons();
         if (serverStarted){
-            List<ServerPlayerEntity> players = server.getPlayerList().getPlayers();
-            for (ServerPlayerEntity entity : players){
+            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            for (ServerPlayer entity : players){
                 handleMKWeaponReloadForPlayerPost(entity);
             }
         }

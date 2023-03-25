@@ -3,17 +3,17 @@ package com.chaosbuffalo.mkweapons.capabilities;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.google.common.collect.Multimap;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
 
-public interface IWeaponData extends INBTSerializable<CompoundNBT> {
+public interface IWeaponData extends INBTSerializable<CompoundTag> {
 
     void attach(ItemStack itemStack);
 
@@ -41,5 +41,5 @@ public interface IWeaponData extends INBTSerializable<CompoundNBT> {
 
     List<IRangedWeaponEffect> getRangedEffects();
 
-    Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot);
+    Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot);
 }

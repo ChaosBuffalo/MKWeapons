@@ -1,35 +1,29 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class WeaponsCapabilities {
 
     public static ResourceLocation MK_ARROW_CAP_ID = new ResourceLocation(MKWeapons.MODID, "arrow_data");
     public static ResourceLocation MK_WEAPON_CAP_ID = new ResourceLocation(MKWeapons.MODID, "melee_weapon_data");
     public static ResourceLocation MK_ARMOR_CAP_ID = new ResourceLocation(MKWeapons.MODID, "armor_data");
 
-    @CapabilityInject(IArrowData.class)
-    public static final Capability<IArrowData> ARROW_DATA_CAPABILITY;
+    public static final Capability<IArrowData> ARROW_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
-    @CapabilityInject(IWeaponData.class)
-    public static final Capability<IWeaponData> WEAPON_DATA_CAPABILITY;
+    public static final Capability<IWeaponData> WEAPON_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
-    @CapabilityInject(IArmorData.class)
-    public static final Capability<IArmorData> ARMOR_DATA_CAPABILITY;
+    public static final Capability<IArmorData> ARMOR_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
-    static {
-        ARROW_DATA_CAPABILITY = null;
-        WEAPON_DATA_CAPABILITY = null;
-        ARMOR_DATA_CAPABILITY = null;
-    }
 
-    public static void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(IArrowData.class, new ArrowDataHandler.Storage(), ArrowDataHandler::new);
-        CapabilityManager.INSTANCE.register(IWeaponData.class, new WeaponDataHandler.Storage(), WeaponDataHandler::new);
-        CapabilityManager.INSTANCE.register(IArmorData.class, new ArmorDataHandler.Storage(), ArmorDataHandler::new);
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(IArmorData.class);
+        event.register(IWeaponData.class);
+        event.register(IArrowData.class);
     }
 }

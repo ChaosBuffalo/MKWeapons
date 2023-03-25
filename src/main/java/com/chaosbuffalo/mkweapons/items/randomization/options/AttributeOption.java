@@ -16,11 +16,11 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class AttributeOption extends BaseRandomizationOption {
     }
 
     public List<AttributeOptionEntry> getModifiers(double difficulty) {
-        return modifiers.stream().map(mod -> mod.getModifier().getID().equals(Util.DUMMY_UUID) ? mod.copy(difficulty) : mod).collect(Collectors.toList());
+        return modifiers.stream().map(mod -> mod.getModifier().getId().equals(Util.NIL_UUID) ? mod.copy(difficulty) : mod).collect(Collectors.toList());
     }
 
     public void addFixedAttributeModifier(Attribute attribute, AttributeModifier attributeModifier){
@@ -50,7 +50,7 @@ public class AttributeOption extends BaseRandomizationOption {
     }
 
     public void addAttributeModifier(Attribute attribute, String name, double minAmount, double maxAmount, AttributeModifier.Operation op){
-        modifiers.add(new AttributeOptionEntry(attribute, new AttributeModifier(Util.DUMMY_UUID, name, minAmount, op), minAmount, maxAmount));
+        modifiers.add(new AttributeOptionEntry(attribute, new AttributeModifier(Util.NIL_UUID, name, minAmount, op), minAmount, maxAmount));
     }
 
     @Override

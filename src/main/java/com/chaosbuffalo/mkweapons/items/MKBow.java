@@ -12,33 +12,35 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedSkillScalingEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKRangedWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.google.common.collect.Multimap;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillChange {
     private final List<IRangedWeaponEffect> weaponEffects = new ArrayList<>();
@@ -53,7 +55,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
         this.baseDrawTime = baseDrawTime;
         this.baseLaunchVel = baseLaunchVel;
         this.weaponEffects.addAll(Arrays.asList(weaponEffects));
-        this.weaponEffects.add(new RangedSkillScalingEffect(5.0 + tier.getAttackDamage(), MKAttributes.MARKSMANSHIP));
+        this.weaponEffects.add(new RangedSkillScalingEffect(5.0 + tier.getAttackDamageBonus(), MKAttributes.MARKSMANSHIP));
         this.tier = tier;
     }
 
@@ -67,10 +69,10 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
     @Nullable
     @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
+    public CompoundTag getShareTag(ItemStack stack) {
         // See comment in MKMeleeWeapon#getShareTag
-        CompoundNBT newTag = new CompoundNBT();
-        CompoundNBT original = super.getShareTag(stack);
+        CompoundTag newTag = new CompoundTag();
+        CompoundTag original = super.getShareTag(stack);
         if (original != null) {
             newTag.put("share", original);
         }
@@ -80,7 +82,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag shareTag) {
         if (shareTag == null)
             return;
 
@@ -111,19 +113,19 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
         return stack.getCapability(WeaponsCapabilities.WEAPON_DATA_CAPABILITY).map(x -> x.getAttributeModifiers(slot))
-                .orElse(getAttributeModifiers(slot));
+                .orElse(getDefaultAttributeModifiers(slot));
     }
 
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (entityLiving instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity)entityLiving;
-            boolean doesntNeedAmmo = player.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(
-                    Enchantments.INFINITY, stack) > 0;
-            ItemStack ammoStack = player.findAmmo(stack);
+    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (entityLiving instanceof Player) {
+            Player player = (Player)entityLiving;
+            boolean doesntNeedAmmo = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(
+                    Enchantments.INFINITY_ARROWS, stack) > 0;
+            ItemStack ammoStack = player.getProjectile(stack);
 
             int useTicks = this.getUseDuration(stack) - timeLeft;
             useTicks = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, useTicks, !ammoStack.isEmpty() || doesntNeedAmmo);
@@ -136,74 +138,74 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
 
                 float powerFactor = getPowerFactor(useTicks, stack, entityLiving);
                 if (!((double)powerFactor < 0.1D)) {
-                    boolean hasAmmo = player.abilities.isCreativeMode || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem)ammoStack.getItem()).isInfinite(ammoStack, stack, player));
-                    if (!worldIn.isRemote) {
+                    boolean hasAmmo = player.getAbilities().instabuild || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem)ammoStack.getItem()).isInfinite(ammoStack, stack, player));
+                    if (!worldIn.isClientSide) {
                         ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
-                        AbstractArrowEntity arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
+                        AbstractArrow arrowEntity = arrowItem.createArrow(worldIn, ammoStack, player);
                         arrowEntity = customArrow(arrowEntity, stack);
-                        arrowEntity.setDirectionAndMovement(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw,
+                        arrowEntity.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(),
                                 0.0F, powerFactor * getLaunchVelocity(stack, entityLiving), 1.0F);
                         if (powerFactor == 1.0F) {
-                            arrowEntity.setIsCritical(true);
+                            arrowEntity.setCritArrow(true);
                         }
 
-                        int powerLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+                        int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
                         if (powerLevel > 0) {
-                            arrowEntity.setDamage(arrowEntity.getDamage() + (double)powerLevel * 0.5D + 0.5D);
+                            arrowEntity.setBaseDamage(arrowEntity.getBaseDamage() + (double)powerLevel * 0.5D + 0.5D);
                         }
 
-                        int punchLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+                        int punchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
                         if (punchLevel > 0) {
-                            arrowEntity.setKnockbackStrength(punchLevel);
+                            arrowEntity.setKnockback(punchLevel);
                         }
 
-                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
-                            arrowEntity.setFire(100);
+                        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
+                            arrowEntity.setSecondsOnFire(100);
                         }
 
-                        stack.damageItem(1, player, (ent) -> ent.sendBreakAnimation(ent.getActiveHand()));
-                        if (hasAmmo || player.abilities.isCreativeMode && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW)) {
-                            arrowEntity.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                        stack.hurtAndBreak(1, player, (ent) -> ent.broadcastBreakEvent(ent.getUsedItemHand()));
+                        if (hasAmmo || player.getAbilities().instabuild && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW)) {
+                            arrowEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                         }
-                        worldIn.addEntity(arrowEntity);
+                        worldIn.addFreshEntity(arrowEntity);
                     }
 
-                    worldIn.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(),
-                            SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F,
-                            1.0F / (random.nextFloat() * 0.4F + 1.2F) + powerFactor * 0.5F);
-                    if (!hasAmmo && !player.abilities.isCreativeMode) {
+                    worldIn.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
+                            1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + powerFactor * 0.5F);
+                    if (!hasAmmo && !player.getAbilities().instabuild) {
                         ammoStack.shrink(1);
                         if (ammoStack.isEmpty()) {
-                            player.inventory.deleteStack(ammoStack);
+                            player.getInventory().removeItem(ammoStack);
                         }
                     }
-                    player.addStat(Stats.ITEM_USED.get(this));
+                    player.awardStat(Stats.ITEM_USED.get(this));
                 }
             }
         }
     }
 
 
-    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow, ItemStack stack) {
+    public AbstractArrow customArrow(AbstractArrow arrow, ItemStack stack) {
         // set item stack on cap here
-        Entity shooter = arrow.getShooter();
-        double damage = arrow.getDamage();
-        damage += getMKTier().getAttackDamage();
+        Entity shooter = arrow.getOwner();
+        double damage = arrow.getBaseDamage();
+        damage += getMKTier().getAttackDamageBonus();
         if (shooter instanceof LivingEntity){
             MKWeapons.getArrowCapability(arrow).ifPresent(cap ->
-                    cap.setShootingWeapon(((LivingEntity) shooter).getHeldItemMainhand()));
+                    cap.setShootingWeapon(((LivingEntity) shooter).getMainHandItem()));
             for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
                 damage = weaponEffect.modifyArrowDamage(damage, (LivingEntity) shooter, arrow);
             }
         }
-        arrow.setDamage(damage);
+        arrow.setBaseDamage(damage);
         return super.customArrow(arrow);
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
-        if (getMKTier().getAttackDamage() > 0){
-            tooltip.add(new TranslationTextComponent("mkweapons.bow_extra_damage.description",
-                    getMKTier().getAttackDamage()).mergeStyle(TextFormatting.GRAY));
+    public void addToTooltip(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip){
+        if (getMKTier().getAttackDamageBonus() > 0){
+            tooltip.add(new TranslatableComponent("mkweapons.bow_extra_damage.description",
+                    getMKTier().getAttackDamageBonus()).withStyle(ChatFormatting.GRAY));
         }
         for (IRangedWeaponEffect weaponEffect : getWeaponEffects(stack)){
             weaponEffect.addInformation(stack, worldIn, tooltip);
@@ -240,7 +242,7 @@ public class MKBow extends BowItem implements IMKRangedWeapon, IReceivesSkillCha
     }
 
     @Override
-    public void onSkillChange(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onSkillChange(ItemStack itemStack, Player playerEntity) {
         getWeaponEffects(itemStack).forEach(x -> x.onSkillChange(playerEntity));
     }
 }

@@ -8,15 +8,15 @@ import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -27,7 +27,7 @@ public class RestoreManaOnCastEffect extends BaseAccessoryEffect {
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "accessory_effect.restore_mana");
 
     public RestoreManaOnCastEffect() {
-        super(NAME, TextFormatting.AQUA);
+        super(NAME, ChatFormatting.AQUA);
         chance = 0.0;
         percentage = 0.0f;
     }
@@ -70,24 +70,24 @@ public class RestoreManaOnCastEffect extends BaseAccessoryEffect {
     @Override
     public void livingCompleteAbility(LivingEntity caster, IMKEntityData entityData, MKAccessory accessory,
                                       ItemStack stack, MKAbility ability) {
-        if (!caster.getEntityWorld().isRemote() && entityData instanceof MKPlayerData){
+        if (!caster.getCommandSenderWorld().isClientSide() && entityData instanceof MKPlayerData){
             MKPlayerData playerData = (MKPlayerData) entityData;
-            double roll = caster.getRNG().nextDouble();
+            double roll = caster.getRandom().nextDouble();
             if (roll >= (1.0 - getChance())){
                 float mana = ability.getManaCost(entityData) * getPercentage();
                 playerData.getStats().addMana(mana);
-                playerData.getEntity().sendMessage(new TranslationTextComponent(
+                playerData.getEntity().sendMessage(new TranslatableComponent(
                         "mkweapons.accessory_effect.restore_mana.message",
-                        stack.getDisplayName()), Util.DUMMY_UUID);
+                        stack.getHoverName()), Util.NIL_UUID);
             }
         }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslationTextComponent("mkweapons.accessory_effect.restore_mana.description",
+            tooltip.add(new TranslatableComponent("mkweapons.accessory_effect.restore_mana.description",
                     MKAbility.PERCENT_FORMATTER.format(getChance()), MKAbility.PERCENT_FORMATTER.format(getPercentage())));
         }
     }

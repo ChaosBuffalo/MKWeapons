@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.extensions;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.InterModComms;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotTypeMessage;

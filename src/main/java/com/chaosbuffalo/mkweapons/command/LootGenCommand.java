@@ -14,19 +14,19 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.concurrent.CompletableFuture;
 
 public class LootGenCommand {
-    public static LiteralArgumentBuilder<CommandSource> register() {
+    public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("gen_loot")
                 .then(Commands.argument("loot_tier", LootTierArgument.definition())
                         .suggests(LootGenCommand::suggestLootTiers)
@@ -36,20 +36,20 @@ public class LootGenCommand {
                         .executes(LootGenCommand::summon))));
     }
 
-    static CompletableFuture<Suggestions> suggestLootTiers(final CommandContext<CommandSource> context,
+    static CompletableFuture<Suggestions> suggestLootTiers(final CommandContext<CommandSourceStack> context,
                                                                 final SuggestionsBuilder builder) throws CommandSyntaxException {
-        return ISuggestionProvider.suggest(LootTierManager.LOOT_TIERS.keySet().stream()
+        return SharedSuggestionProvider.suggest(LootTierManager.LOOT_TIERS.keySet().stream()
                 .map(ResourceLocation::toString), builder);
     }
 
-    static CompletableFuture<Suggestions> suggestLootSlots(final CommandContext<CommandSource> context,
+    static CompletableFuture<Suggestions> suggestLootSlots(final CommandContext<CommandSourceStack> context,
                                                            final SuggestionsBuilder builder) throws CommandSyntaxException {
-        return ISuggestionProvider.suggest(LootSlotManager.SLOTS.keySet().stream()
+        return SharedSuggestionProvider.suggest(LootSlotManager.SLOTS.keySet().stream()
                 .map(ResourceLocation::toString), builder);
     }
 
-    static int summon(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
-        ServerPlayerEntity player = ctx.getSource().asPlayer();
+    static int summon(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
         ResourceLocation tierName = ctx.getArgument("loot_tier", ResourceLocation.class);
         ResourceLocation slotName = ctx.getArgument("loot_slot", ResourceLocation.class);
         double difficulty = ctx.getArgument("difficulty", Double.class);
@@ -57,23 +57,23 @@ public class LootGenCommand {
         LootSlot slot = LootSlotManager.getSlotFromName(slotName);
         if (tier != null){
             if (slot != null){
-                LootConstructor constructor = tier.generateConstructorForSlot(player.getRNG(), slot);
+                LootConstructor constructor = tier.generateConstructorForSlot(player.getRandom(), slot);
                 if (constructor != null) {
-                    ItemStack stack = constructor.constructItem(player.getRNG(), difficulty);
+                    ItemStack stack = constructor.constructItem(player.getRandom(), difficulty);
                     if (!stack.isEmpty()){
-                        boolean wasAdded = player.addItemStackToInventory(stack);
+                        boolean wasAdded = player.addItem(stack);
                         if (!wasAdded){
-                            player.dropItem(stack, false);
+                            player.drop(stack, false);
                         }
                     }
                 } else {
-                    player.sendMessage(new StringTextComponent("No LootConstructor generated."), Util.DUMMY_UUID);
+                    player.sendMessage(new TextComponent("No LootConstructor generated."), Util.NIL_UUID);
                 }
             } else {
-                player.sendMessage(new StringTextComponent("Loot Slot Not Found."), Util.DUMMY_UUID);
+                player.sendMessage(new TextComponent("Loot Slot Not Found."), Util.NIL_UUID);
             }
         } else {
-            player.sendMessage(new StringTextComponent("Loot Tier Not Found."), Util.DUMMY_UUID);
+            player.sendMessage(new TextComponent("Loot Tier Not Found."), Util.NIL_UUID);
         }
         return Command.SINGLE_SUCCESS;
     }

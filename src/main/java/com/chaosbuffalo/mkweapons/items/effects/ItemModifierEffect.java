@@ -4,13 +4,13 @@ import com.chaosbuffalo.mkweapons.items.randomization.options.AttributeOptionEnt
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemModifierEffect extends BaseItemEffect {
     protected final List<AttributeOptionEntry> modifiers;
 
-    public ItemModifierEffect(ResourceLocation name, TextFormatting color) {
+    public ItemModifierEffect(ResourceLocation name, ChatFormatting color) {
         super(name, color);
         modifiers = new ArrayList<>();
     }
@@ -41,7 +41,7 @@ public class ItemModifierEffect extends BaseItemEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
 
     }
 

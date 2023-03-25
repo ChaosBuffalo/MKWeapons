@@ -1,10 +1,8 @@
 package com.chaosbuffalo.mkweapons.items.randomization.slots;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import top.theillusivec4.curios.api.CuriosApi;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +13,17 @@ public class LootSlotManager {
             "loot_slot.invalid");
 
     public static final LootSlot MAIN_HAND = new LootSlot(new ResourceLocation(MKWeapons.MODID, "main_hand"),
-            EquipmentSlotType.MAINHAND);
+            EquipmentSlot.MAINHAND);
     public static final LootSlot OFF_HAND = new LootSlot(new ResourceLocation(MKWeapons.MODID, "off_hand"),
-            EquipmentSlotType.OFFHAND);
+            EquipmentSlot.OFFHAND);
     public static final LootSlot CHEST = new LootSlot(new ResourceLocation(MKWeapons.MODID, "chest"),
-            EquipmentSlotType.CHEST);
+            EquipmentSlot.CHEST);
     public static final LootSlot LEGS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "legs"),
-            EquipmentSlotType.LEGS);
+            EquipmentSlot.LEGS);
     public static final LootSlot HEAD = new LootSlot(new ResourceLocation(MKWeapons.MODID, "head"),
-            EquipmentSlotType.HEAD);
+            EquipmentSlot.HEAD);
     public static final LootSlot FEET = new LootSlot(new ResourceLocation(MKWeapons.MODID, "feet"),
-            EquipmentSlotType.FEET);
+            EquipmentSlot.FEET);
     public static final LootSlot INVALID = new LootSlot(INVALID_LOOT_SLOT, (ent, item) -> {});
     public static final LootSlot ITEMS = new LootSlot(new ResourceLocation(MKWeapons.MODID, "items"),
             (ent, item) -> {});

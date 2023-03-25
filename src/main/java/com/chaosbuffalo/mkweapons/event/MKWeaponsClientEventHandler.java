@@ -5,7 +5,7 @@ import com.chaosbuffalo.mkweapons.items.MKBow;
 import com.chaosbuffalo.mkweapons.items.MKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.accessories.MKAccessory;
 import com.chaosbuffalo.mkweapons.items.armor.MKArmorItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,20 +19,20 @@ public class MKWeaponsClientEventHandler {
         Item item = event.getItemStack().getItem();
         if (item instanceof MKMeleeWeapon) {
             ((MKMeleeWeapon) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getCommandSenderWorld() : null, event.getToolTip());
         }
         if (item instanceof MKBow) {
             ((MKBow) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getCommandSenderWorld() : null, event.getToolTip());
         }
         if (item instanceof MKArmorItem) {
             ((MKArmorItem) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getCommandSenderWorld() : null, event.getToolTip());
         }
 
         if (item instanceof MKAccessory){
             ((MKAccessory) item).addToTooltip(event.getItemStack(),
-                    event.getPlayer() != null ? event.getPlayer().getEntityWorld() : null, event.getToolTip());
+                    event.getPlayer() != null ? event.getPlayer().getCommandSenderWorld() : null, event.getToolTip());
         }
 
     }

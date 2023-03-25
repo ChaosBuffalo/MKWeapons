@@ -10,8 +10,8 @@ import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotMan
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 public class AddAbilityOption extends BaseRandomizationOption{
     public static final ResourceLocation NAME = new ResourceLocation(MKWeapons.MODID, "option.ability");

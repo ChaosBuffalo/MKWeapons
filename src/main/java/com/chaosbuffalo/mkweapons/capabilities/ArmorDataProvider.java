@@ -1,8 +1,8 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -10,30 +10,28 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ArmorDataProvider implements ICapabilitySerializable<CompoundNBT> {
+public class ArmorDataProvider implements ICapabilitySerializable<CompoundTag> {
 
-    private final ArmorDataHandler armorDataHandler;
+    private final ArmorDataHandler data;
 
     public ArmorDataProvider(ItemStack item){
-        armorDataHandler = new ArmorDataHandler();
-        armorDataHandler.attach(item);
+        data = new ArmorDataHandler();
+        data.attach(item);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return WeaponsCapabilities.ARMOR_DATA_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> armorDataHandler));
+        return WeaponsCapabilities.ARMOR_DATA_CAPABILITY.orEmpty(cap, LazyOptional.of(() -> data));
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        return (CompoundNBT) WeaponsCapabilities.ARMOR_DATA_CAPABILITY.getStorage().writeNBT(
-                WeaponsCapabilities.ARMOR_DATA_CAPABILITY, armorDataHandler, null);
+    public CompoundTag serializeNBT() {
+        return data.serializeNBT();
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        WeaponsCapabilities.ARMOR_DATA_CAPABILITY.getStorage().readNBT(
-                WeaponsCapabilities.ARMOR_DATA_CAPABILITY, armorDataHandler, null, nbt);
+    public void deserializeNBT(CompoundTag nbt) {
+        data.deserializeNBT(nbt);
     }
 }

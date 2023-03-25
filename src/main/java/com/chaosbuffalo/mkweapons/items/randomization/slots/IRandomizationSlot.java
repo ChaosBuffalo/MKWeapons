@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.randomization.slots;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 public interface IRandomizationSlot {
 
@@ -9,5 +9,5 @@ public interface IRandomizationSlot {
 
     ResourceLocation getName();
 
-    ITextComponent getDisplayName();
+    Component getDisplayName();
 }

@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class ThirdPartyCapProvider<CapTarget, CapType> implements ICapabilitySerializable<CompoundNBT> {
+public abstract class ThirdPartyCapProvider<CapTarget, CapType> implements ICapabilitySerializable<CompoundTag> {
     protected final CapType data;
     private final LazyOptional<CapType> capOpt;
 

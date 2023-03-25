@@ -3,12 +3,12 @@ package com.chaosbuffalo.mkweapons.items.effects;
 import com.chaosbuffalo.mkcore.serialization.IDynamicMapTypedSerializer;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 public abstract class BaseItemEffect implements IItemEffect {
     public final static ResourceLocation INVALID_EFFECT_TYPE = new ResourceLocation(MKWeapons.MODID, "weapon_effect.error");
     private final ResourceLocation name;
-    protected final TextFormatting color;
+    protected final ChatFormatting color;
     private static final String TYPE_ENTRY_NAME = "itemEffectType";
 
-    public BaseItemEffect(ResourceLocation name, TextFormatting color){
+    public BaseItemEffect(ResourceLocation name, ChatFormatting color){
         this.name = name;
         this.color = color;
     }
@@ -35,9 +35,9 @@ public abstract class BaseItemEffect implements IItemEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        tooltip.add(new TranslationTextComponent(String.format("%s.%s.name",
-                this.getTypeName().getNamespace(), this.getTypeName().getPath())).mergeStyle(color));
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
+        tooltip.add(new TranslatableComponent(String.format("%s.%s.name",
+                this.getTypeName().getNamespace(), this.getTypeName().getPath())).withStyle(color));
     }
 
 
