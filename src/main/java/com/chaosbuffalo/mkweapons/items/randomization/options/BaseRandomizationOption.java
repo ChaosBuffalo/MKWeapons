@@ -9,8 +9,8 @@ import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotMan
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashSet;
 import java.util.List;

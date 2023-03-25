@@ -1,21 +1,21 @@
 package com.chaosbuffalo.mkweapons.items.weapon.tier;
 
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MKTier implements IItemTier{
-    private final IItemTier itemTier;
+public class MKTier implements Tier{
+    private final Tier itemTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
     private final String name;
-    private final ITag.INamedTag<Item> tag;
+    private final Tag.Named<Item> tag;
 
-    public MKTier(IItemTier tier, String name, ITag.INamedTag<Item> tag,
+    public MKTier(Tier tier, String name, Tag.Named<Item> tag,
                   IMeleeWeaponEffect... effects){
         itemTier = tier;
         this.name = name;
@@ -23,12 +23,12 @@ public class MKTier implements IItemTier{
         this.tag = tag;
     }
 
-    public ITag.INamedTag<Item> getTag() {
+    public Tag.Named<Item> getTag() {
         return tag;
     }
 
     public Ingredient getMajorIngredient() {
-        return Ingredient.fromTag(tag);
+        return Ingredient.of(tag);
     }
 
     public String getName() {
@@ -36,33 +36,33 @@ public class MKTier implements IItemTier{
     }
 
     @Override
-    public int getMaxUses() {
-        return itemTier.getMaxUses();
+    public int getUses() {
+        return itemTier.getUses();
     }
 
     @Override
-    public float getEfficiency() {
-        return itemTier.getEfficiency();
+    public float getSpeed() {
+        return itemTier.getSpeed();
     }
 
     @Override
-    public float getAttackDamage() {
-        return itemTier.getAttackDamage();
+    public float getAttackDamageBonus() {
+        return itemTier.getAttackDamageBonus();
     }
 
     @Override
-    public int getHarvestLevel() {
-        return itemTier.getHarvestLevel();
+    public int getLevel() {
+        return itemTier.getLevel();
     }
 
     @Override
-    public int getEnchantability() {
-        return itemTier.getEnchantability();
+    public int getEnchantmentValue() {
+        return itemTier.getEnchantmentValue();
     }
 
     @Override
-    public Ingredient getRepairMaterial() {
-        return itemTier.getRepairMaterial();
+    public Ingredient getRepairIngredient() {
+        return itemTier.getRepairIngredient();
     }
 
     public List<IMeleeWeaponEffect> getMeleeWeaponEffects() {

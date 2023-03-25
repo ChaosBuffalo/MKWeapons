@@ -12,15 +12,15 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTDynamicOps;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 
@@ -35,7 +35,7 @@ public class ArmorDataHandler implements IArmorData {
     private ItemStack itemStack;
     private final List<IArmorEffect> armorEffects;
     private final List<IArmorEffect> cachedArmorEffects;
-    private final Map<EquipmentSlotType, Multimap<Attribute, AttributeModifier>> modifiers = new HashMap<>();
+    private final Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> modifiers = new HashMap<>();
     private boolean isCacheDirty;
 
     public ArmorDataHandler(){
@@ -82,11 +82,11 @@ public class ArmorDataHandler implements IArmorData {
         isCacheDirty = true;
     }
 
-    private void loadSlotModifiers(EquipmentSlotType slot){
-        Multimap<Attribute, AttributeModifier> modifiers = getItemStack().getItem().getAttributeModifiers(slot);
+    private void loadSlotModifiers(EquipmentSlot slot){
+        Multimap<Attribute, AttributeModifier> modifiers = getItemStack().getItem().getDefaultAttributeModifiers(slot);
         Multimap<Attribute, AttributeModifier> newMods = HashMultimap.create();
         newMods.putAll(modifiers);
-        if (slot == getArmorItem().getEquipmentSlot()){
+        if (slot == getArmorItem().getSlot()){
             for (IArmorEffect armorEffect : getArmorEffects()) {
                 if (armorEffect instanceof ItemModifierEffect) {
                     ItemModifierEffect modEffect = (ItemModifierEffect) armorEffect;
@@ -102,7 +102,7 @@ public class ArmorDataHandler implements IArmorData {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         if (!modifiers.containsKey(slot)){
             loadSlotModifiers(slot);
         }
@@ -125,22 +125,22 @@ public class ArmorDataHandler implements IArmorData {
 
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT effectList = new ListNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        ListTag effectList = new ListTag();
         for (IArmorEffect effect : getStackArmorEffects()){
-            effectList.add(effect.serialize(NBTDynamicOps.INSTANCE));
+            effectList.add(effect.serialize(NbtOps.INSTANCE));
         }
         nbt.put("armor_effects", effectList);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("armor_effects")){
-            ListNBT effectList = nbt.getList("armor_effects", Constants.NBT.TAG_COMPOUND);
-            for (INBT effectNBT : effectList){
-                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NBTDynamicOps.INSTANCE, effectNBT));
+            ListTag effectList = nbt.getList("armor_effects", Constants.NBT.TAG_COMPOUND);
+            for (Tag effectNBT : effectList){
+                IItemEffect effect = ItemEffects.deserializeEffect(new Dynamic<>(NbtOps.INSTANCE, effectNBT));
                 if (effect instanceof IArmorEffect){
                     addArmorEffect((IArmorEffect) effect);
                 } else {
@@ -155,7 +155,7 @@ public class ArmorDataHandler implements IArmorData {
 
         @Nullable
         @Override
-        public INBT writeNBT(Capability<IArmorData> capability, IArmorData instance, Direction side) {
+        public Tag writeNBT(Capability<IArmorData> capability, IArmorData instance, Direction side) {
             if (instance == null){
                 return null;
             }
@@ -163,9 +163,9 @@ public class ArmorDataHandler implements IArmorData {
         }
 
         @Override
-        public void readNBT(Capability<IArmorData> capability, IArmorData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT && instance != null) {
-                CompoundNBT tag = (CompoundNBT) nbt;
+        public void readNBT(Capability<IArmorData> capability, IArmorData instance, Direction side, Tag nbt) {
+            if (nbt instanceof CompoundTag && instance != null) {
+                CompoundTag tag = (CompoundTag) nbt;
                 instance.deserializeNBT(tag);
             }
         }

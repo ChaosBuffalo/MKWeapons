@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.data;
 
 import com.chaosbuffalo.mkweapons.MKWeapons;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +21,7 @@ public class MKWeaponsGenerator {
             gen.addProvider(new LootTierProvider(gen));
             BlockTagsProvider blockTagProvider = new BlockTagsProvider(gen, MKWeapons.MODID, helper) {
                 @Override
-                protected void registerTags() {
+                protected void addTags() {
 
                 }
             };

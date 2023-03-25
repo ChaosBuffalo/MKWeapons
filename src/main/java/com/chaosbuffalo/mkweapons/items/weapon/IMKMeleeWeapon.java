@@ -2,7 +2,7 @@ package com.chaosbuffalo.mkweapons.items.weapon;
 
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package com.chaosbuffalo.mkweapons.items.weapon.types;
 import com.chaosbuffalo.mkcore.core.MKAttributes;
 import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.chaosbuffalo.mkweapons.items.effects.melee.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class MeleeWeaponTypes {
 
-    public static final HashMap<ResourceLocation, IMeleeWeaponType> WEAPON_TYPES = new HashMap<net.minecraft.util.ResourceLocation, IMeleeWeaponType>();
+    public static final HashMap<ResourceLocation, IMeleeWeaponType> WEAPON_TYPES = new HashMap<net.minecraft.resources.ResourceLocation, IMeleeWeaponType>();
 
     public static void addWeaponType(IMeleeWeaponType weaponType){
         WEAPON_TYPES.put(weaponType.getName(), weaponType);

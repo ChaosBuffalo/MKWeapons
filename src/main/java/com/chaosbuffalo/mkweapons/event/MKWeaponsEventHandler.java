@@ -16,15 +16,15 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,10 +37,10 @@ public class MKWeaponsEventHandler {
 
     private static void handleProjectileDamage(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget,
                                                LivingEntity livingSource, IMKEntityData sourceData){
-        if (source.getImmediateSource() instanceof AbstractArrowEntity){
-            AbstractArrowEntity arrowEntity = (AbstractArrowEntity) source.getImmediateSource();
+        if (source.getDirectEntity() instanceof AbstractArrow){
+            AbstractArrow arrowEntity = (AbstractArrow) source.getDirectEntity();
             MKWeapons.getArrowCapability(arrowEntity).ifPresent(cap -> {
-                if (!livingTarget.isActiveItemStackBlocking()){
+                if (!livingTarget.isBlocking()){
                     if (!cap.getShootingWeapon().isEmpty() && cap.getShootingWeapon().getItem() instanceof IMKRangedWeapon){
                         IMKRangedWeapon bow = (IMKRangedWeapon) cap.getShootingWeapon().getItem();
                         for (IRangedWeaponEffect effect : bow.getWeaponEffects(cap.getShootingWeapon())){
@@ -62,7 +62,7 @@ public class MKWeaponsEventHandler {
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         Item from = event.getFrom().getItem();
         Item to = event.getTo().getItem();
-        if (event.getSlot() == EquipmentSlotType.MAINHAND){
+        if (event.getSlot() == EquipmentSlot.MAINHAND){
             if (from instanceof IMKWeapon){
                 ((IMKWeapon) from).getWeaponEffects(event.getFrom()).forEach(
                         eff -> eff.onEntityUnequip(event.getEntityLiving())
@@ -84,23 +84,23 @@ public class MKWeaponsEventHandler {
                     eff -> eff.onEntityEquip(event.getEntityLiving())
             );
         }
-        if (!(event.getEntityLiving() instanceof ServerPlayerEntity))
+        if (!(event.getEntityLiving() instanceof ServerPlayer))
             return;
-        ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
+        ServerPlayer player = (ServerPlayer) event.getEntityLiving();
         checkShieldRestriction(player);
     }
 
-    private static void checkShieldRestriction(ServerPlayerEntity player) {
-        ItemStack main = player.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        ItemStack offhand = player.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
+    private static void checkShieldRestriction(ServerPlayer player) {
+        ItemStack main = player.getItemBySlot(EquipmentSlot.MAINHAND);
+        ItemStack offhand = player.getItemBySlot(EquipmentSlot.OFFHAND);
         if (main.getItem() instanceof IMKMeleeWeapon){
             IMKMeleeWeapon weapon = (IMKMeleeWeapon) main.getItem();
             if (weapon.getWeaponType().isTwoHanded() && offhand.getItem() instanceof ShieldItem){
-                ItemStack off = player.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
-                if (!player.inventory.addItemStackToInventory(off)) {
-                    player.dropItem(off, true);
+                ItemStack off = player.getItemBySlot(EquipmentSlot.OFFHAND);
+                if (!player.inventory.add(off)) {
+                    player.drop(off, true);
                 }
-                player.setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStack.EMPTY);
+                player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
             }
         }
     }
@@ -108,7 +108,7 @@ public class MKWeaponsEventHandler {
     @SubscribeEvent
     public static void onPostCombatEvent(PostAttackEvent event){
         LivingEntity entity = event.getEntityLiving();
-        ItemStack mainHand = entity.getHeldItemMainhand();
+        ItemStack mainHand = entity.getMainHandItem();
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
             Item item = mainHand.getItem();
             for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)){
@@ -132,15 +132,15 @@ public class MKWeaponsEventHandler {
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
         LivingEntity livingTarget = event.getEntityLiving();
-        if (livingTarget.world.isRemote)
+        if (livingTarget.level.isClientSide)
             return;
         DamageSource source = event.getSource();
-        Entity trueSource = source.getTrueSource();
+        Entity trueSource = source.getEntity();
         float newDamage = event.getAmount();
         if (trueSource instanceof LivingEntity){
             LivingEntity livingSource = (LivingEntity)trueSource;
             if (DamageUtils.isMinecraftPhysicalDamage(source)) {
-                ItemStack mainHand = livingSource.getHeldItemMainhand();
+                ItemStack mainHand = livingSource.getMainHandItem();
                 if (!mainHand.isEmpty() && mainHand.getItem() instanceof IMKMeleeWeapon){
                     Item item = mainHand.getItem();
                     for (IMeleeWeaponEffect effect : ((IMKMeleeWeapon) item).getWeaponEffects(mainHand)){

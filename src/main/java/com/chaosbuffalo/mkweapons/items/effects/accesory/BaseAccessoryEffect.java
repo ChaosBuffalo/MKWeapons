@@ -1,12 +1,12 @@
 package com.chaosbuffalo.mkweapons.items.effects.accesory;
 
 import com.chaosbuffalo.mkweapons.items.effects.BaseItemEffect;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ChatFormatting;
 
 public class BaseAccessoryEffect extends BaseItemEffect implements IAccessoryEffect {
 
-    public BaseAccessoryEffect(ResourceLocation name, TextFormatting color) {
+    public BaseAccessoryEffect(ResourceLocation name, ChatFormatting color) {
         super(name, color);
     }
 }

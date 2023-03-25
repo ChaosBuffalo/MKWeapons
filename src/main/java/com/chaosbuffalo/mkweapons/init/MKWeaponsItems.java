@@ -14,10 +14,10 @@ import com.chaosbuffalo.mkweapons.items.weapon.tier.MKTier;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.*;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.RegistryEvent;
@@ -27,6 +27,11 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.*;
 
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
+
 @ObjectHolder(MKWeapons.MODID)
 @Mod.EventBusSubscriber(modid = MKWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MKWeaponsItems {
@@ -34,11 +39,11 @@ public class MKWeaponsItems {
     public static List<MKMeleeWeapon> WEAPONS = new ArrayList<>();
     private static final UUID RANGED_WEP_UUID = UUID.fromString("dbaf479e-515e-4ebc-94dd-eb5a4014bb64");
 
-    public static MKTier IRON_TIER = new MKTier(ItemTier.IRON, "iron", Tags.Items.INGOTS_IRON);
-    public static MKTier WOOD_TIER = new MKTier(ItemTier.WOOD, "wood", ItemTags.PLANKS);
-    public static MKTier DIAMOND_TIER = new MKTier(ItemTier.DIAMOND, "diamond", Tags.Items.GEMS_DIAMOND);
-    public static MKTier GOLD_TIER = new MKTier(ItemTier.GOLD, "gold", Tags.Items.INGOTS_GOLD);
-    public static MKTier STONE_TIER = new MKTier(ItemTier.STONE, "stone", Tags.Items.COBBLESTONE);
+    public static MKTier IRON_TIER = new MKTier(Tiers.IRON, "iron", Tags.Items.INGOTS_IRON);
+    public static MKTier WOOD_TIER = new MKTier(Tiers.WOOD, "wood", ItemTags.PLANKS);
+    public static MKTier DIAMOND_TIER = new MKTier(Tiers.DIAMOND, "diamond", Tags.Items.GEMS_DIAMOND);
+    public static MKTier GOLD_TIER = new MKTier(Tiers.GOLD, "gold", Tags.Items.INGOTS_GOLD);
+    public static MKTier STONE_TIER = new MKTier(Tiers.STONE, "stone", Tags.Items.COBBLESTONE);
 
     public static List<MKBow> BOWS = new ArrayList<>();
 
@@ -87,7 +92,7 @@ public class MKWeaponsItems {
             for (IMeleeWeaponType weaponType : MeleeWeaponTypes.WEAPON_TYPES.values()){
                 MKMeleeWeapon weapon = new MKMeleeWeapon(new ResourceLocation(MKWeapons.MODID,
                         String.format("%s_%s", weaponType.getName().getPath(), mat.getA())), mat.getB(), weaponType,
-                        (new Item.Properties()).group(ItemGroup.COMBAT));
+                        (new Item.Properties()).tab(CreativeModeTab.TAB_COMBAT));
                 WEAPONS.add(weapon);
                 WeaponTypeManager.addMeleeWeapon(weapon);
                 putWeaponForLookup(mat.getB(), weaponType, weapon);
@@ -99,7 +104,7 @@ public class MKWeaponsItems {
             rangedMods.addAttributeModifier(MKAttributes.RANGED_CRIT_MULTIPLIER,
                     new AttributeModifier(RANGED_WEP_UUID, "Bow Crit",0.25, AttributeModifier.Operation.ADDITION ));
             MKBow bow = new MKBow(new ResourceLocation(MKWeapons.MODID, String.format("longbow_%s", mat.getA())),
-                    new Item.Properties().maxDamage(mat.getB().getMaxUses() * 3).group(ItemGroup.COMBAT), mat.getB(),
+                    new Item.Properties().durability(mat.getB().getUses() * 3).tab(CreativeModeTab.TAB_COMBAT), mat.getB(),
                     GameConstants.TICKS_PER_SECOND * 2.5f, 4.0f,
                     new RapidFireRangedWeaponEffect(7, .10f),
                     rangedMods
@@ -107,52 +112,52 @@ public class MKWeaponsItems {
             BOWS.add(bow);
             evt.getRegistry().register(bow);
         }
-        Item haft = new Item(new Item.Properties().group(ItemGroup.MATERIALS));
+        Item haft = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS));
         haft.setRegistryName(MKWeapons.MODID, "haft");
         evt.getRegistry().register(haft);
         TestNBTWeaponEffectItem testNBTWeaponEffectItem = new TestNBTWeaponEffectItem(new Item.Properties());
         testNBTWeaponEffectItem.setRegistryName(MKWeapons.MODID, "test_nbt_effect");
         evt.getRegistry().register(testNBTWeaponEffectItem);
-        MKAccessory copperRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory copperRing = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         copperRing.setRegistryName(MKWeapons.MODID, "copper_ring");
         evt.getRegistry().register(copperRing);
-        MKAccessory goldRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory goldRing = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         goldRing.setRegistryName(MKWeapons.MODID, "gold_ring");
         evt.getRegistry().register(goldRing);
-        MKAccessory silverRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory silverRing = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         silverRing.setRegistryName(MKWeapons.MODID, "silver_ring");
         evt.getRegistry().register(silverRing);
-        MKAccessory roseGoldRing = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory roseGoldRing = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         roseGoldRing.setRegistryName(MKWeapons.MODID, "rose_gold_ring");
         evt.getRegistry().register(roseGoldRing);
-        MKAccessory silverEarring = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory silverEarring = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         silverEarring.setRegistryName(MKWeapons.MODID, "silver_earring");
         evt.getRegistry().register(silverEarring);
-        MKAccessory goldEarring = new MKAccessory(new Item.Properties().maxStackSize(1).group(ItemGroup.COMBAT));
+        MKAccessory goldEarring = new MKAccessory(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT));
         goldEarring.setRegistryName(MKWeapons.MODID, "gold_earring");
         evt.getRegistry().register(goldEarring);
     }
 
     public static void registerItemProperties(){
         for (MKBow bow : BOWS){
-            ItemModelsProperties.registerProperty(bow, new ResourceLocation("pull"), (itemStack, world, entity) -> {
+            ItemProperties.register(bow, new ResourceLocation("pull"), (itemStack, world, entity) -> {
                 if (entity == null) {
                     return 0.0F;
                 } else {
-                    return !(entity.getActiveItemStack().getItem() instanceof MKBow) ? 0.0F :
-                            (float)(itemStack.getUseDuration() - entity.getItemInUseCount()) / bow.getDrawTime(itemStack, entity);
+                    return !(entity.getUseItem().getItem() instanceof MKBow) ? 0.0F :
+                            (float)(itemStack.getUseDuration() - entity.getUseItemRemainingTicks()) / bow.getDrawTime(itemStack, entity);
                 }
             });
-            ItemModelsProperties.registerProperty(bow, new ResourceLocation("pulling"), (itemStack, world, entity) -> {
-                return entity != null && entity.isHandActive() && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F;
+            ItemProperties.register(bow, new ResourceLocation("pulling"), (itemStack, world, entity) -> {
+                return entity != null && entity.isUsingItem() && entity.getUseItem() == itemStack ? 1.0F : 0.0F;
             });
         }
 
         for (MKMeleeWeapon weapon : WEAPONS){
             if (MeleeWeaponTypes.WITH_BLOCKING.contains(weapon.getWeaponType()))
-            ItemModelsProperties.registerProperty(weapon, new ResourceLocation("blocking"),
-                    (itemStack, world, entity) -> entity != null && entity.isHandActive()
-                            && entity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
+            ItemProperties.register(weapon, new ResourceLocation("blocking"),
+                    (itemStack, world, entity) -> entity != null && entity.isUsingItem()
+                            && entity.getUseItem() == itemStack ? 1.0F : 0.0F);
         }
 
 

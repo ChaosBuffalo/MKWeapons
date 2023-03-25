@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.items.randomization.options;
 
 import com.mojang.serialization.Dynamic;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;

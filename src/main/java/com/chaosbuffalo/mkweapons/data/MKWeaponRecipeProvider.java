@@ -7,11 +7,11 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.types.IMeleeWeaponType;
 import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.data.ShapedRecipeBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.Tags;
 
@@ -93,58 +93,58 @@ public class MKWeaponRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        getHaftRecipe().build(consumer);
+    protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
+        getHaftRecipe().save(consumer);
         for (MKMeleeWeapon weapon : MKWeaponsItems.WEAPONS){
-            getRecipe(weapon).build(consumer);
+            getRecipe(weapon).save(consumer);
         }
         for (MKBow bow : MKWeaponsItems.BOWS){
-            getLongbowRecipe(bow).build(consumer);
+            getLongbowRecipe(bow).save(consumer);
         }
     }
 
     private ShapedRecipeBuilder getHaftRecipe(){
-        return ShapedRecipeBuilder.shapedRecipe(MKWeaponsItems.Haft, 3)
-                .key('S', Items.STICK)
-                .key('L', Tags.Items.LEATHER)
-                .patternLine("SSS")
-                .patternLine(" L ")
-                .patternLine("SSS")
-                .addCriterion("has_stick", this.hasItem(Items.STICK))
-                .addCriterion("has_leather", this.hasItem(Tags.Items.LEATHER));
+        return ShapedRecipeBuilder.shaped(MKWeaponsItems.Haft, 3)
+                .define('S', Items.STICK)
+                .define('L', Tags.Items.LEATHER)
+                .pattern("SSS")
+                .pattern(" L ")
+                .pattern("SSS")
+                .unlockedBy("has_stick", this.has(Items.STICK))
+                .unlockedBy("has_leather", this.has(Tags.Items.LEATHER));
     }
 
     private ShapedRecipeBuilder getLongbowRecipe(MKBow bow){
-        return ShapedRecipeBuilder.shapedRecipe(bow)
-                .key('H', MKWeaponsItems.Haft)
-                .key('I', bow.getMKTier().getMajorIngredient())
-                .key('S', Tags.Items.STRING)
-                .patternLine(" IS")
-                .patternLine("H S")
-                .patternLine(" IS")
-                .addCriterion("has_haft", this.hasItem(MKWeaponsItems.Haft))
-                .addCriterion("has_string", this.hasItem(Tags.Items.STRING))
-                .addCriterion("has_ingot", this.hasItem(bow.getMKTier().getTag()))
+        return ShapedRecipeBuilder.shaped(bow)
+                .define('H', MKWeaponsItems.Haft)
+                .define('I', bow.getMKTier().getMajorIngredient())
+                .define('S', Tags.Items.STRING)
+                .pattern(" IS")
+                .pattern("H S")
+                .pattern(" IS")
+                .unlockedBy("has_haft", this.has(MKWeaponsItems.Haft))
+                .unlockedBy("has_string", this.has(Tags.Items.STRING))
+                .unlockedBy("has_ingot", this.has(bow.getMKTier().getTag()))
                 ;
     }
 
     private ShapedRecipeBuilder getRecipe(MKMeleeWeapon weapon) {
-        ShapedRecipeBuilder recipeBuilder = ShapedRecipeBuilder.shapedRecipe(weapon);
-        recipeBuilder.key('I', weapon.getMKTier().getMajorIngredient());;
+        ShapedRecipeBuilder recipeBuilder = ShapedRecipeBuilder.shaped(weapon);
+        recipeBuilder.define('I', weapon.getMKTier().getMajorIngredient());;
         WeaponRecipe weaponRecipe = weaponRecipes.get(weapon.getWeaponType());
         for (Tuple<Character, Item> key : weaponRecipe.getItemKeys()) {
-            recipeBuilder.key(key.getA(), key.getB());
+            recipeBuilder.define(key.getA(), key.getB());
         }
         for (String line : weaponRecipe.getPattern()){
-            recipeBuilder.patternLine(line);
+            recipeBuilder.pattern(line);
         }
         if (weaponRecipe.hasHaft()){
-            recipeBuilder.addCriterion("has_haft", this.hasItem(MKWeaponsItems.Haft));
+            recipeBuilder.unlockedBy("has_haft", this.has(MKWeaponsItems.Haft));
         }
         if (weaponRecipe.hasStick()){
-            recipeBuilder.addCriterion("has_stick", this.hasItem(Items.STICK));
+            recipeBuilder.unlockedBy("has_stick", this.has(Items.STICK));
         }
-        recipeBuilder.addCriterion("has_ingot", this.hasItem(weapon.getMKTier().getTag()));
+        recipeBuilder.unlockedBy("has_ingot", this.has(weapon.getMKTier().getTag()));
         return recipeBuilder;
     }
 }

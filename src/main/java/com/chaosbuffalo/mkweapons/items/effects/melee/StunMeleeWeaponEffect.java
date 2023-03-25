@@ -11,16 +11,16 @@ import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -38,7 +38,7 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     public StunMeleeWeaponEffect(){
-        super(NAME, TextFormatting.DARK_PURPLE);
+        super(NAME, ChatFormatting.DARK_PURPLE);
     }
 
     @Override
@@ -57,20 +57,20 @@ public class StunMeleeWeaponEffect extends BaseMeleeWeaponEffect {
 
     @Override
     public void onHit(IMKMeleeWeapon weapon, ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (attacker.getRNG().nextDouble() >= (1.0 - stunChance)) {
+        if (attacker.getRandom().nextDouble() >= (1.0 - stunChance)) {
             MKEffectBuilder<?> stun = StunEffect.from(attacker)
                     .timed(stunDuration * GameConstants.TICKS_PER_SECOND);
             MKCore.getEntityData(target).ifPresent(targetData -> targetData.getEffects().addEffect(stun));
             PacketHandler.sendToTrackingAndSelf(new MKParticleEffectSpawnPacket(
-                            new Vector3d(0.0, target.getHeight(), 0.0), PARTICLES, target.getEntityId()), target);
+                            new Vec3(0.0, target.getBbHeight(), 0.0), PARTICLES, target.getId()), target);
         }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
         if (Screen.hasShiftDown()){
-            tooltip.add(new StringTextComponent(I18n.format("mkweapons.weapon_effect.stun.description",
+            tooltip.add(new TextComponent(I18n.get("mkweapons.weapon_effect.stun.description",
                     stunChance * 100.0, stunDuration)));
         }
     }

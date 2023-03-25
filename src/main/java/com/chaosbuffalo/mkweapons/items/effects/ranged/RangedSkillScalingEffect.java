@@ -10,20 +10,20 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -38,7 +38,7 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     private Attribute skill;
 
     public RangedSkillScalingEffect() {
-        super(NAME, TextFormatting.GRAY);
+        super(NAME, ChatFormatting.GRAY);
     }
 
     public RangedSkillScalingEffect(double baseDamage, Attribute skill){
@@ -48,7 +48,7 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     }
 
     @Override
-    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, LivingEntity livingSource, IMKEntityData sourceData, AbstractArrowEntity arrow, ItemStack bow) {
+    public void onProjectileHit(LivingHurtEvent event, DamageSource source, LivingEntity livingTarget, LivingEntity livingSource, IMKEntityData sourceData, AbstractArrow arrow, ItemStack bow) {
         MKCore.getPlayer(livingSource).ifPresent(x -> x.getSkills().tryScaledIncreaseSkill(skill, 0.5));
     }
 
@@ -60,36 +60,36 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
 //    }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
+        tooltip.add(new TranslatableComponent(skill.getDescriptionId()).withStyle(color));
         if (Screen.hasShiftDown()){
             float skillLevel = ClientUtils.getClientSkillLevel(skill);
             double bonus = skillLevel * baseDamage;
-            tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.ranged_skill_scaling.description",
-                    new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
+            tooltip.add(new TranslatableComponent("mkweapons.weapon_effect.ranged_skill_scaling.description",
+                    new TranslatableComponent(skill.getDescriptionId()), MKAbility.NUMBER_FORMATTER.format(bonus)));
         }
     }
 
     @Override
     public void onEntityEquip(LivingEntity entity) {
         float skillLevel = MKAbility.getSkillLevel(entity, skill);
-        ModifiableAttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
+        AttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
         if (attr != null){
             if (attr.getModifier(skillScaling) == null){
-                attr.applyNonPersistentModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
+                attr.addTransientModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
             }
         }
     }
 
     @Override
-    public void onSkillChange(PlayerEntity player) {
+    public void onSkillChange(Player player) {
         onEntityUnequip(player);
         onEntityEquip(player);
     }
 
     @Override
     public void onEntityUnequip(LivingEntity entity) {
-        ModifiableAttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
+        AttributeInstance attr = entity.getAttribute(MKAttributes.RANGED_DAMAGE);
         if (attr != null) {
             attr.removeModifier(skillScaling);
         }

@@ -9,19 +9,19 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     private Attribute skill;
 
     public SkillScalingEffect() {
-        super(NAME, TextFormatting.GRAY);
+        super(NAME, ChatFormatting.GRAY);
     }
 
     public SkillScalingEffect(double baseDamage, Attribute skill){
@@ -50,7 +50,7 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     }
 
     @Override
-    public void onSkillChange(PlayerEntity player) {
+    public void onSkillChange(Player player) {
         onEntityUnequip(player);
         onEntityEquip(player);
     }
@@ -58,28 +58,28 @@ public class SkillScalingEffect extends BaseMeleeWeaponEffect{
     @Override
     public void onEntityEquip(LivingEntity entity) {
         float skillLevel = MKAbility.getSkillLevel(entity, skill);
-        ModifiableAttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);
+        AttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attr != null){
             if (attr.getModifier(skillScaling) == null){
-                attr.applyNonPersistentModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
+                attr.addTransientModifier(new AttributeModifier(skillScaling, "skill scaling", skillLevel * baseDamage, AttributeModifier.Operation.ADDITION));
             }
         }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
-        tooltip.add(new TranslationTextComponent(skill.getAttributeName()).mergeStyle(color));
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
+        tooltip.add(new TranslatableComponent(skill.getDescriptionId()).withStyle(color));
         if (Screen.hasShiftDown()){
             float skillLevel = ClientUtils.getClientSkillLevel(skill);
             double bonus = skillLevel * baseDamage;
-                tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.skill_scaling.description",
-                        new TranslationTextComponent(skill.getAttributeName()), MKAbility.NUMBER_FORMATTER.format(bonus)));
+                tooltip.add(new TranslatableComponent("mkweapons.weapon_effect.skill_scaling.description",
+                        new TranslatableComponent(skill.getDescriptionId()), MKAbility.NUMBER_FORMATTER.format(bonus)));
         }
     }
 
     @Override
     public void onEntityUnequip(LivingEntity entity) {
-        ModifiableAttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);
+        AttributeInstance attr = entity.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attr != null) {
             attr.removeModifier(skillScaling);
         }

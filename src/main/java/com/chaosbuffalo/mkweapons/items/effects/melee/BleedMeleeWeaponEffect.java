@@ -12,18 +12,18 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     public BleedMeleeWeaponEffect() {
-        super(NAME, TextFormatting.DARK_RED);
+        super(NAME, ChatFormatting.DARK_RED);
     }
 
     public void setDamageMultiplier(float damageMultiplier) {
@@ -97,11 +97,11 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip) {
         super.addInformation(stack, worldIn, tooltip);
         if (Screen.hasShiftDown()) {
-            tooltip.add(new TranslationTextComponent("mkweapons.weapon_effect.bleed.description",
-                    damageMultiplier, durationSeconds, maxStacks, new TranslationTextComponent(skill.getAttributeName())));
+            tooltip.add(new TranslatableComponent("mkweapons.weapon_effect.bleed.description",
+                    damageMultiplier, durationSeconds, maxStacks, new TranslatableComponent(skill.getDescriptionId())));
         }
     }
 

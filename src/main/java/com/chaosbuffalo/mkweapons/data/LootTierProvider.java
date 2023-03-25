@@ -16,11 +16,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class LootTierProvider implements IDataProvider {
+public class LootTierProvider implements DataProvider {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private final DataGenerator generator;
 
@@ -39,7 +39,7 @@ public class LootTierProvider implements IDataProvider {
     }
 
     @Override
-    public void act(@Nonnull DirectoryCache cache) {
+    public void run(@Nonnull HashCache cache) {
         writeLootTier(generateTierOne(), cache);
     }
 
@@ -82,13 +82,13 @@ public class LootTierProvider implements IDataProvider {
         return tier;
     }
 
-    public void writeLootTier(LootTier lootTier, @Nonnull DirectoryCache cache){
+    public void writeLootTier(LootTier lootTier, @Nonnull HashCache cache){
         Path outputFolder = this.generator.getOutputFolder();
         ResourceLocation key = lootTier.getName();
         Path path = outputFolder.resolve("data/" + key.getNamespace() + "/loot_tiers/" + key.getPath() + ".json");
         try {
             JsonElement element = lootTier.serialize(JsonOps.INSTANCE);
-            IDataProvider.save(GSON, cache, element, path);
+            DataProvider.save(GSON, cache, element, path);
         } catch (IOException e){
             MKWeapons.LOGGER.error("Couldn't write loot tier {}", path, e);
         }

@@ -7,8 +7,8 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.IRangedWeaponEffect;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.IRandomizationSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.LootSlot;
 import com.chaosbuffalo.mkweapons.items.randomization.slots.RandomizationSlotManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Optional;

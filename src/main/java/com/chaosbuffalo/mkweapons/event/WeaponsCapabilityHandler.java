@@ -8,9 +8,9 @@ import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.armor.IMKArmor;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKMeleeWeapon;
 import com.chaosbuffalo.mkweapons.items.weapon.IMKWeapon;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,9 +20,9 @@ public class WeaponsCapabilityHandler {
 
     @SubscribeEvent
     public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> e) {
-        if (e.getObject() instanceof AbstractArrowEntity) {
+        if (e.getObject() instanceof AbstractArrow) {
             e.addCapability(WeaponsCapabilities.MK_ARROW_CAP_ID,
-                    new ArrowDataProvider((AbstractArrowEntity) e.getObject()));
+                    new ArrowDataProvider((AbstractArrow) e.getObject()));
         }
     }
 

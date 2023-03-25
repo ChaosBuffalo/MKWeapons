@@ -1,7 +1,7 @@
 package com.chaosbuffalo.mkweapons.capabilities;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
 import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.type.capability.ICurio;
@@ -25,12 +25,12 @@ public class MKCurioItemProvider extends ThirdPartyCapProvider<ItemStack, ICurio
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
+    public CompoundTag serializeNBT() {
         return ourHandler.serializeNBT();
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         ourHandler.deserializeNBT(nbt);
     }
 }

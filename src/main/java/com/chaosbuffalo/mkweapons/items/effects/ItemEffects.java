@@ -7,7 +7,7 @@ import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedModifierEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RangedSkillScalingEffect;
 import com.chaosbuffalo.mkweapons.items.effects.ranged.RapidFireRangedWeaponEffect;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

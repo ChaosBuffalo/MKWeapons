@@ -5,15 +5,15 @@ import com.chaosbuffalo.mkweapons.capabilities.MKCurioItemProvider;
 import com.chaosbuffalo.mkweapons.capabilities.WeaponsCapabilities;
 import com.chaosbuffalo.mkweapons.items.effects.accesory.IAccessoryEffect;
 import com.google.common.collect.Multimap;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.CuriosCapability;
@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class MKAccessory extends Item {
 
@@ -49,7 +51,7 @@ public class MKAccessory extends Item {
         return effects;
     }
 
-    public void addToTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip){
+    public void addToTooltip(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip){
         for (IAccessoryEffect accessoryEffect : getAccessoryEffects(stack)){
             accessoryEffect.addInformation(stack, worldIn, tooltip);
         }
@@ -57,7 +59,7 @@ public class MKAccessory extends Item {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         MKCurioItemProvider provider = new MKCurioItemProvider(stack);
         if (nbt != null){
             provider.deserializeNBT(nbt);
@@ -79,10 +81,10 @@ public class MKAccessory extends Item {
 
     @Nullable
     @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
+    public CompoundTag getShareTag(ItemStack stack) {
         // See comment in MKMeleeWeapon#getShareTag
-        CompoundNBT newTag = new CompoundNBT();
-        CompoundNBT original = super.getShareTag(stack);
+        CompoundTag newTag = new CompoundTag();
+        CompoundTag original = super.getShareTag(stack);
         if (original != null) {
             newTag.put("share", original);
         }
@@ -91,7 +93,7 @@ public class MKAccessory extends Item {
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT shareTag) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag shareTag) {
         if (shareTag == null)
             return;
 

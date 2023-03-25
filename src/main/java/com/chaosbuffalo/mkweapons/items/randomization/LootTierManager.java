@@ -7,10 +7,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,7 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LootTierManager extends JsonReloadListener {
+public class LootTierManager extends SimpleJsonResourceReloadListener {
     public static final ResourceLocation INVALID_LOOT_TIER = new ResourceLocation(MKWeapons.MODID,
             "loot_tier.invalid");
     public static final ResourceLocation INVALID_RANDOMIZATION_TEMPLATE = new ResourceLocation(MKWeapons.MODID,
@@ -32,7 +32,7 @@ public class LootTierManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         MKWeapons.LOGGER.debug("Loading loot tier definitions from Json");
         LOOT_TIERS.clear();
         for (Map.Entry<ResourceLocation, JsonElement> entry : objectIn.entrySet()) {

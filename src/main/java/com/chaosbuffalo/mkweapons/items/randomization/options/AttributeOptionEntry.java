@@ -6,14 +6,14 @@ import com.chaosbuffalo.mkweapons.MKWeapons;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Optional;
@@ -58,12 +58,12 @@ public class AttributeOptionEntry {
         ImmutableMap.Builder<D, D> builder = ImmutableMap.builder();
         builder.put(ops.createString("Name"), ops.createString(modifier.getName()));
         builder.put(ops.createString("Amount"), ops.createDouble(modifier.getAmount()));
-        builder.put(ops.createString("Operation"), ops.createInt(modifier.getOperation().getId()));
+        builder.put(ops.createString("Operation"), ops.createInt(modifier.getOperation().toValue()));
         builder.put(ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString()));
         builder.put(ops.createString("minValue"), ops.createDouble(minValue));
         builder.put(ops.createString("maxValue"), ops.createDouble(maxValue));
-        if (!modifier.getID().equals(Util.DUMMY_UUID)){
-            builder.put(ops.createString("UUID"), ops.createString(modifier.getID().toString()));
+        if (!modifier.getId().equals(Util.NIL_UUID)){
+            builder.put(ops.createString("UUID"), ops.createString(modifier.getId().toString()));
         }
         return ops.createMap(builder.build());
     }
@@ -81,22 +81,22 @@ public class AttributeOptionEntry {
         }
     }
 
-    public ITextComponent getDescription(){
+    public Component getDescription(){
         String translationKey = getTranslationKeyForModifier(modifier.getOperation());
         double amount = modifier.getAmount();
         if (modifier.getOperation() != AttributeModifier.Operation.ADDITION){
             amount *= 100.0f;
         }
-        return new TranslationTextComponent(translationKey, I18n.format(attribute.getAttributeName()), amount).mergeStyle(TextFormatting.GRAY);
+        return new TranslatableComponent(translationKey, I18n.get(attribute.getDescriptionId()), amount).withStyle(ChatFormatting.GRAY);
     }
 
     public <D> void deserialize(Dynamic<D> dynamic){
         Optional<String> name = dynamic.get("Name").asString().result();
-        UUID uuid = dynamic.get("UUID").asString().result().map(UUID::fromString).orElse(Util.DUMMY_UUID);
+        UUID uuid = dynamic.get("UUID").asString().result().map(UUID::fromString).orElse(Util.NIL_UUID);
         double amount = dynamic.get("Amount").asDouble(0.0);
         int op = dynamic.get("Operation").asInt(0);
         if (name.isPresent()){
-            modifier = new AttributeModifier(uuid, name.get(), amount, AttributeModifier.Operation.byId(op));
+            modifier = new AttributeModifier(uuid, name.get(), amount, AttributeModifier.Operation.fromValue(op));
         } else {
             MKWeapons.LOGGER.error("Failed to decode attribute modifier {} : {}", name, dynamic);
         }

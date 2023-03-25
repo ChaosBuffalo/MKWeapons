@@ -6,11 +6,11 @@ import com.chaosbuffalo.mkweapons.items.weapon.types.MeleeWeaponTypes;
 import com.chaosbuffalo.mkweapons.items.weapon.types.WeaponTypeManager;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.NBTDynamicOps;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Collection;
@@ -19,16 +19,16 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class SyncWeaponTypesPacket {
-    public final Map<ResourceLocation, CompoundNBT> data;
+    public final Map<ResourceLocation, CompoundTag> data;
 
 
     public SyncWeaponTypesPacket(Collection<IMeleeWeaponType> meleeTypes) {
 
         data = new HashMap<>();
         for (IMeleeWeaponType meleeType : meleeTypes) {
-            INBT dyn = meleeType.serialize(NBTDynamicOps.INSTANCE);
-            if (dyn instanceof CompoundNBT) {
-                data.put(meleeType.getName(), (CompoundNBT) dyn);
+            Tag dyn = meleeType.serialize(NbtOps.INSTANCE);
+            if (dyn instanceof CompoundTag) {
+                data.put(meleeType.getName(), (CompoundTag) dyn);
             } else {
                 throw new RuntimeException(String.format("Melee Weapon Type %s did not serialize to a CompoundNBT!",
                         meleeType.getName()));
@@ -36,20 +36,20 @@ public class SyncWeaponTypesPacket {
         }
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeInt(data.size());
-        for (Map.Entry<ResourceLocation, CompoundNBT> meleeData : data.entrySet()) {
+        for (Map.Entry<ResourceLocation, CompoundTag> meleeData : data.entrySet()) {
             buffer.writeResourceLocation(meleeData.getKey());
-            buffer.writeCompoundTag(meleeData.getValue());
+            buffer.writeNbt(meleeData.getValue());
         }
     }
 
-    public SyncWeaponTypesPacket(PacketBuffer buffer) {
+    public SyncWeaponTypesPacket(FriendlyByteBuf buffer) {
         int count = buffer.readInt();
         data = new HashMap<>();
         for (int i = 0; i < count; i++) {
             ResourceLocation typeName = buffer.readResourceLocation();
-            CompoundNBT typeData = buffer.readCompoundTag();
+            CompoundTag typeData = buffer.readNbt();
             data.put(typeName, typeData);
         }
     }
