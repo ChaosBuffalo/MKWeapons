@@ -1,29 +1,29 @@
 package com.chaosbuffalo.mkweapons.items.weapon.tier;
 
 import com.chaosbuffalo.mkweapons.items.effects.melee.IMeleeWeaponEffect;
-import net.minecraft.world.item.Tier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MKTier implements Tier{
+public class MKTier implements Tier {
     private final Tier itemTier;
     private final List<IMeleeWeaponEffect> weaponEffects;
     private final String name;
-    private final Tag.Named<Item> tag;
+    private final TagKey<Item> tag;
 
-    public MKTier(Tier tier, String name, Tag.Named<Item> tag,
-                  IMeleeWeaponEffect... effects){
+    public MKTier(Tier tier, String name, TagKey<Item> tag,
+                  IMeleeWeaponEffect... effects) {
         itemTier = tier;
         this.name = name;
         weaponEffects = Arrays.asList(effects);
         this.tag = tag;
     }
 
-    public Tag.Named<Item> getItemTag() {
+    public TagKey<Item> getItemTag() {
         return tag;
     }
 

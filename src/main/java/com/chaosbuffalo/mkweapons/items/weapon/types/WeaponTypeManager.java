@@ -24,9 +24,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class WeaponTypeManager extends SimpleJsonResourceReloadListener {
     }
 
     @SubscribeEvent
-    public void serverStart(FMLServerAboutToStartEvent event) {
+    public void serverStart(ServerAboutToStartEvent event) {
         server = event.getServer();
         serverStarted = true;
     }
@@ -123,7 +123,7 @@ public class WeaponTypeManager extends SimpleJsonResourceReloadListener {
     }
 
     @SubscribeEvent
-    public void serverStop(FMLServerStoppingEvent event) {
+    public void serverStop(ServerStoppingEvent event) {
         serverStarted = false;
         server = null;
     }
