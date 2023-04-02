@@ -106,6 +106,6 @@ public class RangedSkillScalingEffect extends BaseRangedWeaponEffect{
     @Override
     public <D> void writeAdditionalData(DynamicOps<D> ops, ImmutableMap.Builder<D, D> builder) {
         builder.put(ops.createString("baseDamage"), ops.createDouble(baseDamage));
-        builder.put(ops.createString("skill"), ops.createString(skill.getRegistryName().toString()));
+        builder.put(ops.createString("skill"), ops.createString(ForgeRegistries.ATTRIBUTES.getKey(skill).toString()));
     }
 }

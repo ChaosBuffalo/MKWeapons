@@ -59,7 +59,7 @@ public class AttributeOptionEntry {
         builder.put(ops.createString("Name"), ops.createString(modifier.getName()));
         builder.put(ops.createString("Amount"), ops.createDouble(modifier.getAmount()));
         builder.put(ops.createString("Operation"), ops.createInt(modifier.getOperation().toValue()));
-        builder.put(ops.createString("AttributeName"), ops.createString(attribute.getRegistryName().toString()));
+        builder.put(ops.createString("AttributeName"), ops.createString(ForgeRegistries.ATTRIBUTES.getKey(attribute).toString()));
         builder.put(ops.createString("minValue"), ops.createDouble(minValue));
         builder.put(ops.createString("maxValue"), ops.createDouble(maxValue));
         if (!modifier.getId().equals(Util.NIL_UUID)){

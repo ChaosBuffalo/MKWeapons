@@ -73,7 +73,7 @@ public class BleedMeleeWeaponEffect extends BaseMeleeWeaponEffect {
         builder.put(ops.createString("damageMultiplier"), ops.createFloat(damageMultiplier));
         builder.put(ops.createString("maxStacks"), ops.createInt(maxStacks));
         builder.put(ops.createString("durationSeconds"), ops.createInt(durationSeconds));
-        builder.put(ops.createString("skill"), ops.createString(skill.getRegistryName().toString()));
+        builder.put(ops.createString("skill"), ops.createString(ForgeRegistries.ATTRIBUTES.getKey(skill).toString()));
     }
 
     @Override
